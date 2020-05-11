@@ -13,6 +13,7 @@ using ExitGames.Client.Photon;
 using global::Photon.Realtime;
 using System;
 using System.Text;
+using UnityEngine;
 
 
 /// <summary>Delegate to get notified of joining/leaving players (see OnEventJoin and OnEventLeave).</summary>
@@ -88,9 +89,6 @@ public class GameLogic : LoadBalancingClient
     protected static readonly string[] RoomPropsInLobby = new string[] { CustomConstants.MapProp, CustomConstants.GridSizeProp };
 
 
-    /// <summary>Tracks the interval in which the local player should move (unless disabled).</summary>
-    public Timer MoveInterval { get; set; }
-
     /// <summary>Tracks the interval in which the current position should be broadcasted.</summary>
     /// <remarks>This actually defines how many updates per second this player creates by position updates.</remarks>
     public Timer UpdateOthersInterval { get; set; }
@@ -129,8 +127,7 @@ public class GameLogic : LoadBalancingClient
 
         this.DispatchInterval = new Timer(10);
         this.SendInterval = new Timer(100);
-        this.MoveInterval = new Timer(500);
-        this.UpdateOthersInterval = new Timer(this.MoveInterval.Interval);
+        this.UpdateOthersInterval = new Timer(500);
     }
 
 
@@ -143,6 +140,7 @@ public class GameLogic : LoadBalancingClient
     /// </remarks>
     public void CallConnect()
     {
+        Debug.Log("CallConnect");
         bool couldConnect = false;
         if (!string.IsNullOrEmpty(this.MasterServerAddress))
         {
@@ -157,7 +155,6 @@ public class GameLogic : LoadBalancingClient
         {
             this.DebugReturn(DebugLevel.ERROR, "Can't connect to: " + this.CurrentServerAddress);
         }
-
 
         // alternatively, you could call ConnectToNameServer() and get a list of available regions from it.
         // then, you have to pick one region's code and ConnectToRegionMaster(code)
@@ -190,7 +187,8 @@ public class GameLogic : LoadBalancingClient
             case ClientState.ConnectedToMasterServer:
                 // when that's done, this demo asks the Master for any game. the result is handled below
                 // this.OpJoinRandomRoom(null, 0);
-
+                
+                
                 this.CreateParticleDemoRoom(CustomConstants.MapType.Forest, 16);
                 break;
         }
@@ -242,15 +240,6 @@ public class GameLogic : LoadBalancingClient
         // If the client is in a room, we might move our LocalPlayer and update others of our position
         if (this.State == ClientState.Joined)
         {
-            if (this.MoveInterval.ShouldExecute)
-            {
-                this.LocalPlayer.MoveRandom();
-                this.MoveInterval.Reset();
-
-                this.UpdateOthersInterval.ShouldExecute = true; // we just moved. this should produce a update (in this demo)
-                UpdateVisuals = true; // update visuals to show new pos
-            }
-
             // This demo sends updates in intervals and when the player was moved
             // In a game you could send ~10 times per second or only when the user did some input, too
             if (this.UpdateOthersInterval.ShouldExecute)
@@ -463,6 +452,7 @@ public class GameLogic : LoadBalancingClient
     /// <param name="gridSize"></param>
     public void CreateParticleDemoRoom(CustomConstants.MapType maptype, int gridSize)
     {
+        Debug.Log("CreateParticleDemoRoom");
         // custom room properties to use when this client creates a room. Note: Not all are listed in the lobby.
         Hashtable roomPropsForCreation = new Hashtable() { { CustomConstants.MapProp, maptype.ToString() }, { CustomConstants.GridSizeProp, gridSize } };
         

@@ -39,6 +39,7 @@ public class CustomPlayer : Player
         {
             // we pick a random color when we create a local player
             this.RandomizeColor();
+            this.RandomizePosition();
         }
     }
 
@@ -138,5 +139,36 @@ public class CustomPlayer : Player
     		this.Color = System.Convert.ToInt32(evContent["1"]);
         }
         this.LastUpdateTimestamp = GameLogic.Timestamp;
+    }
+    
+    /// <summary>Checks if a position is in the grid (still on the board) and corrects it if needed.</summary>
+    public void ClampPosition()
+    {
+        if (this.RoomReference == null)
+        {
+            return;
+        }
+
+        int gridSize = 16;
+
+        if (this.PosX < 0)
+        {
+            this.PosX = 0;
+        }
+
+        if (this.PosX >= gridSize - 1)
+        {
+            this.PosX = gridSize - 1;
+        }
+
+        if (this.PosY < 0)
+        {
+            this.PosY = 0;
+        }
+
+        if (this.PosY > gridSize - 1)
+        {
+            this.PosY = gridSize - 1;
+        }
     }
 }

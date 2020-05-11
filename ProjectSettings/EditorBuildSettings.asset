@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/PhotonExamples/MemoryDemo/MemoryDemoScene.unity
-    guid: c447e231aff29fe4da87399541581cad
+    path: Assets/NeoReaverProject/Scenes/ExampleCommunicationScene.unity
+    guid: 5689abdf749cb3c4395ade10e758c3a4
   m_configObjects: {}

@@ -37,6 +37,7 @@ public class Logic
     /// <param name="gameVersion">Game version</param>
     public void StartGame(string serverAddress, string appId, string gameVersion)
     {
+        Debug.Log("StartGame");
         ServerAddress = serverAddress;
         AppId = appId;
         GameVersion = gameVersion;
@@ -64,6 +65,7 @@ public class Logic
     /// <param name="CustomPlayer">Player that joined the game</param>
     private void OnJoinedPlayer(CustomPlayer CustomPlayer)
     {
+        Debug.Log("OnJoinedPlayer");
         if (!CustomPlayer.IsLocal)
         {
             lock (remotePlayers)
@@ -104,6 +106,7 @@ public class Logic
     /// <param name="CustomPlayer">Player that leaved the game</param>
     private void OnLeavedPlayer(CustomPlayer CustomPlayer)
     {
+        Debug.Log("OnLeavedPlayer");
         string name = CustomPlayer.NickName;
 
         foreach (GameObject cube in cubes)
@@ -121,6 +124,7 @@ public class Logic
     // Update is called once per frame
     public void UpdateLocal ()
     {
+        Debug.Log("UpdateLocal");
         if (localPlayer != null)
         {
             localPlayer.UpdateLoop();
@@ -131,6 +135,7 @@ public class Logic
     // Update the position of the client
     private void Move()
     {
+        Debug.Log("Move");
         if (LocalPlayerJoined())
         {
             foreach (GameLogic logic in backgroundGames.Values)
@@ -145,6 +150,7 @@ public class Logic
     /// </summary>
     public bool LocalPlayerJoined()
     {
+        Debug.Log("LocalPlayerJoined");
         if (localPlayer != null && localPlayer.State == ClientState.Joined && localPlayer.LocalRoom != null)
         {
             return true;
@@ -157,6 +163,7 @@ public class Logic
     /// </summary>
     public void AddClient()
     {
+        Debug.Log("AddClient");
         GameLogic addedClient = new GameLogic(AppId, GameVersion);
         addedClient.CallConnect();
 
@@ -173,6 +180,7 @@ public class Logic
     /// </summary>
     public void RemoveClient()
     {
+        Debug.Log("RemoveClient");
         if (backgroundGames.Count > 0)
         {
             GameLogic logic = null;
@@ -193,6 +201,7 @@ public class Logic
     /// <summary>Disconnects all simulated/additional clients that are hosted in this process.</summary>
     public void DisconnectAllClients()
     {
+        Debug.Log("DisconnectAllClients");
         foreach (GameLogic gl in backgroundGames.Values)
         {
             if (gl != null)
