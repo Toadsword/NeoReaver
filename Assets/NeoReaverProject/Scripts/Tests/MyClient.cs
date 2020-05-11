@@ -25,7 +25,7 @@ public class MyClient : MonoBehaviour {
     // Start is called before the first frame update
     void Start() {
         _lobbyPanel.SetActive(false);
-        inputRepeatTimer = new Timer(200);
+        inputRepeatTimer = new Timer(10);
     }
 
     public void ConnectGame() {

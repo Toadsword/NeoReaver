@@ -149,11 +149,11 @@ public class CustomPlayer : Player
             return;
         }
 
-        int gridSize = 16;
+        int gridSize = 32;
 
-        if (this.PosX < 0)
+        if (this.PosX < -32)
         {
-            this.PosX = 0;
+            this.PosX = -32;
         }
 
         if (this.PosX >= gridSize - 1)
@@ -161,9 +161,9 @@ public class CustomPlayer : Player
             this.PosX = gridSize - 1;
         }
 
-        if (this.PosY < 0)
+        if (this.PosY < -32)
         {
-            this.PosY = 0;
+            this.PosY = -32;
         }
 
         if (this.PosY > gridSize - 1)
