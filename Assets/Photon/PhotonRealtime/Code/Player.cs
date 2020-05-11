@@ -238,7 +238,7 @@ namespace Photon.Realtime
         /// This only updates the CustomProperties and doesn't send them to the server.
         /// Mostly used when creating new remote players, where the server sends their properties.
         /// </remarks>
-        protected internal virtual void InternalCacheProperties(Hashtable properties)
+        public virtual void InternalCacheProperties(Hashtable properties)
         {
             if (properties == null || properties.Count == 0 || this.CustomProperties.Equals(properties))
             {
@@ -374,55 +374,39 @@ namespace Photon.Realtime
         /// <param name="propertiesToSet">Hashtable of Custom Properties to be set. </param>
         /// <param name="expectedValues">If non-null, these are the property-values the server will check as condition for this update.</param>
         /// <param name="webFlags">Defines if this SetCustomProperties-operation gets forwarded to your WebHooks. Client must be in room.</param>
-        /// <returns>
-        /// False if propertiesToSet is null or empty or have zero string keys.
-        /// True in offline mode even if expectedProperties or webFlags are used.
-        /// If not in a room, returns true if local player and expectedValues and webFlags are null.
-        /// (Use this to cache properties to be sent when joining a room).
-        /// Otherwise, returns if this operation could be sent to the server.
-        /// </returns>
         public bool SetCustomProperties(Hashtable propertiesToSet, Hashtable expectedValues = null, WebFlags webFlags = null)
         {
-            if (propertiesToSet == null || propertiesToSet.Count == 0)
+            if (propertiesToSet == null)
             {
                 return false;
             }
 
             Hashtable customProps = propertiesToSet.StripToStringKeys() as Hashtable;
+            Hashtable customPropsToCheck = expectedValues.StripToStringKeys() as Hashtable;
+
+
+            // no expected values -> set and callback
+            bool noCas = customPropsToCheck == null || customPropsToCheck.Count == 0;
+
+
+            if (noCas)
+            {
+                this.CustomProperties.Merge(customProps);
+                this.CustomProperties.StripKeysWithNullValues();
+            }
 
             if (this.RoomReference != null)
             {
                 if (this.RoomReference.IsOffline)
                 {
-                    if (customProps.Count == 0)
-                    {
-                        return false;
-                    }
-                    this.CustomProperties.Merge(customProps);
-                    this.CustomProperties.StripKeysWithNullValues();
                     // invoking callbacks
                     this.RoomReference.LoadBalancingClient.InRoomCallbackTargets.OnPlayerPropertiesUpdate(this, customProps);
                     return true;
                 }
                 else
                 {
-                    Hashtable customPropsToCheck = expectedValues.StripToStringKeys() as Hashtable;
-
                     // send (sync) these new values if in online room
-                    return this.RoomReference.LoadBalancingClient.OpSetPropertiesOfActor(this.actorNumber, customProps, customPropsToCheck, webFlags);
-                }
-            }
-            if (this.IsLocal)
-            {
-                if (customProps.Count == 0)
-                {
-                    return false;
-                }
-                if (expectedValues == null && webFlags == null)
-                {
-                    this.CustomProperties.Merge(customProps);
-                    this.CustomProperties.StripKeysWithNullValues();
-                    return true;
+                    return this.RoomReference.LoadBalancingClient.LoadBalancingPeer.OpSetPropertiesOfActor(this.actorNumber, customProps, customPropsToCheck, webFlags);
                 }
             }
 
@@ -437,7 +421,7 @@ namespace Photon.Realtime
             {
                 Hashtable properties = new Hashtable();
                 properties[ActorProperties.PlayerName] = this.nickName;
-                return this.RoomReference.LoadBalancingClient.OpSetPropertiesOfActor(this.ActorNumber, properties);
+                return this.RoomReference.LoadBalancingClient.LoadBalancingPeer.OpSetPropertiesOfActor(this.ActorNumber, properties);
             }
 
             return false;

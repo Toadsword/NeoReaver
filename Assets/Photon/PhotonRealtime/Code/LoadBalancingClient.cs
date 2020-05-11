@@ -199,10 +199,6 @@ namespace Photon.Realtime
         /// With this encryption mode for UDP, the connection gets setup with random sequence numbers and all further datagrams get encrypted almost entirely. On-demand message encryption (like in PayloadEncryption) is unavailable.
         /// </summary>
         DatagramEncryptionRandomSequence = 11,
-        /// <summary>
-        /// Same as above except that GCM mode is used to encrypt data
-        /// </summary>
-        DatagramEncryptionGCMRandomSequence = 12,
     }
 
 
@@ -261,6 +257,9 @@ namespace Photon.Realtime
             }
             set
             {
+                #if UNITY_WEBGL || WEBSOCKET || (UNITY_XBOXONE && UNITY_EDITOR)
+                SocketWebTcp.SerializationProtocol = Enum.GetName(typeof(SerializationProtocol), value);
+                #endif
                 this.LoadBalancingPeer.SerializationProtocolType = value;
             }
         }
@@ -578,7 +577,7 @@ namespace Photon.Realtime
         }
 
         /// <summary>The current room this client is connected to (null if none available).</summary>
-        public Room CurrentRoom { get; set; }
+        public Room CurrentRoom { get; private set; }
 
 
         /// <summary>Is true while being in a room (this.state == ClientState.Joined).</summary>
@@ -788,7 +787,6 @@ namespace Photon.Realtime
 
             if (this.IsUsingNameServer)
             {
-                this.Server = ServerConnection.NameServer;
                 if (!appSettings.IsDefaultNameServer)
                 {
                     this.NameServerHost = appSettings.Server;
@@ -803,10 +801,9 @@ namespace Photon.Realtime
             }
             else
             {
-                this.Server = ServerConnection.MasterServer;
                 int portToUse = appSettings.IsDefaultPort ? 5055 : appSettings.Port;    // TODO: setup new (default) port config
                 this.MasterServerAddress = string.Format("{0}:{1}", appSettings.Server, portToUse);
-                //this.SerializationProtocol = SerializationProtocol.GpBinaryV16; // this is a workaround to use On Premises Servers, which don't support GpBinaryV18 yet.
+                this.SerializationProtocol = SerializationProtocol.GpBinaryV16; // this is a workaround to use On Premises Servers, which don't support GpBinaryV18 yet.
                 if (!this.LoadBalancingPeer.Connect(this.MasterServerAddress, this.AppId, this.TokenForInit))
                 {
                     return false;
@@ -850,9 +847,9 @@ namespace Photon.Realtime
             if (string.IsNullOrEmpty(this.AppId) || !this.IsUsingNameServer)
             {
                 // this is a workaround to use with version v4.0.29.11263 or lower, which doesn't support GpBinaryV18 yet.
-                //this.SerializationProtocol = SerializationProtocol.GpBinaryV16;
+                this.SerializationProtocol = SerializationProtocol.GpBinaryV16;
             }
-
+            
             this.connectToBestRegion = false;
             this.DisconnectedCause = DisconnectCause.None;
             if (this.LoadBalancingPeer.Connect(this.MasterServerAddress, this.AppId, this.TokenForInit))
@@ -912,7 +909,7 @@ namespace Photon.Realtime
         /// If the region is null or empty, no connection will be made.
         /// If the region (code) provided is not available, the connection process will fail on the Name Server.
         /// This method connects only to the region defined. No "Best Region" pinging will be done.
-        ///
+        /// 
         /// If the region string does not contain a "/", this means no specific cluster is requested.
         /// To support "Sharding", the region gets a "/*" postfix in this case, to select a random cluster.
         /// </remarks>
@@ -1398,7 +1395,7 @@ namespace Photon.Realtime
             return sending;
         }
 
-
+        
         /// <summary>
         /// Attempts to join a room that matches the specified filter and creates a room if none found.
         /// </summary>
@@ -1412,12 +1409,12 @@ namespace Photon.Realtime
         ///
         /// This method can only be called while connected to a Master Server.
         /// This client's State is set to ClientState.Joining immediately.
-        ///
+        /// 
         /// Either IMatchmakingCallbacks.OnJoinedRoom or IMatchmakingCallbacks.OnCreatedRoom get called.
-        ///
+        /// 
         /// More about matchmaking:
         /// https://doc.photonengine.com/en-us/realtime/current/reference/matchmaking-and-lobby
-        ///
+        /// 
         /// Check the return value to make sure the operation will be called on the server.
         /// Note: There will be no callbacks if this method returned false.
         /// </remarks>
@@ -1754,25 +1751,16 @@ namespace Photon.Realtime
         /// <param name="propertiesToSet">Hashtable of Custom Properties that changes.</param>
         /// <param name="expectedProperties">Provide some keys/values to use as condition for setting the new values. Client must be in room.</param>
         /// <param name="webFlags">Defines if the set properties should be forwarded to a WebHook. Client must be in room.</param>
-        /// <returns>
-        /// False if propertiesToSet is null or empty or have zero string keys.
-        /// If not in a room, returns true if local player and expectedProperties and webFlags are null.
-        /// False if actorNr is lower than or equal to zero.
-        /// Otherwise, returns if the operation could be sent to the server.
-        /// </returns>
         public bool OpSetCustomPropertiesOfActor(int actorNr, Hashtable propertiesToSet, Hashtable expectedProperties = null, WebFlags webFlags = null)
         {
-            if (propertiesToSet == null || propertiesToSet.Count == 0)
-            {
-                this.DebugReturn(DebugLevel.ERROR, "OpSetCustomPropertiesOfActor() failed. propertiesToSet must not be null nor empty.");
-                return false;
-            }
+
             if (this.CurrentRoom == null)
             {
                 // if you attempt to set this player's values without conditions, then fine:
                 if (expectedProperties == null && webFlags == null && this.LocalPlayer != null && this.LocalPlayer.ActorNumber == actorNr)
                 {
-                    return this.LocalPlayer.SetCustomProperties(propertiesToSet);
+                    this.LocalPlayer.SetCustomProperties(propertiesToSet);
+                    return true;
                 }
 
                 if (this.LoadBalancingPeer.DebugOut >= DebugLevel.ERROR)
@@ -1784,11 +1772,7 @@ namespace Photon.Realtime
 
             Hashtable customActorProperties = new Hashtable();
             customActorProperties.MergeStringKeys(propertiesToSet);
-            if (customActorProperties.Count == 0)
-            {
-                this.DebugReturn(DebugLevel.ERROR, "OpSetCustomPropertiesOfActor() failed. Only string keys allowed for custom properties.");
-                return false;
-            }
+
             return this.OpSetPropertiesOfActor(actorNr, customActorProperties, expectedProperties, webFlags);
         }
 
@@ -1801,22 +1785,16 @@ namespace Photon.Realtime
             {
                 return false;
             }
-            if (actorProperties == null || actorProperties.Count == 0)
-            {
-                this.DebugReturn(DebugLevel.ERROR, "OpSetPropertiesOfActor() failed. actorProperties must not be null nor empty.");
-                return false;
-            }
-            bool res = this.LoadBalancingPeer.OpSetPropertiesOfActor(actorNr, actorProperties, expectedProperties, webFlags);
-            if (res && !this.CurrentRoom.BroadcastPropertiesChangeToAll && (expectedProperties == null || expectedProperties.Count == 0))
+            if (expectedProperties == null || expectedProperties.Count == 0)
             {
                 Player target = this.CurrentRoom.GetPlayer(actorNr);
                 if (target != null)
                 {
                     target.InternalCacheProperties(actorProperties);
-                    this.InRoomCallbackTargets.OnPlayerPropertiesUpdate(target, actorProperties);
                 }
             }
-            return res;
+
+            return this.LoadBalancingPeer.OpSetPropertiesOfActor(actorNr, actorProperties, expectedProperties, webFlags);
         }
 
 
@@ -1861,24 +1839,11 @@ namespace Photon.Realtime
         /// <param name="propertiesToSet">Hashtable of Custom Properties that changes.</param>
         /// <param name="expectedProperties">Provide some keys/values to use as condition for setting the new values.</param>
         /// <param name="webFlags">Defines web flags for an optional PathProperties webhook.</param>
-        /// <returns>
-        /// False if propertiesToSet is null or empty or have zero string keys.
-        /// Otherwise, returns if the operation could be sent to the server.
-        /// </returns>
         public bool OpSetCustomPropertiesOfRoom(Hashtable propertiesToSet, Hashtable expectedProperties = null, WebFlags webFlags = null)
         {
-            if (propertiesToSet == null || propertiesToSet.Count == 0)
-            {
-                this.DebugReturn(DebugLevel.ERROR, "OpSetCustomPropertiesOfRoom() failed. propertiesToSet must not be null nor empty.");
-                return false;
-            }
             Hashtable customGameProps = new Hashtable();
             customGameProps.MergeStringKeys(propertiesToSet);
-            if (customGameProps.Count == 0)
-            {
-                this.DebugReturn(DebugLevel.ERROR, "OpSetCustomPropertiesOfRoom() failed. Only string keys are allowed for custom properties.");
-                return false;
-            }
+
             return this.OpSetPropertiesOfRoom(customGameProps, expectedProperties, webFlags);
         }
 
@@ -1892,24 +1857,17 @@ namespace Photon.Realtime
 
         /// <summary>Internally used to cache and set properties (including well known properties).</summary>
         /// <remarks>Requires being in a room (because this attempts to send an operation which will fail otherwise).</remarks>
-        protected internal bool OpSetPropertiesOfRoom(Hashtable gameProperties, Hashtable expectedProperties = null, WebFlags webFlags = null)
+        public bool OpSetPropertiesOfRoom(Hashtable gameProperties, Hashtable expectedProperties = null, WebFlags webFlags = null)
         {
             if (!this.CheckIfOpCanBeSent(OperationCode.SetProperties, this.Server, "SetProperties"))
             {
                 return false;
             }
-            if (gameProperties == null || gameProperties.Count == 0)
-            {
-                this.DebugReturn(DebugLevel.ERROR, "OpSetPropertiesOfRoom() failed. gameProperties must not be null nor empty.");
-                return false;
-            }
-            bool res = this.LoadBalancingPeer.OpSetPropertiesOfRoom(gameProperties, expectedProperties, webFlags);
-            if (res && !this.CurrentRoom.BroadcastPropertiesChangeToAll && (expectedProperties == null || expectedProperties.Count == 0))
+            if (expectedProperties == null || expectedProperties.Count == 0)
             {
                 this.CurrentRoom.InternalCacheProperties(gameProperties);
-                this.InRoomCallbackTargets.OnRoomPropertiesUpdate(gameProperties);
             }
-            return res;
+            return this.LoadBalancingPeer.OpSetPropertiesOfRoom(gameProperties, expectedProperties, webFlags);
         }
 
 
@@ -2099,12 +2057,6 @@ namespace Photon.Realtime
             Hashtable actorProperties = (Hashtable)operationResponse[ParameterCode.PlayerProperties];
             Hashtable gameProperties = (Hashtable)operationResponse[ParameterCode.GameProperties];
             this.ReadoutProperties(gameProperties, actorProperties, 0);
-
-            object temp;
-            if (operationResponse.Parameters.TryGetValue(ParameterCode.RoomOptionFlags, out temp))
-            {
-                this.CurrentRoom.SetRoomFlags((int)temp);
-            }
 
             this.State = ClientState.Joined;
 
@@ -2392,7 +2344,7 @@ namespace Photon.Realtime
                                     this.DisconnectedCause = DisconnectCause.AuthenticationTicketExpired;
                                     break;
                             }
-
+                            
                             this.Disconnect(this.DisconnectedCause);
                             break;  // if auth didn't succeed, we disconnect (above) and exit this operation's handling
                         }
@@ -2747,6 +2699,7 @@ namespace Photon.Realtime
                     }
                     break;
 
+
                 case StatusCode.Disconnect:
                     // disconnect due to connection exception is handled below (don't connect to GS or master in that case)
 
@@ -2811,7 +2764,6 @@ namespace Photon.Realtime
                     break;
                 case StatusCode.ExceptionOnConnect:
                 case StatusCode.SecurityExceptionOnConnect:
-                case StatusCode.EncryptionFailedToEstablish:
                     this.DisconnectedCause = DisconnectCause.ExceptionOnConnect;
                     this.State = ClientState.Disconnecting;
                     break;
@@ -3010,7 +2962,7 @@ namespace Photon.Realtime
 
         #endregion
 
-
+        
         /// <summary>A callback of the RegionHandler, provided in OnRegionListReceived.</summary>
         /// <param name="regionHandler">The regionHandler wraps up best region and other region relevant info.</param>
         private void OnRegionPingCompleted(RegionHandler regionHandler)
@@ -3036,12 +2988,6 @@ namespace Photon.Realtime
                         byte[] secret1 = (byte[])encryptionData[EncryptionDataParameters.Secret1];
                         byte[] secret2 = (byte[])encryptionData[EncryptionDataParameters.Secret2];
                         this.LoadBalancingPeer.InitDatagramEncryption(secret1, secret2, mode == EncryptionMode.DatagramEncryptionRandomSequence);
-                    }
-                    break;
-                case EncryptionMode.DatagramEncryptionGCMRandomSequence:
-                    {
-                        byte[] secret1 = (byte[])encryptionData[EncryptionDataParameters.Secret1];
-                        this.LoadBalancingPeer.InitDatagramEncryption(secret1, null, true, true);
                     }
                     break;
                 default:
@@ -3109,8 +3055,9 @@ namespace Photon.Realtime
         /// <param name="sendAuthCookie">Defines if the authentication cookie gets sent to a WebHook (if setup).</param>
         public bool OpWebRpc(string uriPath, object parameters, bool sendAuthCookie = false)
         {
-            if (!this.CheckIfOpCanBeSent(OperationCode.WebRpc, this.Server, "WebRpc"))
+            if (!this.CheckIfOpAllowedOnServer(OperationCode.WebRpc, this.Server))
             {
+                this.DebugReturn(DebugLevel.ERROR, string.Format("Operation {0} ({1}) not allowed on current server ({2})", "WebRPC", OperationCode.WebRpc, this.Server));
                 return false;
             }
             Dictionary<byte, object> opParameters = new Dictionary<byte, object>();
@@ -3615,7 +3562,7 @@ namespace Photon.Realtime
         /// </remarks>
         void OnWebRpcResponse(OperationResponse response);
     }
-
+    
     /// <summary>
     /// Interface for <see cref="EventCode.ErrorInfo"/> event callback for the Realtime Api.
     /// </summary>
@@ -3636,7 +3583,7 @@ namespace Photon.Realtime
         /// In most cases this could be either:
         /// 1. an error from webhooks plugin (if HasErrorInfo is enabled), read more here:
         /// https://doc.photonengine.com/en-us/realtime/current/gameplay/web-extensions/webhooks#options
-        /// 2. an error sent from a custom server plugin via PluginHost.BroadcastErrorInfoEvent, see example here:
+        /// 2. an error sent from a custom server plugin via PluginHost.BroadcastErrorInfoEvent, see example here: 
         /// https://doc.photonengine.com/en-us/server/current/plugins/manual#handling_http_response
         /// 3. an error sent from the server, for example, when the limit of cached events has been exceeded in the room
         /// (all clients will be disconnected and the room will be closed in this case)
@@ -3964,7 +3911,7 @@ namespace Photon.Realtime
         }
     }
 
-
+    
     /// <summary>
     /// Container type for callbacks defined by <see cref="IErrorInfoCallback"/>. See <see cref="LoadBalancingClient.ErrorInfoCallbackTargets"/>.
     /// </summary>
@@ -3997,11 +3944,11 @@ namespace Photon.Realtime
     /// <remarks>
     /// This is passed inside <see cref="IErrorInfoCallback.OnErrorInfo"/> callback.
     /// If you implement <see cref="IOnEventCallback.OnEvent"/> or <see cref="LoadBalancingClient.EventReceived"/> you will also get <see cref="EventCode.ErrorInfo"/> but not parsed.
-    ///
+    /// 
     /// In most cases this could be either:
     /// 1. an error from webhooks plugin (if HasErrorInfo is enabled), read more here:
     /// https://doc.photonengine.com/en-us/realtime/current/gameplay/web-extensions/webhooks#options
-    /// 2. an error sent from a custom server plugin via PluginHost.BroadcastErrorInfoEvent, see example here:
+    /// 2. an error sent from a custom server plugin via PluginHost.BroadcastErrorInfoEvent, see example here: 
     /// https://doc.photonengine.com/en-us/server/current/plugins/manual#handling_http_response
     /// 3. an error sent from the server, for example, when the limit of cached events has been exceeded in the room
     /// (all clients will be disconnected and the room will be closed in this case)
