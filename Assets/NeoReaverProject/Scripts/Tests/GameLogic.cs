@@ -119,8 +119,6 @@ public class GameLogic : LoadBalancingClient
         this.AppId = appId;
         this.AppVersion = gameVersion;
 
-        this.LocalPlayer.NickName = "usr" + SupportClass.ThreadSafeRandom.Next() % 99;
-
         this.StateChanged += this.OnStateChanged;
         this.UseInterestGroups = true;
         this.JoinRandomGame = true;
@@ -189,7 +187,9 @@ public class GameLogic : LoadBalancingClient
                 // this.OpJoinRandomRoom(null, 0);
                 
                 
-                this.CreateParticleDemoRoom(CustomConstants.MapType.Forest, 16);
+                this.OpGetGameList(TypedLobby.Default, "");
+                
+                //this.CreateParticleDemoRoom(CustomConstants.MapType.Forest, 16);
                 break;
         }
     }
@@ -351,6 +351,7 @@ public class GameLogic : LoadBalancingClient
     {
         base.OnOperationResponse(operationResponse);  // important to call, to keep state up to date
 
+        Debug.Log("OnOperationResponse." + operationResponse.OperationCode.ToString());
         if (operationResponse.ReturnCode != ErrorCode.Ok)
         {
             //this.DebugReturn(DebugLevel.ERROR, operationResponse.ToStringFull() + " " + this.State);
@@ -383,6 +384,8 @@ public class GameLogic : LoadBalancingClient
 					//this.loadBalancingPeer.OpRaiseEvent(CustomConstants.EvColor, this.LocalPlayer.WriteEvColor(), true, 0, null, EventCaching.AddToRoomCache);
                     this.LoadBalancingPeer.OpRaiseEvent(CustomConstants.EvColor, this.LocalPlayer.WriteEvColor(), new RaiseEventOptions() { CachingOption = EventCaching.AddToRoomCache }, new SendOptions() { Reliability = this.SendReliable });
                 }
+                break;
+            case OperationCode.GetGameList:
                 break;
         }
 

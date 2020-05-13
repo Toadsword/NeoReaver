@@ -13,10 +13,8 @@ using Photon.Realtime;
 
 public class Logic
 {
-
     public GameLogic localPlayer { get; private set; }
-
-
+    
     // Connection parameters
     public static string ServerAddress { get; set; }
     public static string AppId { get; set; }
@@ -35,9 +33,10 @@ public class Logic
     /// <param name="serverAddress">Server address</param>
     /// <param name="appId">Application ID</param>
     /// <param name="gameVersion">Game version</param>
-    public void StartGame(string serverAddress, string appId, string gameVersion)
+    /// <param name="nickName">Nickname of the player</param>
+    public void ConnectToMaster(string serverAddress, string appId, string gameVersion, string nickName)
     {
-        Debug.Log("StartGame");
+        Debug.Log("ConnectToMaster");
         ServerAddress = serverAddress;
         AppId = appId;
         GameVersion = gameVersion;
@@ -48,6 +47,7 @@ public class Logic
 
         // Initialize local game
         localPlayer = new GameLogic(appId, gameVersion);
+        localPlayer.NickName = nickName;
 
         localPlayer.OnEventJoin = this.OnJoinedPlayer;
         localPlayer.OnEventLeave = this.OnLeavedPlayer;

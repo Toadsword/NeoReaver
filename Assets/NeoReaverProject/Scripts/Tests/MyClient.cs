@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MyClient : MonoBehaviour {
+    
     Logic _logic;
 
     string _serverAdress = "";
@@ -19,6 +21,7 @@ public class MyClient : MonoBehaviour {
     [SerializeField] Text _serverAddressInput;
     [SerializeField] Text _appIdInput;
     [SerializeField] Text _gameVersionInput;
+    [SerializeField] Text _nickNameInput;
 
     private Timer inputRepeatTimer;
     
@@ -28,9 +31,17 @@ public class MyClient : MonoBehaviour {
         inputRepeatTimer = new Timer(10);
     }
 
-    public void ConnectGame() {
+    public void ConnectToServer() {
         _logic = new Logic();
-        _logic.StartGame(_serverAddressInput.text.ToString(), _appIdInput.text.ToString(), _gameVersionInput.text.ToString());
+        _logic.ConnectToMaster(
+            _serverAddressInput.text.ToString(),
+            _appIdInput.text.ToString(), 
+            _gameVersionInput.text.ToString(),
+            _nickNameInput.text.ToString()
+            );
+        
+        _logic.localPlayer.StateChanged += this.OnStateChanged;
+        
         _connectionPanel.SetActive(false);
     }
     
@@ -98,6 +109,20 @@ public class MyClient : MonoBehaviour {
         }
 
         this._logic.localPlayer.LocalPlayer.ClampPosition();
+    }
+
+    public void JoinRandomGame() {
+        this._logic.localPlayer.OpJoinRandomRoom();
+    }
+
+    private void OnStateChanged(ClientState fromState, ClientState toState)
+    {
+        switch (toState) {
+            case ClientState.ConnectedToMasterServer:
+                //Show room panel
+                _lobbyPanel.SetActive(true);
+                break;
+        }
     }
     
     /// <summary>
