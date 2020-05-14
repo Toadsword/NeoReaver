@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -84,27 +85,17 @@ public class MyClient : MonoBehaviour {
             return;
         }
 
-        float x = Input.GetAxis("Horizontal");
-        if (x < -0.2f)
+        float x = Input.GetAxisRaw("Horizontal");
+        if (math.abs(x) > 0.1f)
         {
-            _logic.localPlayer.LocalPlayer.PosX -= 1;
-            inputRepeatTimer.Reset();
-        }
-        else if (x > 0.2f)
-        {
-            _logic.localPlayer.LocalPlayer.PosX += 1;
+            _logic.localPlayer.LocalPlayer.PosX += (int)x;
             inputRepeatTimer.Reset();
         }
 
-        float y = Input.GetAxis("Vertical");
-        if (y < -0.2f)
+        float y = Input.GetAxisRaw("Vertical");
+        if (math.abs(y) > 0.1f)
         {
-            _logic.localPlayer.LocalPlayer.PosY -= 1;
-            inputRepeatTimer.Reset();
-        }
-        else if (y > 0.2f)
-        {
-            _logic.localPlayer.LocalPlayer.PosY += 1;
+            _logic.localPlayer.LocalPlayer.PosY += (int)y;
             inputRepeatTimer.Reset();
         }
 
@@ -134,19 +125,10 @@ public class MyClient : MonoBehaviour {
         {
             foreach (CustomPlayer p in _logic.localPlayer.LocalRoom.Players.Values)
             {
-                foreach (GameObject cube in _logic.cubes)
+                foreach (GameObject cube in _logic.playerObjects)
                 {
                     if (cube.name == p.NickName)
                     {
-                        float alpha = 1.0f;
-                        if (!p.IsLocal && p.UpdateAge > 500)
-                        {
-                            cube.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-                            alpha = (p.UpdateAge > 1000) ? 0.3f : 0.8f;
-                        }
-                        
-                        Color cubeColor = IntToColor(p.Color);
-                        cube.GetComponent<Renderer>().material.color = new Color(cubeColor.r, cubeColor.g, cubeColor.b, alpha);
                         cube.transform.position = new Vector3(p.PosX / 10f, p.PosY/ 10f, 0);
                         break;
                     }

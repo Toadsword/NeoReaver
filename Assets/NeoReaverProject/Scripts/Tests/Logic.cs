@@ -25,7 +25,7 @@ public class Logic
     public static Dictionary<string, CustomPlayer> remotePlayers;
 
     // Cube GameObjects that represent players
-    public List<GameObject> cubes;
+    public List<GameObject> playerObjects;
 
     /// <summary>
     /// CallConnect the game using given connection parameters
@@ -43,7 +43,7 @@ public class Logic
 
         backgroundGames = new Dictionary<string, GameLogic>();
         remotePlayers = new Dictionary<string, CustomPlayer>();
-        cubes = new List<GameObject>();
+        playerObjects = new List<GameObject>();
 
         // Initialize local game
         localPlayer = new GameLogic(appId, gameVersion);
@@ -72,11 +72,11 @@ public class Logic
             {
                 if (!remotePlayers.ContainsKey(CustomPlayer.NickName) && !backgroundGames.ContainsKey(CustomPlayer.NickName))
                 {
-                    GameObject playerCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    playerCube.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-                    playerCube.name = CustomPlayer.NickName;
-                    cubes.Add(playerCube);
+                    GameObject player = GameObject.Instantiate((GameObject)Resources.Load("NeoReaverProject/Prefabs/Player"), new Vector3(), new Quaternion());
+                    player.name = CustomPlayer.NickName;
+                    playerObjects.Add(player);
                     remotePlayers.Add(CustomPlayer.NickName, CustomPlayer);
+                    Debug.Log(player);
                 }
             }
         }
@@ -86,15 +86,18 @@ public class Logic
             {
                 foreach (CustomPlayer p in localPlayer.LocalRoom.Players.Values)
                 {
-                    foreach (GameObject cube in cubes)
+                    foreach (GameObject cube in playerObjects)
                     {
                         if (cube.name == p.NickName) return;
                     }
-                    GameObject playerCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    playerCube.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-                    playerCube.name = p.NickName;
-                    cubes.Add(playerCube);
-                    remotePlayers.Add(p.NickName, p);
+
+                    GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
+                    Debug.Log(playerPrefab);
+                    GameObject player = GameObject.Instantiate(playerPrefab, new Vector3(), new Quaternion());
+                    player.name = CustomPlayer.NickName;
+                    Debug.Log(player);
+                    playerObjects.Add(player);
+                    remotePlayers.Add(CustomPlayer.NickName, CustomPlayer);
                 }
             }
         }
@@ -109,12 +112,12 @@ public class Logic
         Debug.Log("OnLeavedPlayer");
         string name = CustomPlayer.NickName;
 
-        foreach (GameObject cube in cubes)
+        foreach (GameObject cube in playerObjects)
         {
             if (cube.name == name)
             {
                 remotePlayers.Remove(name);
-                cubes.Remove(cube);
+                playerObjects.Remove(cube);
                 GameObject.Destroy(cube);
                 return;
             }
@@ -170,7 +173,7 @@ public class Logic
         GameObject playerCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         playerCube.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
         playerCube.name = addedClient.NickName;
-        cubes.Add(playerCube);
+        playerObjects.Add(playerCube);
 
         backgroundGames.Add(addedClient.NickName, addedClient);
     }
@@ -184,12 +187,12 @@ public class Logic
         if (backgroundGames.Count > 0)
         {
             GameLogic logic = null;
-            foreach (GameObject cube in cubes)
+            foreach (GameObject cube in playerObjects)
             {
                 if (backgroundGames.TryGetValue(cube.name, out logic))
                 {
                     logic.Disconnect();
-                    cubes.Remove(cube);
+                    playerObjects.Remove(cube);
                     backgroundGames.Remove(cube.name);
                     GameObject.Destroy(cube);
                     break;
