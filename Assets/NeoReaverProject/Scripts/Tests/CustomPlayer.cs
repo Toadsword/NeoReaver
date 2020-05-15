@@ -1,5 +1,6 @@
 ﻿using ExitGames.Client.Photon;
 using global::Photon.Realtime;
+using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 /// <summary>
@@ -58,25 +59,7 @@ public class CustomPlayer : Player
         this.PosX = SupportClass.ThreadSafeRandom.Next() % gridSize;
         this.PosY = SupportClass.ThreadSafeRandom.Next() % gridSize;
     }
-
-    /// <summary>
-    /// Simple method to make the "player" move even without input. This way, we get some
-    /// movement even if one developer tests with many running clients.
-    /// </summary>
-    internal void MoveRandom()
-    {
-        this.PosX += (SupportClass.ThreadSafeRandom.Next() % 3) - 1;
-        this.PosY += (SupportClass.ThreadSafeRandom.Next() % 3) - 1;
-    }
-
-    /// <summary>
-    /// Converts the player info into a string.
-    /// </summary>
-    /// <returns>String showing basic info about this player.</returns>
-    public override string ToString()
-    {
-        return this.ActorNumber + "'" + this.NickName + "':" + " " + this.PosX + ":" + this.PosY + " PlayerProps: " + SupportClass.DictionaryToString(this.CustomProperties);
-    }
+    
 
     /// <summary>Creates the "custom content" Hashtable that is sent as position update.</summary>
     /// <remarks>
@@ -92,7 +75,7 @@ public class CustomPlayer : Player
     public Hashtable WriteEvMove()
     {
         Hashtable evContent = new Hashtable();
-        evContent[(byte)1] = new byte[] { (byte)this.PosX, (byte)this.PosY };
+        evContent[(int)1] = new int[] { this.PosX, this.PosY };
         return evContent;
     }
 
@@ -100,9 +83,9 @@ public class CustomPlayer : Player
     /// <returns>Hashtable for event "move" to update others</returns>
     public void ReadEvMove(Hashtable evContent)
     {
-        if (evContent.ContainsKey((byte)1))
+        if (evContent.ContainsKey((int)1))
         {
-            byte[] posArray = (byte[])evContent[(byte)1];
+            int[] posArray = (int[])evContent[(int)1];
             this.PosX = posArray[0];
             this.PosY = posArray[1];
         }
@@ -110,9 +93,11 @@ public class CustomPlayer : Player
         {
             // js client event support (those can't send with byte-keys)
             var posArray = (object[])evContent["1"];   // NOTE: this is subject to change while we update the serialization in JS/Server
-            this.PosX = System.Convert.ToByte(posArray[0]);
-            this.PosY = System.Convert.ToByte(posArray[1]);
+            this.PosX = System.Convert.ToInt32(posArray[0]);
+            this.PosY = System.Convert.ToInt32(posArray[1]);
         }
+        
+        Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
         this.LastUpdateTimestamp = GameLogic.Timestamp;
     }
 
@@ -141,34 +126,12 @@ public class CustomPlayer : Player
         this.LastUpdateTimestamp = GameLogic.Timestamp;
     }
     
-    /// <summary>Checks if a position is in the grid (still on the board) and corrects it if needed.</summary>
-    public void ClampPosition()
+    /// <summary>
+    /// Converts the player info into a string.
+    /// </summary>
+    /// <returns>String showing basic info about this player.</returns>
+    public override string ToString()
     {
-        if (this.RoomReference == null)
-        {
-            return;
-        }
-
-        int gridSize = 32;
-
-        if (this.PosX < -32)
-        {
-            this.PosX = -32;
-        }
-
-        if (this.PosX >= gridSize - 1)
-        {
-            this.PosX = gridSize - 1;
-        }
-
-        if (this.PosY < -32)
-        {
-            this.PosY = -32;
-        }
-
-        if (this.PosY > gridSize - 1)
-        {
-            this.PosY = gridSize - 1;
-        }
+        return this.ActorNumber + "'" + this.NickName + "':" + " " + this.PosX + ":" + this.PosY + " PlayerProps: " + SupportClass.DictionaryToString(this.CustomProperties);
     }
 }

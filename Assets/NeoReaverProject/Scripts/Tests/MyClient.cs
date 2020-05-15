@@ -42,6 +42,7 @@ public class MyClient : MonoBehaviour {
             );
         
         _logic.localPlayer.StateChanged += this.OnStateChanged;
+        _logic.localPlayer.OpResponseReceived += this.OnOperationResponse;
         
         _connectionPanel.SetActive(false);
     }
@@ -88,18 +89,15 @@ public class MyClient : MonoBehaviour {
         float x = Input.GetAxisRaw("Horizontal");
         if (math.abs(x) > 0.1f)
         {
-            _logic.localPlayer.LocalPlayer.PosX += (int)x;
+            _logic.localPlayer.LocalPlayer.PosX += (int) x;
             inputRepeatTimer.Reset();
         }
 
         float y = Input.GetAxisRaw("Vertical");
-        if (math.abs(y) > 0.1f)
-        {
-            _logic.localPlayer.LocalPlayer.PosY += (int)y;
+        if (math.abs(y) > 0.1f) {
+            _logic.localPlayer.LocalPlayer.PosY += (int) y;
             inputRepeatTimer.Reset();
         }
-
-        this._logic.localPlayer.LocalPlayer.ClampPosition();
     }
 
     public void JoinRandomGame() {
@@ -135,5 +133,15 @@ public class MyClient : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public void OnOperationResponse(OperationResponse operationResponse) {
+        switch (operationResponse.OperationCode) {
+            case OperationCode.JoinRandomGame:
+            case OperationCode.JoinGame:
+                _lobbyPanel.SetActive(false);
+                break;  
+        }
+        Debug.Log("MyClient : " + operationResponse.ToString());
     }
 }

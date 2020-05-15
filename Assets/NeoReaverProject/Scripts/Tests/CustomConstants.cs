@@ -11,7 +11,7 @@ public static class CustomConstants
     public const byte EvColor = 1;
 
     /// <summary>(2) Event defining the position of a player.</summary>
-    public const byte EvPosition = 2;
+    public const int EvPosition = 2;
 
     /// <summary>("s") Property grid size currently used in this room.</summary>
     public const string GridSizeProp = "s";

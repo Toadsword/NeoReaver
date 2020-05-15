@@ -13,7 +13,6 @@ using Photon.Realtime;
 
 public class Logic
 {
-    public GameLogic localPlayer { get; private set; }
     
     // Connection parameters
     public static string ServerAddress { get; set; }
@@ -21,7 +20,8 @@ public class Logic
     public static string GameVersion { get; set; }
 
     // Dictionaries for storing references to background games and remote players
-    public static Dictionary<string, GameLogic> backgroundGames;
+    public GameLogic localPlayer { get; private set; }
+    public static Dictionary<string, GameLogic> clients;
     public static Dictionary<string, CustomPlayer> remotePlayers;
 
     // Cube GameObjects that represent players
@@ -41,7 +41,7 @@ public class Logic
         AppId = appId;
         GameVersion = gameVersion;
 
-        backgroundGames = new Dictionary<string, GameLogic>();
+        clients = new Dictionary<string, GameLogic>();
         remotePlayers = new Dictionary<string, CustomPlayer>();
         playerObjects = new List<GameObject>();
 
@@ -70,13 +70,13 @@ public class Logic
         {
             lock (remotePlayers)
             {
-                if (!remotePlayers.ContainsKey(CustomPlayer.NickName) && !backgroundGames.ContainsKey(CustomPlayer.NickName))
+                if (!remotePlayers.ContainsKey(CustomPlayer.NickName) && !clients.ContainsKey(CustomPlayer.NickName))
                 {
-                    GameObject player = GameObject.Instantiate((GameObject)Resources.Load("NeoReaverProject/Prefabs/Player"), new Vector3(), new Quaternion());
+                    GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
+                    GameObject player = GameObject.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = CustomPlayer.NickName;
                     playerObjects.Add(player);
                     remotePlayers.Add(CustomPlayer.NickName, CustomPlayer);
-                    Debug.Log(player);
                 }
             }
         }
@@ -92,10 +92,8 @@ public class Logic
                     }
 
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
-                    Debug.Log(playerPrefab);
                     GameObject player = GameObject.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = CustomPlayer.NickName;
-                    Debug.Log(player);
                     playerObjects.Add(player);
                     remotePlayers.Add(CustomPlayer.NickName, CustomPlayer);
                 }
@@ -141,7 +139,7 @@ public class Logic
         Debug.Log("Move");
         if (LocalPlayerJoined())
         {
-            foreach (GameLogic logic in backgroundGames.Values)
+            foreach (GameLogic logic in clients.Values)
             {
                 logic.UpdateLoop();
             }
@@ -159,58 +157,5 @@ public class Logic
             return true;
         }
         return false;
-    }
-
-    /// <summary>
-    /// Add background game
-    /// </summary>
-    public void AddClient()
-    {
-        Debug.Log("AddClient");
-        GameLogic addedClient = new GameLogic(AppId, GameVersion);
-        addedClient.CallConnect();
-
-        GameObject playerCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        playerCube.GetComponent<Renderer>().material.shader = Shader.Find("Transparent/Diffuse");
-        playerCube.name = addedClient.NickName;
-        playerObjects.Add(playerCube);
-
-        backgroundGames.Add(addedClient.NickName, addedClient);
-    }
-
-    /// <summary>
-    /// Remove background game
-    /// </summary>
-    public void RemoveClient()
-    {
-        Debug.Log("RemoveClient");
-        if (backgroundGames.Count > 0)
-        {
-            GameLogic logic = null;
-            foreach (GameObject cube in playerObjects)
-            {
-                if (backgroundGames.TryGetValue(cube.name, out logic))
-                {
-                    logic.Disconnect();
-                    playerObjects.Remove(cube);
-                    backgroundGames.Remove(cube.name);
-                    GameObject.Destroy(cube);
-                    break;
-                }
-            }
-        }
-    }
-
-    /// <summary>Disconnects all simulated/additional clients that are hosted in this process.</summary>
-    public void DisconnectAllClients()
-    {
-        Debug.Log("DisconnectAllClients");
-        foreach (GameLogic gl in backgroundGames.Values)
-        {
-            if (gl != null)
-            {
-                gl.Disconnect();
-            }
-        }
     }
 }
