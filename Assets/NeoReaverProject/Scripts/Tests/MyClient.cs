@@ -101,6 +101,7 @@ public class MyClient : MonoBehaviour {
     }
 
     public void JoinRandomGame() {
+        Debug.Log("JOINING RANDOM GAME");
         this._logic.localPlayer.OpJoinRandomRoom();
     }
 

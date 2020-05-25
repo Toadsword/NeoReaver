@@ -36,7 +36,6 @@ public class Logic
     /// <param name="nickName">Nickname of the player</param>
     public void ConnectToMaster(string serverAddress, string appId, string gameVersion, string nickName)
     {
-        Debug.Log("ConnectToMaster");
         ServerAddress = serverAddress;
         AppId = appId;
         GameVersion = gameVersion;
@@ -48,6 +47,7 @@ public class Logic
         // Initialize local game
         localPlayer = new GameLogic(appId, gameVersion);
         localPlayer.NickName = nickName;
+        localPlayer.UserId = nickName;
 
         localPlayer.OnEventJoin = this.OnJoinedPlayer;
         localPlayer.OnEventLeave = this.OnLeavedPlayer;
@@ -65,7 +65,9 @@ public class Logic
     /// <param name="CustomPlayer">Player that joined the game</param>
     private void OnJoinedPlayer(CustomPlayer CustomPlayer)
     {
-        Debug.Log("OnJoinedPlayer");
+        Debug.Log("11111OnJoinedPlayer");
+        Debug.Log("CustomPlayer.IsLocal : " + CustomPlayer.IsLocal);
+        Debug.Log("CustomPlayer.NickName : " + CustomPlayer.NickName);
         if (!CustomPlayer.IsLocal)
         {
             lock (remotePlayers)
@@ -84,18 +86,19 @@ public class Logic
         {
             lock (localPlayer)
             {
-                foreach (CustomPlayer p in localPlayer.LocalRoom.Players.Values)
+                foreach (Player p in localPlayer.LocalRoom.Players.Values)
                 {
-                    foreach (GameObject cube in playerObjects)
+                    foreach (GameObject playerObject in playerObjects)
                     {
-                        if (cube.name == p.NickName) return;
+                        Debug.Log("playerObject + == + p.NickName : " + playerObject + " == " + p.NickName);
+                        if (playerObject.name == p.NickName) return;
                     }
 
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = GameObject.Instantiate(playerPrefab, new Vector3(), new Quaternion());
-                    player.name = CustomPlayer.NickName;
+                    player.name = p.NickName;
                     playerObjects.Add(player);
-                    remotePlayers.Add(CustomPlayer.NickName, CustomPlayer);
+                    remotePlayers.Add(p.NickName, CustomPlayer);
                 }
             }
         }
@@ -107,7 +110,6 @@ public class Logic
     /// <param name="CustomPlayer">Player that leaved the game</param>
     private void OnLeavedPlayer(CustomPlayer CustomPlayer)
     {
-        Debug.Log("OnLeavedPlayer");
         string name = CustomPlayer.NickName;
 
         foreach (GameObject cube in playerObjects)
@@ -125,7 +127,6 @@ public class Logic
     // Update is called once per frame
     public void UpdateLocal ()
     {
-        Debug.Log("UpdateLocal");
         if (localPlayer != null)
         {
             localPlayer.UpdateLoop();
@@ -136,7 +137,6 @@ public class Logic
     // Update the position of the client
     private void Move()
     {
-        Debug.Log("Move");
         if (LocalPlayerJoined())
         {
             foreach (GameLogic logic in clients.Values)
@@ -151,7 +151,6 @@ public class Logic
     /// </summary>
     public bool LocalPlayerJoined()
     {
-        Debug.Log("LocalPlayerJoined");
         if (localPlayer != null && localPlayer.State == ClientState.Joined && localPlayer.LocalRoom != null)
         {
             return true;

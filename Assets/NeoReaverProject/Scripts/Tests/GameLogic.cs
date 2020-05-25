@@ -124,8 +124,8 @@ public class GameLogic : LoadBalancingClient
         this.JoinRandomGame = true;
 
         this.DispatchInterval = new Timer(10);
-        this.SendInterval = new Timer(100);
-        this.UpdateOthersInterval = new Timer(500);
+        this.SendInterval = new Timer(20);
+        this.UpdateOthersInterval = new Timer(20);
     }
 
 
@@ -138,7 +138,6 @@ public class GameLogic : LoadBalancingClient
     /// </remarks>
     public void CallConnect()
     {
-        Debug.Log("CallConnect");
         bool couldConnect = false;
         if (!string.IsNullOrEmpty(this.MasterServerAddress))
         {
@@ -206,6 +205,7 @@ public class GameLogic : LoadBalancingClient
     /// </remarks>
     protected internal override Player CreatePlayer(string actorName, int actorNumber, bool isLocal, Hashtable actorProperties)
     {
+        Debug.Log("CreatePlayer . " + actorName + " : " + actorNumber + " : " + isLocal);
         return new CustomPlayer(actorName, actorNumber, isLocal, actorProperties);
     }
 
@@ -290,9 +290,8 @@ public class GameLogic : LoadBalancingClient
         int actorNr = 0;
         Player origin = null;
         actorNr = photonEvent.Sender;
-        
 
-		if (actorNr > 0)
+        if (actorNr > 0)
 		{
 			this.LocalRoom.Players.TryGetValue(actorNr, out origin);
 		}
@@ -325,6 +324,9 @@ public class GameLogic : LoadBalancingClient
                 break;
 
 			// in this demo, we want a callback when players join or leave (so we can update their representation)
+            case EventCode.GameListUpdate:
+                Debug.Log("GameListUpdate");
+                break;
             case EventCode.Join:
                 if (OnEventJoin != null)
 				{

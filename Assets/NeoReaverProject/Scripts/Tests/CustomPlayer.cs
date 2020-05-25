@@ -97,7 +97,7 @@ public class CustomPlayer : Player
             this.PosY = System.Convert.ToInt32(posArray[1]);
         }
         
-        Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
+        //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
         this.LastUpdateTimestamp = GameLogic.Timestamp;
     }
 
