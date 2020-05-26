@@ -6,6 +6,11 @@ using UnityEngine;
 public class InputRecorderFrames : MonoBehaviour {
     public int frameCount = 0;
     public Timer countPerSecond;
+
+    bool isDown = false;
+    bool isHeld = false;
+    bool isUp = false;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -15,18 +20,30 @@ public class InputRecorderFrames : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (InputActionManager.GetInputDown(InputActionManager.InputType.SHOOT)) {
+            isDown = true;
+            isHeld = true;
+        }
+        if (InputActionManager.GetInputUp(InputActionManager.InputType.SHOOT)) {
+            isHeld = false;
+            isUp = true;
+            //  Debug.Log("Shoot : Up, Frame : " + frameCount);
+        }
     }
 
     void FixedUpdate() {
-        
-        if (InputActionManager.GetInputDown(InputActionManager.InputType.SHOOT)) {
+        if (isDown) {
             Debug.Log("Shoot : Down, Frame : " + frameCount);
+            isDown = false;
         }
-        if (InputActionManager.GetInputUp(InputActionManager.InputType.SHOOT)) {
+
+        if (isHeld) {
+            Debug.Log("Shoot : Held, Frame : " + frameCount);
+        }
+
+        if (isUp) {
             Debug.Log("Shoot : Up, Frame : " + frameCount);
-        }
-        if (InputActionManager.GetInput(InputActionManager.InputType.SHOOT)) {
-            Debug.Log("Shoot : Help, Frame : " + frameCount);
+            isUp = false;
         }
         frameCount++;
     }
