@@ -106,7 +106,8 @@ public static class InputActionManager {
                          GetInput(KeyCode.Escape, timeType);
                 break;
             case InputType.SHOOT:
-                result = GetInput((int)MouseButton.RIGHT, timeType);
+                result = GetInput((int)MouseButton.RIGHT, timeType) ||
+                         GetInput(InputControlType.Action1, timeType);
                 break;
             case InputType.PAUSE:
                 result = GetInput(InputControlType.Start, timeType, device) ||
