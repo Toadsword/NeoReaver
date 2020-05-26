@@ -65,11 +65,10 @@ public class Logic
     /// <param name="CustomPlayer">Player that joined the game</param>
     private void OnJoinedPlayer(CustomPlayer CustomPlayer)
     {
-        Debug.Log("11111OnJoinedPlayer");
-        Debug.Log("CustomPlayer.IsLocal : " + CustomPlayer.IsLocal);
-        Debug.Log("CustomPlayer.NickName : " + CustomPlayer.NickName);
         if (!CustomPlayer.IsLocal)
         {
+            // Adding the new player, that just joined the game
+            Debug.Log("Adding remote player");
             lock (remotePlayers)
             {
                 if (!remotePlayers.ContainsKey(CustomPlayer.NickName) && !clients.ContainsKey(CustomPlayer.NickName))
@@ -84,13 +83,14 @@ public class Logic
         }
         else
         {
+            // Adding the remote players that already appeared in the game
+            Debug.Log("Adding local player");
             lock (localPlayer)
             {
-                foreach (Player p in localPlayer.LocalRoom.Players.Values)
+                foreach (CustomPlayer p in localPlayer.LocalRoom.Players.Values)
                 {
                     foreach (GameObject playerObject in playerObjects)
                     {
-                        Debug.Log("playerObject + == + p.NickName : " + playerObject + " == " + p.NickName);
                         if (playerObject.name == p.NickName) return;
                     }
 

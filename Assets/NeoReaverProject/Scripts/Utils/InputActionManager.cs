@@ -30,7 +30,7 @@ public static class InputActionManager {
         HORIZONTAL,
         VERTICAL,
     }
-    public enum TimeType
+    public enum InputStateEnum
     {
         UP,
         DOWN,
@@ -50,22 +50,22 @@ public static class InputActionManager {
     /* public functions, callable on any scripts */
     public static bool GetInputDown(InputType inputType, InputDevice inputDevice = null)
     {
-        return GetInput(inputType, TimeType.DOWN, inputDevice);
+        return GetInput(inputType, InputStateEnum.DOWN, inputDevice);
     }
     public static bool GetInputUp(InputType inputType, InputDevice inputDevice = null)
     {
-        return GetInput(inputType, TimeType.UP, inputDevice);
+        return GetInput(inputType, InputStateEnum.UP, inputDevice);
     }
     public static bool GetInput(InputType inputType, InputDevice inputDevice = null)
     {
-        return GetInput(inputType, TimeType.HOLD, inputDevice);
+        return GetInput(inputType, InputStateEnum.HOLD, inputDevice);
     }
 
     /* Call input principal function
      *
      * To change configuration of controller or keyboard, do it here !    
      */
-    private static bool GetInput(InputType inputType, TimeType timeType, InputDevice inputDevice = null)
+    private static bool GetInput(InputType inputType, InputStateEnum timeType, InputDevice inputDevice = null)
     {
         InputDevice device = InputManager.ActiveDevice;
         if (inputDevice != null)
@@ -122,7 +122,7 @@ public static class InputActionManager {
         return result;
     }
 
-    private static bool GetInput(InputControlType input, TimeType timeType, InputDevice inputDevice = null)
+    private static bool GetInput(InputControlType input, InputStateEnum timeType, InputDevice inputDevice = null)
     {
         InputDevice device = InputManager.ActiveDevice;
         if (inputDevice != null)
@@ -130,37 +130,37 @@ public static class InputActionManager {
 
         switch (timeType)
         {
-            case TimeType.UP:
+            case InputStateEnum.UP:
                 return device.GetControl(input).WasReleased;
-            case TimeType.DOWN:
+            case InputStateEnum.DOWN:
                 return device.GetControl(input).WasPressed;
-            case TimeType.HOLD:
+            case InputStateEnum.HOLD:
                 return device.GetControl(input).IsPressed;
         }
         return false;
     }
-    private static bool GetInput(KeyCode keyCode, TimeType timeType)
+    private static bool GetInput(KeyCode keyCode, InputStateEnum timeType)
     {
         switch (timeType)
         {
-            case TimeType.UP:
+            case InputStateEnum.UP:
                 return Input.GetKeyUp(keyCode);
-            case TimeType.DOWN:
+            case InputStateEnum.DOWN:
                 return Input.GetKeyDown(keyCode);
-            case TimeType.HOLD:
+            case InputStateEnum.HOLD:
                 return Input.GetKey(keyCode);
         }
         return false;
     }
-    private static bool GetInput(int mouseBtn, TimeType timeType)
+    private static bool GetInput(int mouseBtn, InputStateEnum timeType)
     {
         switch (timeType)
         {
-            case TimeType.UP:
+            case InputStateEnum.UP:
                 return Input.GetMouseButtonUp(mouseBtn);
-            case TimeType.DOWN:
+            case InputStateEnum.DOWN:
                 return Input.GetMouseButtonDown(mouseBtn);
-            case TimeType.HOLD:
+            case InputStateEnum.HOLD:
                 return Input.GetMouseButton(mouseBtn);
         }
         return false;

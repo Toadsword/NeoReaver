@@ -2081,7 +2081,7 @@ namespace Photon.Realtime
                     Player target = this.CurrentRoom.GetPlayer(userId);
                     if (target == null)
                     {
-                        this.CurrentRoom.StorePlayer(this.CreatePlayer(string.Empty, userId, false, null));
+                         this.CurrentRoom.StorePlayer(this.CreatePlayer(string.Empty, userId, false, null));
                     }
                 }
             }

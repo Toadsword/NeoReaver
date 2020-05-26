@@ -245,6 +245,7 @@ public class GameLogic : LoadBalancingClient
             if (this.UpdateOthersInterval.ShouldExecute)
             {
                 this.SendPositionUpdate();
+                this.SendInputUpdate();
 
                 this.UpdateOthersInterval.Reset();
             }
@@ -270,6 +271,15 @@ public class GameLogic : LoadBalancingClient
     {
         // this overload of OpRaiseEvent sends to everyone in the room - even those who didn't subscribe to any group
         this.LoadBalancingPeer.OpRaiseEvent(CustomConstants.EvPosition, this.LocalPlayer.WriteEvMove(), new RaiseEventOptions(), new SendOptions() { Reliability = this.SendReliable });
+    }
+
+    private void SendInputUpdate() {
+        this.LoadBalancingPeer.OpRaiseEvent(
+            CustomConstants.EvPosition,
+            this.LocalPlayer.WriteEvMove(), 
+            new RaiseEventOptions(), 
+            new SendOptions() { Reliability = this.SendReliable }
+        );    
     }
 
     /// <summary>

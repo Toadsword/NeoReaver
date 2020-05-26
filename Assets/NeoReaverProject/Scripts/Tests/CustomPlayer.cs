@@ -1,4 +1,5 @@
-﻿using ExitGames.Client.Photon;
+﻿using System.Collections.Generic;
+using ExitGames.Client.Photon;
 using global::Photon.Realtime;
 using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -25,9 +26,11 @@ public class CustomPlayer : Player
     public int PosX { get; set; }
     public int PosY { get; set; }
     public int Color { get; set; }
+    
+    // Implement current player input and send it through network
+    public List<FrameInput> inputHistory;
 
-    private int LastUpdateTimestamp { get; set; }
-    public int UpdateAge { get { return GameLogic.Timestamp - this.LastUpdateTimestamp; } }
+    private int LastUpdateFrame { get; set; }
 
     /// <summary>
     /// Stores this client's "group interest currently set on server" of this player (not necessarily the current one).
@@ -59,8 +62,30 @@ public class CustomPlayer : Player
         this.PosX = SupportClass.ThreadSafeRandom.Next() % gridSize;
         this.PosY = SupportClass.ThreadSafeRandom.Next() % gridSize;
     }
-    
 
+
+    public Hashtable WriteEvInputChange() {
+        Hashtable evContent = new Hashtable();
+        evContent[(int)1] = 1;    
+        evContent[(int)2] = new FrameInput(InputActionManager.InputStateEnum.DOWN, 0.5f, 0.4f);
+        return evContent;
+    }
+    
+    public void ReadEvInputChange(Hashtable evContent) {
+        int bufferSize = 1;
+        // Know the buffer size
+        if (evContent.ContainsKey((byte) 1)) {
+            bufferSize = (int)evContent[(byte)1];
+        }
+        if (evContent.ContainsKey((byte) 2)) {
+            FrameInput[] inputs = (FrameInput[])evContent[(byte)2];
+
+        }
+        
+        //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
+        this.LastUpdateFrame = GameLogic.Timestamp;
+    }
+    
     /// <summary>Creates the "custom content" Hashtable that is sent as position update.</summary>
     /// <remarks>
     /// As with event codes, the content of this event is arbitrary and "made up" for this demo.
@@ -98,7 +123,7 @@ public class CustomPlayer : Player
         }
         
         //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
-        this.LastUpdateTimestamp = GameLogic.Timestamp;
+        this.LastUpdateFrame = GameLogic.Timestamp;
     }
 
     /// <summary>Creates the "custom content" Hashtable that is sent as color update.</summary>
@@ -123,7 +148,7 @@ public class CustomPlayer : Player
             // js client event support (those can't send with byte-keys)
     		this.Color = System.Convert.ToInt32(evContent["1"]);
         }
-        this.LastUpdateTimestamp = GameLogic.Timestamp;
+        this.LastUpdateFrame = GameLogic.Timestamp;
     }
     
     /// <summary>
