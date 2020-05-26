@@ -234,6 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   frameCount: 0
+  deadZone: 0.1
 --- !u!4 &705899019
 Transform:
   m_ObjectHideFlags: 0

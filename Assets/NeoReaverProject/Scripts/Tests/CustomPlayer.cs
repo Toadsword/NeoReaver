@@ -63,14 +63,14 @@ public class CustomPlayer : Player
         this.PosY = SupportClass.ThreadSafeRandom.Next() % gridSize;
     }
 
-
+/*
     public Hashtable WriteEvInputChange() {
         Hashtable evContent = new Hashtable();
         evContent[(int)1] = 1;    
-        evContent[(int)2] = new FrameInput(InputActionManager.InputStateEnum.DOWN, 0.5f, 0.4f);
+        evContent[(int)2] = new FrameInput(, 0.5f, 0.4f);
         return evContent;
     }
-    
+    */
     public void ReadEvInputChange(Hashtable evContent) {
         int bufferSize = 1;
         // Know the buffer size

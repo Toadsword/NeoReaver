@@ -5,47 +5,67 @@ using UnityEngine;
 
 public class InputRecorderFrames : MonoBehaviour {
     public int frameCount = 0;
-    public Timer countPerSecond;
 
-    bool isDown = false;
-    bool isHeld = false;
-    bool isUp = false;
+    public float deadZone = 0.1f;
     
-    // Start is called before the first frame update
-    void Start()
-    {
+    InputState shootInputState_;
+
+    List<FrameInput> LocalFrameInputs;
+
+    float horizontalInput_;
+    float verticalInput_;
+    
+    // Update is called once per frame
+    void Update() {
+        ComputeUpdateInputState(shootInputState_, InputActionManager.InputType.SHOOT);
+
+        float horizontalInput = InputActionManager.GetAxis(InputActionManager.AxisType.HORIZONTAL);
+        if (Math.Abs(horizontalInput) > deadZone && 
+            Math.Abs(horizontalInput) >= Math.Abs(horizontalInput_)) 
+        {
+            horizontalInput_ = horizontalInput;
+        }
+        
+        float verticalInput = InputActionManager.GetAxis(InputActionManager.AxisType.HORIZONTAL);
+        if (Math.Abs(verticalInput) > deadZone && 
+            Math.Abs(verticalInput) >= Math.Abs(verticalInput_)) 
+        {
+            verticalInput_ = verticalInput;
+        }
         
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (InputActionManager.GetInputDown(InputActionManager.InputType.SHOOT)) {
-            isDown = true;
-            isHeld = true;
-        }
-        if (InputActionManager.GetInputUp(InputActionManager.InputType.SHOOT)) {
-            isHeld = false;
-            isUp = true;
-            //  Debug.Log("Shoot : Up, Frame : " + frameCount);
-        }
+    void FixedUpdate() {
+        ResetInputs();
+
+        RegisterNewInputFrame();
+        
+        LocalFrameInputs.Add(new FrameInput(shootInputState_, horizontalInput_, verticalInput_));
+        
+        frameCount++;
     }
 
-    void FixedUpdate() {
-        if (isDown) {
-            Debug.Log("Shoot : Down, Frame : " + frameCount);
-            isDown = false;
+    void ComputeUpdateInputState(InputState inputState, InputActionManager.InputType action) {
+        if (InputActionManager.GetInputDown(action)) {
+            inputState.isDown = true;
+            inputState.isHeld = true;
         }
 
-        if (isHeld) {
-            Debug.Log("Shoot : Held, Frame : " + frameCount);
+        if (InputActionManager.GetInputUp(action)) {
+            inputState.isHeld = false;
+            inputState.isUp = true;
         }
+    }
+    
+    void ResetInputs() {
+        shootInputState_.Reset();
+        
+        horizontalInput_ = 0.0f;
+        verticalInput_ = 0.0f;
+    }
 
-        if (isUp) {
-            Debug.Log("Shoot : Up, Frame : " + frameCount);
-            isUp = false;
-        }
-        frameCount++;
+    void RegisterNewInputFrame() {
+        
     }
 
     void OnGUI() {
