@@ -10,11 +10,16 @@ public class InputRecorderFrames : MonoBehaviour {
     
     InputState shootInputState_;
 
-    List<FrameInput> LocalFrameInputs;
+    public List<FrameInput> LocalFrameInputs = new List<FrameInput>();
 
     float horizontalInput_;
     float verticalInput_;
-    
+
+    void Start() {
+        shootInputState_ = new InputState();
+        LocalFrameInputs = new List<FrameInput>();
+    }
+
     // Update is called once per frame
     void Update() {
         ComputeUpdateInputState(shootInputState_, InputActionManager.InputType.SHOOT);
@@ -36,12 +41,9 @@ public class InputRecorderFrames : MonoBehaviour {
     }
 
     void FixedUpdate() {
-        ResetInputs();
-
         RegisterNewInputFrame();
         
-        LocalFrameInputs.Add(new FrameInput(shootInputState_, horizontalInput_, verticalInput_));
-        
+        ResetInputs();
         frameCount++;
     }
 
@@ -54,6 +56,7 @@ public class InputRecorderFrames : MonoBehaviour {
         if (InputActionManager.GetInputUp(action)) {
             inputState.isHeld = false;
             inputState.isUp = true;
+            Debug.Break();
         }
     }
     
@@ -65,7 +68,11 @@ public class InputRecorderFrames : MonoBehaviour {
     }
 
     void RegisterNewInputFrame() {
-        
+        InputState inputState = new InputState();
+        inputState.isDown = shootInputState_.isDown;
+        inputState.isUp = shootInputState_.isUp;
+        inputState.isHeld = shootInputState_.isHeld;
+        LocalFrameInputs.Add(new FrameInput(inputState, horizontalInput_, verticalInput_));
     }
 
     void OnGUI() {

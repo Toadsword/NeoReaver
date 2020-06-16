@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class FrameInput {
     
     // One for each action
-    private InputState shootState_;
+    [SerializeField] private InputState shootState_;
     
     //One for each axis
-    private float horizontalAxisValue_ = 0.0f;
-    private float verticalAxisValue_ = 0.0f;
+    [SerializeField] private float horizontalAxisValue_ = 0.0f;
+    [SerializeField] private float verticalAxisValue_ = 0.0f;
 
     public FrameInput(
         InputState shootState,
