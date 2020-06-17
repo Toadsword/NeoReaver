@@ -34,7 +34,7 @@ public class RollbackHierarchyHighligher {
     //==============================================================================
     private static void HierarchyHighlight_OnGUI(int inSelectionID, Rect inSelectionRect) {
 
-        bool mustRollbackObj = RollbackTool.instancesIdList.Contains(inSelectionID);
+        bool mustRollbackObj = RollbackTool.completeInstancesIdList.Contains(inSelectionID);
 
         GameObject GO_Label = EditorUtility.InstanceIDToObject(inSelectionID) as GameObject;
 
@@ -42,7 +42,18 @@ public class RollbackHierarchyHighligher {
 
             if (mustRollbackObj) {
                 Rect backgroundOffset = new Rect(inSelectionRect.position, inSelectionRect.size);   
-                EditorGUI.DrawRect(backgroundOffset, Color.Lerp(GUI.skin.settings.selectionColor, Color.green, 0.3f));
+                
+                bool ObjectIsSelected = Selection.instanceIDs.Contains(inSelectionID);
+                if (ObjectIsSelected)
+                    EditorGUI.DrawRect(backgroundOffset, Color.Lerp(GUI.skin.settings.selectionColor, Color.green, 0.5f));
+                else
+                    EditorGUI.DrawRect(backgroundOffset, Color.green);
+                
+                Rect Offset = new Rect(inSelectionRect.position + new Vector2(20f, 0f), inSelectionRect.size);
+                EditorGUI.LabelField(Offset, GO_Label.name, new GUIStyle()
+                {
+                    normal = new GUIStyleState() { textColor = Color.black }
+                });
             }
 
             EditorApplication.RepaintHierarchyWindow();

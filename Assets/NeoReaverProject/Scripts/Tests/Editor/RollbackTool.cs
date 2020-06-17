@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class RollbackTool : EditorWindow
-{
-    public static List<UnityEngine.Object> rollbackObjectsList = new List<UnityEngine.Object>();
+public class RollbackTool : EditorWindow {
+    public static List<GameObject> completeRollbackObjectsList = new List<GameObject>();
+    public static List<int> completeInstancesIdList = new List<int>();
+    
+    public static List<GameObject> rollbackObjectsList = new List<GameObject>();
     public static List<int> instancesIdList = new List<int>();
-
+    
     bool openedObjectList = false;
     int currentWantedSize = 0;
     
     [MenuItem("RollbackTool/Information")]
     public static void ShowWindow() {
-        rollbackObjectsList = new List<Object>(); 
-        instancesIdList = new List<int>();
+        //rollbackObjectsList = new List<Object>(); 
+        //instancesIdList = new List<int>();
         GetWindow(typeof(RollbackTool));
     }
 
@@ -22,7 +24,11 @@ public class RollbackTool : EditorWindow
         GUILayout.Label("Spawn New Object", EditorStyles.boldLabel);
         openedObjectList = EditorGUILayout.Foldout(openedObjectList, "Rollback object list");
         if (openedObjectList) {
+            
             currentWantedSize += 1;
+            
+            completeRollbackObjectsList = new List<GameObject>();
+            completeInstancesIdList = new List<int>();
             
             while (currentWantedSize < rollbackObjectsList.Count) {
                 rollbackObjectsList.RemoveAt(rollbackObjectsList.Count - 1);
@@ -51,11 +57,28 @@ public class RollbackTool : EditorWindow
                 
                 if (rollbackObjectsList[i] != null) {
                     instancesIdList[i] = rollbackObjectsList[i].GetInstanceID();
+                    EditorGUILayout.TextField(rollbackObjectsList[i].transform.childCount.ToString());
+                    AddChildrenToList(rollbackObjectsList[i]);
                 } else {
                     currentWantedSize = i;
                     break;
                 }
             }
+        }
+        if (GUILayout.Button("Save")) {
+            
+        }
+    }
+
+    void AddChildrenToList(GameObject gameObject) {
+        completeInstancesIdList.Add(gameObject.GetInstanceID());
+        completeRollbackObjectsList.Add(gameObject);
+        int numChildren = gameObject.transform.childCount;
+        for (int i = 0; i < numChildren; i++) {
+            completeRollbackObjectsList.Add(gameObject.transform.GetChild(i).gameObject);
+            completeInstancesIdList.Add(gameObject.transform.GetChild(i).GetInstanceID());
+            
+            AddChildrenToList(gameObject.transform.GetChild(i).gameObject);
         }
     }
     
