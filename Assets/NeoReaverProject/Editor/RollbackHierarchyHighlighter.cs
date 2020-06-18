@@ -34,7 +34,7 @@ public class RollbackHierarchyHighligher {
     //==============================================================================
     private static void HierarchyHighlight_OnGUI(int inSelectionID, Rect inSelectionRect) {
 
-        bool mustRollbackObj = RollbackTool.completeInstancesIdList.Contains(inSelectionID);
+        bool mustRollbackObj = RollbackTool.completeRollbackInformation.Contains(inSelectionID);
 
         GameObject GO_Label = EditorUtility.InstanceIDToObject(inSelectionID) as GameObject;
 

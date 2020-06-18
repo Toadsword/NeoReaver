@@ -1,20 +1,20 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
+[Serializable]
 public class RollbackTool : EditorWindow {
-    public static List<GameObject> completeRollbackObjectsList = new List<GameObject>();
-    public static List<int> completeInstancesIdList = new List<int>();
-    
-    public static List<GameObject> rollbackObjectsList = new List<GameObject>();
-    public static List<int> instancesIdList = new List<int>();
-    
+    public static RollbackInformation rollbackInformation = new RollbackInformation();
+    public static RollbackInformation completeRollbackInformation = new RollbackInformation();
+
     bool openedObjectList = false;
     int currentWantedSize = 0;
     
     [MenuItem("RollbackTool/Information")]
     public static void ShowWindow() {
+        LoadInformations();
         //rollbackObjectsList = new List<Object>(); 
         //instancesIdList = new List<int>();
         GetWindow(typeof(RollbackTool));
@@ -27,59 +27,71 @@ public class RollbackTool : EditorWindow {
             
             currentWantedSize += 1;
             
-            completeRollbackObjectsList = new List<GameObject>();
-            completeInstancesIdList = new List<int>();
+            completeRollbackInformation.Clear();
             
-            while (currentWantedSize < rollbackObjectsList.Count) {
-                rollbackObjectsList.RemoveAt(rollbackObjectsList.Count - 1);
-                instancesIdList.RemoveAt(instancesIdList.Count - 1);
-            }
-
-            while (currentWantedSize > rollbackObjectsList.Count) {
-                rollbackObjectsList.Add(null);
-                instancesIdList.Add(0);
-            }
+            rollbackInformation.Resize(currentWantedSize);
 
             for (int i = 0; i < currentWantedSize; i++) {
-                //Debug.Log("occurence");
                 //Display list of game objects to track rollback on 
                 EditorGUILayout.BeginHorizontal();
-                rollbackObjectsList[i] = EditorGUILayout.ObjectField("object " + i.ToString(), rollbackObjectsList[i], typeof(GameObject), true, GUILayout.ExpandWidth(true)) as GameObject;
+                rollbackInformation.objectsToRollback[i] = EditorGUILayout.ObjectField("object " + i.ToString(), rollbackInformation.objectsToRollback[i], typeof(GameObject), true, GUILayout.ExpandWidth(true)) as GameObject;
                 if (i != currentWantedSize) {
                     if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20))) {
-                        rollbackObjectsList.RemoveAt(i);
-                        instancesIdList.RemoveAt(i);
-                        currentWantedSize = rollbackObjectsList.Count;
+                        rollbackInformation.RemoveAt(i);
+                        currentWantedSize = rollbackInformation.GetCount();
                         break;
                     }
                 }
                 EditorGUILayout.EndHorizontal();
                 
-                if (rollbackObjectsList[i] != null) {
-                    instancesIdList[i] = rollbackObjectsList[i].GetInstanceID();
-                    EditorGUILayout.TextField(rollbackObjectsList[i].transform.childCount.ToString());
-                    AddChildrenToList(rollbackObjectsList[i]);
+                if (rollbackInformation.objectsToRollback[i] != null) {
+                    rollbackInformation.instancesIdToRollback[i] = rollbackInformation.objectsToRollback[i].GetInstanceID();
                 } else {
+                    RefreshCompleteList();
                     currentWantedSize = i;
                     break;
                 }
             }
         }
+        EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Save")) {
-            
+            SaveInformations();
+        }
+        if (GUILayout.Button("Load from last save")) {
+            LoadInformations();
+            currentWantedSize = rollbackInformation.GetCount();
+            RefreshCompleteList();
+        }
+        EditorGUILayout.EndHorizontal();
+    }
+
+    void SaveInformations() {
+        string saveJson = JsonUtility.ToJson(rollbackInformation);
+        File.WriteAllText(Application.dataPath + "/save.txt", saveJson);
+    }
+
+    static void LoadInformations() {
+        string json = File.ReadAllText(Application.dataPath + "/save.txt");
+        rollbackInformation = JsonUtility.FromJson<RollbackInformation>(json);
+    }
+
+    static void RefreshCompleteList() {
+        completeRollbackInformation.Clear();
+        for (int i = 0; i < rollbackInformation.objectsToRollback.Count; i++) {
+            if (rollbackInformation.objectsToRollback[i] != null) {
+                AddChildrenToList(rollbackInformation.objectsToRollback[i]);
+            }
         }
     }
 
-    void AddChildrenToList(GameObject gameObject) {
-        completeInstancesIdList.Add(gameObject.GetInstanceID());
-        completeRollbackObjectsList.Add(gameObject);
+    static void AddChildrenToList(GameObject gameObject) {
+        completeRollbackInformation.Add(ref gameObject);
         int numChildren = gameObject.transform.childCount;
         for (int i = 0; i < numChildren; i++) {
-            completeRollbackObjectsList.Add(gameObject.transform.GetChild(i).gameObject);
-            completeInstancesIdList.Add(gameObject.transform.GetChild(i).GetInstanceID());
+            GameObject newObj = gameObject.transform.GetChild(i).gameObject;
+            completeRollbackInformation.Add(ref newObj);
             
-            AddChildrenToList(gameObject.transform.GetChild(i).gameObject);
+            AddChildrenToList(newObj);
         }
     }
-    
 }
