@@ -35,7 +35,7 @@ public class RollbackInformation {
         return instancesIdToRollback.Contains(instanceId);
     }
 
-    public void Add(ref GameObject gameObject) {
+    public void Add(GameObject gameObject) {
         objectsToRollback.Add(gameObject);
         if(gameObject == null){
             instancesIdToRollback.Add(0);        

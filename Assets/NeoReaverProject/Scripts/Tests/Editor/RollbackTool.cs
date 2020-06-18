@@ -14,14 +14,14 @@ public class RollbackTool : EditorWindow {
     
     [MenuItem("RollbackTool/Information")]
     public static void ShowWindow() {
-        LoadInformations();
+
+        UpdateInformationList();
         //rollbackObjectsList = new List<Object>(); 
         //instancesIdList = new List<int>();
         GetWindow(typeof(RollbackTool));
     }
 
     void OnGUI() {
-        GUILayout.Label("Spawn New Object", EditorStyles.boldLabel);
         openedObjectList = EditorGUILayout.Foldout(openedObjectList, "Rollback object list");
         if (openedObjectList) {
             
@@ -37,6 +37,12 @@ public class RollbackTool : EditorWindow {
                 rollbackInformation.objectsToRollback[i] = EditorGUILayout.ObjectField("object " + i.ToString(), rollbackInformation.objectsToRollback[i], typeof(GameObject), true, GUILayout.ExpandWidth(true)) as GameObject;
                 if (i != currentWantedSize) {
                     if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20))) {
+                        Debug.Log("Try");
+                        if (rollbackInformation.objectsToRollback[i].GetComponent<RollbackComponent>() != null) {
+                            Debug.Log("Remove Component");
+                            Debug.Log(rollbackInformation.objectsToRollback[i].GetComponent<RollbackComponent>());
+                            DestroyImmediate(rollbackInformation.objectsToRollback[i].GetComponent<RollbackComponent>());
+                        }
                         rollbackInformation.RemoveAt(i);
                         currentWantedSize = rollbackInformation.GetCount();
                         break;
@@ -46,6 +52,11 @@ public class RollbackTool : EditorWindow {
                 
                 if (rollbackInformation.objectsToRollback[i] != null) {
                     rollbackInformation.instancesIdToRollback[i] = rollbackInformation.objectsToRollback[i].GetInstanceID();
+                    
+                    //If the object doesn't have the component, add it
+                    if (rollbackInformation.objectsToRollback[i].GetComponent<RollbackComponent>() == null) {
+                        rollbackInformation.objectsToRollback[i].AddComponent<RollbackComponent>();
+                    }
                 } else {
                     RefreshCompleteList();
                     currentWantedSize = i;
@@ -53,26 +64,6 @@ public class RollbackTool : EditorWindow {
                 }
             }
         }
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Save")) {
-            SaveInformations();
-        }
-        if (GUILayout.Button("Load from last save")) {
-            LoadInformations();
-            currentWantedSize = rollbackInformation.GetCount();
-            RefreshCompleteList();
-        }
-        EditorGUILayout.EndHorizontal();
-    }
-
-    void SaveInformations() {
-        string saveJson = JsonUtility.ToJson(rollbackInformation);
-        File.WriteAllText(Application.dataPath + "/save.txt", saveJson);
-    }
-
-    static void LoadInformations() {
-        string json = File.ReadAllText(Application.dataPath + "/save.txt");
-        rollbackInformation = JsonUtility.FromJson<RollbackInformation>(json);
     }
 
     static void RefreshCompleteList() {
@@ -85,13 +76,21 @@ public class RollbackTool : EditorWindow {
     }
 
     static void AddChildrenToList(GameObject gameObject) {
-        completeRollbackInformation.Add(ref gameObject);
+        completeRollbackInformation.Add(gameObject);
         int numChildren = gameObject.transform.childCount;
         for (int i = 0; i < numChildren; i++) {
             GameObject newObj = gameObject.transform.GetChild(i).gameObject;
-            completeRollbackInformation.Add(ref newObj);
+            completeRollbackInformation.Add(newObj);
             
             AddChildrenToList(newObj);
+        }
+    }
+
+    private static void UpdateInformationList() {
+        rollbackInformation.Clear();
+        var list = GameObject.FindObjectsOfType<RollbackComponent>();
+        foreach (RollbackComponent rollbackComponent in list) {
+            rollbackInformation.Add(rollbackComponent.gameObject);
         }
     }
 }
