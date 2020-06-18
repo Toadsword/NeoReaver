@@ -37,10 +37,7 @@ public class RollbackTool : EditorWindow {
                 rollbackInformation.objectsToRollback[i] = EditorGUILayout.ObjectField("object " + i.ToString(), rollbackInformation.objectsToRollback[i], typeof(GameObject), true, GUILayout.ExpandWidth(true)) as GameObject;
                 if (i != currentWantedSize) {
                     if (GUILayout.Button("X", GUILayout.Width(20), GUILayout.Height(20))) {
-                        Debug.Log("Try");
                         if (rollbackInformation.objectsToRollback[i].GetComponent<RollbackComponent>() != null) {
-                            Debug.Log("Remove Component");
-                            Debug.Log(rollbackInformation.objectsToRollback[i].GetComponent<RollbackComponent>());
                             DestroyImmediate(rollbackInformation.objectsToRollback[i].GetComponent<RollbackComponent>());
                         }
                         rollbackInformation.RemoveAt(i);
