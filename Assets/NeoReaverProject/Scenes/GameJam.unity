@@ -259,9 +259,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8ed05c3ebb75464284dccc3fb54077e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeedo: 5
-  minSpeedo: 0.2
-  speedMultiplier: 1.001
+  maxSpeedo: 7.5
+  minSpeedo: 0.5
+  speedMultiplier: 1.01
+  currentSpeedMultiplier: 0
   direction: {x: 0, y: 0}
   midSpeedo: 0
   currentSpeedo: 0
