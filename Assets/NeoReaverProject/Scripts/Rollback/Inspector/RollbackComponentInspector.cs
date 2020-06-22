@@ -21,26 +21,33 @@ public class RollbackComponentInspector : Editor {
 
         GUILayout.Label("Components");
         
+        //Button to refresh the list
         if (GUILayout.Button("Refresh list")) {
             RefreshComponentList();
         }
-        var copy = _rollbackComponent.rollbackedComponents.ToList();
-        foreach(var component in copy) {
-            _rollbackComponent.rollbackedComponents[component.Key] = GUILayout.Toggle(component.Value, component.Key);
+        
+        //Display all the elements in the dictionnaries
+        for(int i = 0; i < _rollbackComponent.rollbackedComponentsName.Count; i++){
+            _rollbackComponent.doRollbackComponents[i] = GUILayout.Toggle(_rollbackComponent.doRollbackComponents[i], _rollbackComponent.rollbackedComponentsName[i]);
         }
     }
 
     private void RefreshComponentList() {
         Component[] components = _rollbackComponent.gameObject.GetComponents<Component>();
 
-        Dictionary<string, bool> copiedDico = _rollbackComponent.rollbackedComponents.ToDictionary(entry => entry.Key, entry => entry.Value);
-        _rollbackComponent.rollbackedComponents.Clear();
+        Dictionary<string, bool> copiedDico = new Dictionary<string, bool>();
+        for (int i = 0; i < _rollbackComponent.rollbackedComponentsName.Count; i++) {
+            copiedDico.Add(_rollbackComponent.rollbackedComponentsName[i], _rollbackComponent.doRollbackComponents[i]);
+        }
+
+        _rollbackComponent.rollbackedComponentsName.Clear();
+        _rollbackComponent.doRollbackComponents.Clear();
         
         foreach(var component in components) {
             bool temp = false;
             copiedDico.TryGetValue(component.GetType().ToString(), out temp);
-            Debug.Log(component.GetType().ToString() + " : " + temp);
-            _rollbackComponent.rollbackedComponents.Add(component.GetType().ToString(), temp);
+            _rollbackComponent.rollbackedComponentsName.Add(component.GetType().ToString());
+            _rollbackComponent.doRollbackComponents.Add(temp);
         }
     }
 }
