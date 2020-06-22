@@ -260,7 +260,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeedo: 5
+  minSpeedo: 0.2
+  speedMultiplier: 1.001
   direction: {x: 0, y: 0}
+  midSpeedo: 0
+  currentSpeedo: 0
+  currentMovementState: 0
 --- !u!1 &891484437
 GameObject:
   m_ObjectHideFlags: 0
