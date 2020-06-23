@@ -5,9 +5,7 @@ using UnityEditor;
 
 [InitializeOnLoad]
 public class RollbackHierarchyHighligher {
-
-    List<int> objectsEntitiesToRollback = new List<int>();
-    
+   
     //==============================================================================
     //
     //                                    CONSTANTS
@@ -22,8 +20,8 @@ public class RollbackHierarchyHighligher {
     //
     //==============================================================================
 
-    static RollbackHierarchyHighligher()
-    {
+    static RollbackHierarchyHighligher() {
+        //RefreshCompleteList();
         EditorApplication.hierarchyWindowItemOnGUI += HierarchyHighlight_OnGUI;
     }
 
@@ -34,29 +32,26 @@ public class RollbackHierarchyHighligher {
     //==============================================================================
     private static void HierarchyHighlight_OnGUI(int inSelectionID, Rect inSelectionRect) {
 
-        bool mustRollbackObj = RollbackTool.completeRollbackInformation.Contains(inSelectionID);
-
         GameObject GO_Label = EditorUtility.InstanceIDToObject(inSelectionID) as GameObject;
-
+        
         if (GO_Label != null) {
+            if (GO_Label.GetComponent<RollbackComponent>() || GO_Label.GetComponentInParent<RollbackComponent>()) {
 
-            if (mustRollbackObj) {
-                Rect backgroundOffset = new Rect(inSelectionRect.position, inSelectionRect.size);   
-                
-                bool ObjectIsSelected = Selection.instanceIDs.Contains(inSelectionID);
-                if (ObjectIsSelected)
+                Rect backgroundOffset = new Rect(inSelectionRect.position, inSelectionRect.size);
+
+                if (Selection.instanceIDs.Contains(inSelectionID)) {
                     EditorGUI.DrawRect(backgroundOffset, Color.Lerp(GUI.skin.settings.selectionColor, Color.green, 0.5f));
-                else
+                } else {
                     EditorGUI.DrawRect(backgroundOffset, Color.green);
-                
-                Rect Offset = new Rect(inSelectionRect.position + new Vector2(20f, 0f), inSelectionRect.size);
-                EditorGUI.LabelField(Offset, GO_Label.name, new GUIStyle()
-                {
-                    normal = new GUIStyleState() { textColor = Color.black }
-                });
-            }
+                }
 
-            EditorApplication.RepaintHierarchyWindow();
+                Rect Offset = new Rect(inSelectionRect.position + new Vector2(20f, 0f), inSelectionRect.size);
+                EditorGUI.LabelField(Offset, GO_Label.name, new GUIStyle() {
+                    normal = new GUIStyleState() {textColor = Color.black}
+                });
+
+                EditorApplication.RepaintHierarchyWindow();
+            }
         }
     }
 }

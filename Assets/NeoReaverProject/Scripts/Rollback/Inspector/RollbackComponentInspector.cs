@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 [CustomEditor(typeof(RollbackComponent))]
@@ -17,18 +18,37 @@ public class RollbackComponentInspector : Editor {
     }
 
     public override void OnInspectorGUI() {
-        base.OnInspectorGUI();
+        //base.OnInspectorGUI();
 
+        if (_rollbackComponent == null) {
+            _rollbackComponent = (RollbackComponent)target;
+            RefreshComponentList();
+        }
+        
         GUILayout.Label("Components");
         
         //Button to refresh the list
         if (GUILayout.Button("Refresh list")) {
             RefreshComponentList();
         }
-        
+
+        bool valueChanged = false;
         //Display all the elements in the dictionnaries
-        for(int i = 0; i < _rollbackComponent.rollbackedComponentsName.Count; i++){
+        for(int i = 0; i < _rollbackComponent.rollbackedComponentsName.Count; i++) {
+            bool temp = _rollbackComponent.doRollbackComponents[i];
             _rollbackComponent.doRollbackComponents[i] = GUILayout.Toggle(_rollbackComponent.doRollbackComponents[i], _rollbackComponent.rollbackedComponentsName[i]);
+
+            if (temp != _rollbackComponent.doRollbackComponents[i]) {
+                valueChanged = true;
+            }
+        }
+
+        if (valueChanged) {
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(_rollbackComponent);
+                EditorSceneManager.MarkSceneDirty(_rollbackComponent.gameObject.scene);
+            }
         }
     }
 

@@ -260,6 +260,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32ecc8e83de63e047bd4e85f2a34cad5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rollbackedComponentsName:
+  - UnityEngine.Transform
+  - UnityEngine.SpriteRenderer
+  - PlayerMovement
+  - NeoReaverProject.Scripts.PlayerController
+  - RollbackComponent
+  doRollbackComponents: 0100010000
 --- !u!114 &682128099
 MonoBehaviour:
   m_ObjectHideFlags: 0

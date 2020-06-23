@@ -7,7 +7,6 @@ using UnityEngine;
 [Serializable]
 public class RollbackTool : EditorWindow {
     public static RollbackInformation rollbackInformation = new RollbackInformation();
-    public static RollbackInformation completeRollbackInformation = new RollbackInformation();
 
     bool openedObjectList = false;
     int currentWantedSize = 0;
@@ -24,11 +23,9 @@ public class RollbackTool : EditorWindow {
     void OnGUI() {
         openedObjectList = EditorGUILayout.Foldout(openedObjectList, "Rollback object list");
         if (openedObjectList) {
-            
+
             currentWantedSize += 1;
-            
-            completeRollbackInformation.Clear();
-            
+
             rollbackInformation.Resize(currentWantedSize);
 
             for (int i = 0; i < currentWantedSize; i++) {
@@ -55,31 +52,10 @@ public class RollbackTool : EditorWindow {
                         rollbackInformation.objectsToRollback[i].AddComponent<RollbackComponent>();
                     }
                 } else {
-                    RefreshCompleteList();
                     currentWantedSize = i;
                     break;
                 }
             }
-        }
-    }
-
-    static void RefreshCompleteList() {
-        completeRollbackInformation.Clear();
-        for (int i = 0; i < rollbackInformation.objectsToRollback.Count; i++) {
-            if (rollbackInformation.objectsToRollback[i] != null) {
-                AddChildrenToList(rollbackInformation.objectsToRollback[i]);
-            }
-        }
-    }
-
-    static void AddChildrenToList(GameObject gameObject) {
-        completeRollbackInformation.Add(gameObject);
-        int numChildren = gameObject.transform.childCount;
-        for (int i = 0; i < numChildren; i++) {
-            GameObject newObj = gameObject.transform.GetChild(i).gameObject;
-            completeRollbackInformation.Add(newObj);
-            
-            AddChildrenToList(newObj);
         }
     }
 
