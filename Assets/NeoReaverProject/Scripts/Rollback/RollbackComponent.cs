@@ -8,7 +8,6 @@ public class RollbackComponent : MonoBehaviour
 {
     [SerializeField] public List<string> rollbackedComponentsName = new List<string>();
     [SerializeField] public List<bool> doRollbackComponents = new List<bool>();
-    //[SerializeField] public Dictionary<string, bool> rollbackedComponents = new Dictionary<string, bool>();
 
     [SerializeField] List<RollbackElement> elementsToRollback;
     

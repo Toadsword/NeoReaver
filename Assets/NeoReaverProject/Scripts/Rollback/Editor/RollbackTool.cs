@@ -75,6 +75,7 @@ public class RollbackTool : EditorWindow {
 
         if (UnityEditor.EditorApplication.isPaused) {
             if (GUILayout.Button("Resume", GUILayout.Width(100), GUILayout.Height(20))) {
+                _rollbackManager.Rollback(_rollbackManager.GetCurrentFrameNum(), true);
                 UnityEditor.EditorApplication.isPaused = false;
             }
         } else {
@@ -96,6 +97,19 @@ public class RollbackTool : EditorWindow {
 
     private void DisplayInformations() {
         if (UnityEditor.EditorApplication.isPlaying && _rollbackManager != null) {
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("CurrentFrame", GUILayout.Width(100));
+            int newFrameNum = (int)GUILayout.HorizontalSlider(_rollbackManager.GetCurrentFrameNum(), 0, _rollbackManager.GetMaxFramesNum());
+            if (newFrameNum > _rollbackManager.GetCurrentFrameNum()) {
+                _rollbackManager.GoForward(newFrameNum);
+                UnityEditor.EditorApplication.isPaused = true;
+                
+            } else if (newFrameNum < _rollbackManager.GetCurrentFrameNum()){
+                _rollbackManager.Rollback(newFrameNum, false);
+                UnityEditor.EditorApplication.isPaused = true;
+            }
+            EditorGUILayout.EndHorizontal();
+            
             GUILayout.Label("Current frame number : " + _rollbackManager.GetCurrentFrameNum() + " / " + _rollbackManager.GetMaxFramesNum());
         }
     }
