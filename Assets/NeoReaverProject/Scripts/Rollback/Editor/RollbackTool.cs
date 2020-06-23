@@ -7,7 +7,6 @@ public class RollbackTool : EditorWindow {
     public static RollbackInformation rollbackInformation = new RollbackInformation();
 
     RollbackManager _rollbackManager;
-    bool justCreatedManager = false;
     
     bool openedObjectList = false;
     int currentWantedSize = 0;
@@ -16,8 +15,6 @@ public class RollbackTool : EditorWindow {
     public static void ShowWindow() {
 
         UpdateInformationList();
-        //rollbackObjectsList = new List<Object>(); 
-        //instancesIdList = new List<int>();
         GetWindow(typeof(RollbackTool));
     }
     
@@ -27,6 +24,8 @@ public class RollbackTool : EditorWindow {
 
     void OnGUI() {
         DisplayRollbackEditionButtons();
+
+        DisplayInformations();
         
         DisplayAllRollbackEntities();
     }
@@ -37,16 +36,8 @@ public class RollbackTool : EditorWindow {
                 _rollbackManager = GameObject.FindObjectOfType<RollbackManager>(); 
                 if (_rollbackManager == null) {
                     _rollbackManager = Instantiate(Resources.Load("RollbackManagerPrefab") as GameObject, Vector3.zero, Quaternion.identity).GetComponent<RollbackManager>();
-                    justCreatedManager = true;
                 }
                 break;
-            case PlayModeStateChange.EnteredEditMode: {
-                if (justCreatedManager) {
-                    justCreatedManager = false;
-                    Destroy(_rollbackManager.gameObject);
-                }
-                break;
-            }
         }
     }
 
@@ -61,8 +52,15 @@ public class RollbackTool : EditorWindow {
     private void DisplayRollbackEditionButtons() {
         EditorGUILayout.BeginHorizontal();
         
-        if (GUILayout.Button("<", GUILayout.Width(20), GUILayout.Height(20))) {
-            
+        
+        if (GUILayout.Button("<=", GUILayout.Width(30), GUILayout.Height(20))) {
+            _rollbackManager.Rollback(0, false);
+            UnityEditor.EditorApplication.isPaused = true;
+        }
+        
+        if (GUILayout.Button("<", GUILayout.Width(30), GUILayout.Height(20))) {
+            _rollbackManager.Rollback(_rollbackManager.GetCurrentFrameNum() - 1, false);
+            UnityEditor.EditorApplication.isPaused = true;
         }
 
         if (UnityEditor.EditorApplication.isPlaying){
@@ -85,12 +83,23 @@ public class RollbackTool : EditorWindow {
             }
         }
 
-        if (GUILayout.Button(">", GUILayout.Width(20), GUILayout.Height(20))) {
-            
+        if (GUILayout.Button(">", GUILayout.Width(30), GUILayout.Height(20))) {
+            _rollbackManager.GoForward(_rollbackManager.GetCurrentFrameNum() + 1);
+        }
+        
+        if (GUILayout.Button("=>", GUILayout.Width(30), GUILayout.Height(20))) {
+            _rollbackManager.GoForward(_rollbackManager.GetMaxFramesNum());
         }
         
         EditorGUILayout.EndHorizontal();
     }
+
+    private void DisplayInformations() {
+        if (UnityEditor.EditorApplication.isPlaying && _rollbackManager != null) {
+            GUILayout.Label("Current frame number : " + _rollbackManager.GetCurrentFrameNum() + " / " + _rollbackManager.GetMaxFramesNum());
+        }
+    }
+    
     private void DisplayAllRollbackEntities() {
         openedObjectList = EditorGUILayout.Foldout(openedObjectList, "Rollback object list");
         if (openedObjectList) {

@@ -6,7 +6,6 @@ using UnityEngine;
 [Serializable]
 public class RollbackComponent : MonoBehaviour
 {
-    
     [SerializeField] public List<string> rollbackedComponentsName = new List<string>();
     [SerializeField] public List<bool> doRollbackComponents = new List<bool>();
     //[SerializeField] public Dictionary<string, bool> rollbackedComponents = new Dictionary<string, bool>();
@@ -31,16 +30,21 @@ public class RollbackComponent : MonoBehaviour
         }
     }
 
-    public void SaveState() {
+    public void SaveCurrentFrame() {
         foreach (RollbackElement rbElement in elementsToRollback) {
-            rbElement.SaveData();
+            rbElement.SaveFrame();
         }
     }
 
-    public void RestoreState(int frameNumber) {
-
+    public void GoBackToFrame(int frameNumber, bool deleteFrames) {
         foreach (RollbackElement rbElement in elementsToRollback) {
-            rbElement.Restore(frameNumber);
+            rbElement.GoBack(frameNumber, deleteFrames);
+        }
+    }
+
+    public void GoForward(int frameNumber) {
+        foreach (RollbackElement rbElement in elementsToRollback) {
+            rbElement.GoForward(frameNumber);
         }
     }
 

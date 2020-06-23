@@ -21,24 +21,35 @@ public class TransformRollback : RollbackElement {
         lastSavedFrame = 0;
     }
     
-    public override void SaveData() {
+    public override void SaveFrame() {
         positions.Add(_refGameObject.transform.position);
         rotations.Add(_refGameObject.transform.rotation);
         lastSavedFrame++;
     }
-
-    public override void Restore(int frameNumber) {
+    
+    public override void GoBack(int frameNumber, bool deleteFrames) {
         if (lastSavedFrame < frameNumber) {
             Debug.LogError("Cannot restore from higher number of registered frames");
             return;
         }
+        
         _refGameObject.transform.position = positions[frameNumber - 1];
         _refGameObject.transform.rotation = rotations[frameNumber - 1];
-        
-        positions.RemoveAt(positions.Count - 1);
-        rotations.RemoveAt(rotations.Count - 1);
-        
-        lastSavedFrame = frameNumber;
+
+        if (deleteFrames) {
+            positions.RemoveAt(positions.Count - 1);
+            rotations.RemoveAt(rotations.Count - 1);
+
+            lastSavedFrame = frameNumber;
+        }
     }
 
+    public override void GoForward(int frameNumber) {
+        if (lastSavedFrame < frameNumber) {
+            Debug.LogError("Cannot forward from higher number of registered frames");
+            return;
+        }
+        _refGameObject.transform.position = positions[frameNumber - 1];
+        _refGameObject.transform.rotation = rotations[frameNumber - 1];
+    }
 }

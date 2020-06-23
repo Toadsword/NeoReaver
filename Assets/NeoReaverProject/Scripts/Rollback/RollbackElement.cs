@@ -11,11 +11,15 @@ public class RollbackElement{
     }
     
     // Start is called before the first frame update
-    public virtual void SaveData() {
+    public virtual void SaveFrame() {
         Debug.LogError("SaveData from RollbackElement not implemented");
     }
 
-    public virtual void Restore(int frameNumber) {
-        Debug.LogError("Restore from RollbackElement not implemented");
+    public virtual void GoBack(int frameNumber, bool deleteFrame) {
+        Debug.LogError("GoBack from RollbackElement not implemented");
+    }
+
+    public virtual void GoForward(int frameNumber) {
+        Debug.LogError("GoForward from RollbackElement not implemented");
     }
 }
