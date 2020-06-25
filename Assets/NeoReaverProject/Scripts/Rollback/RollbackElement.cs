@@ -24,12 +24,10 @@ public abstract class RollbackElement{
     protected abstract void GoToFrame(int frameNumber);
 
     private void DeleteFrames(int fromFrameNumber, int toFrameNumber) {
-        Debug.Log("Delete frame from" + fromFrameNumber + " to " + toFrameNumber);
         for (int i = toFrameNumber; i > fromFrameNumber; i--) {
             DeleteFrame(i);
         }
     }
     
     protected abstract void DeleteFrame(int frameNumber);
-
 }
