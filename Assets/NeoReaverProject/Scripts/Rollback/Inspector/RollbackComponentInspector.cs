@@ -32,13 +32,31 @@ public class RollbackComponentInspector : Editor {
             RefreshComponentList();
         }
 
+        CheckListsSize();
+        
+        
+        //Header of list
+        GUILayout.BeginHorizontal();
+        
+        GUILayout.Label("Component name");
+        GUILayout.FlexibleSpace();
+        GUILayout.Label("Track info when rollback");
+        GUILayout.Label("Disable script when rollback");
+        GUILayout.EndHorizontal();
+
         bool valueChanged = false;
         //Display all the elements in the dictionnaries
         for(int i = 0; i < _rollbackComponent.rollbackedComponentsName.Count; i++) {
-            bool temp = _rollbackComponent.doRollbackComponents[i];
-            _rollbackComponent.doRollbackComponents[i] = GUILayout.Toggle(_rollbackComponent.doRollbackComponents[i], _rollbackComponent.rollbackedComponentsName[i]);
+            GUILayout.BeginHorizontal();
+            
+            bool tempRbComp = _rollbackComponent.doRollbackComponents[i];
+            
+            GUILayout.Label(_rollbackComponent.rollbackedComponentsName[i]);
+            GUILayout.FlexibleSpace();
+            _rollbackComponent.doRollbackComponents[i] = GUILayout.Toggle(_rollbackComponent.doRollbackComponents[i], GUIContent.none);
+            GUILayout.EndHorizontal();
 
-            if (temp != _rollbackComponent.doRollbackComponents[i]) {
+            if (tempRbComp != _rollbackComponent.doRollbackComponents[i]) {
                 valueChanged = true;
             }
         }
@@ -55,19 +73,29 @@ public class RollbackComponentInspector : Editor {
     private void RefreshComponentList() {
         Component[] components = _rollbackComponent.gameObject.GetComponents<Component>();
 
-        Dictionary<string, bool> copiedDico = new Dictionary<string, bool>();
+        Dictionary<string, bool> copiedCompDico = new Dictionary<string, bool>();
         for (int i = 0; i < _rollbackComponent.rollbackedComponentsName.Count; i++) {
-            copiedDico.Add(_rollbackComponent.rollbackedComponentsName[i], _rollbackComponent.doRollbackComponents[i]);
+            copiedCompDico.Add(_rollbackComponent.rollbackedComponentsName[i], _rollbackComponent.doRollbackComponents.Count > i && _rollbackComponent.doRollbackComponents[i]);
         }
 
         _rollbackComponent.rollbackedComponentsName.Clear();
         _rollbackComponent.doRollbackComponents.Clear();
-        
+
         foreach(var component in components) {
-            bool temp = false;
-            copiedDico.TryGetValue(component.GetType().ToString(), out temp);
+            
             _rollbackComponent.rollbackedComponentsName.Add(component.GetType().ToString());
+            
+            //DoRollBackComponent
+            bool temp = false;
+            copiedCompDico.TryGetValue(component.GetType().ToString(), out temp);
             _rollbackComponent.doRollbackComponents.Add(temp);
+        }
+    }
+
+    private void CheckListsSize() {
+        int wantedSize = _rollbackComponent.rollbackedComponentsName.Count;
+        if (_rollbackComponent.doRollbackComponents.Count != wantedSize) {
+            RefreshComponentList();
         }
     }
 }

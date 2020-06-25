@@ -27,47 +27,29 @@ public class RollbackManager : MonoBehaviour {
     void FixedUpdate()
     {
         if (doRollback) {
-            Rollback(1);
+            GoToFrame(currentFrameNum - 1);
         } else {
             SaveCurrentFrame();
         }
     }
 
-    public void Rollback(int frameNumber, bool deleteFrames = true) {
-        if (currentFrameNum < frameNumber)
+    public void GoToFrame(int frameNumber, bool deleteFrames = true) {
+        if (maxFrameNum < frameNumber)
             return;
         
-        int numFrames = Mathf.Abs(frameNumber - currentFrameNum);
-        for (int i = 0; i < numFrames; i++) {
-            if (currentFrameNum == 0)
-                return; 
-            
-            foreach(RollbackComponent rollbackElement in rollbackElements)
-            {
-                rollbackElement.GoBackToFrame(currentFrameNum, deleteFrames);
-                rollbackElement.SetActivenessComponents(false);
-            } 
-            currentFrameNum--;
+        foreach(RollbackComponent rollbackElement in rollbackElements)
+        {
+            rollbackElement.GoToFrame(currentFrameNum, deleteFrames);
         }
-    }
 
-    public void GoForward(int frameNumber) {
-        int numFrames = Mathf.Abs(frameNumber - currentFrameNum);
-        for (int i = 0; i < numFrames; i++) {
-            currentFrameNum++;
-            foreach(RollbackComponent rollbackElement in rollbackElements)
-            {
-                rollbackElement.GoForward(currentFrameNum);
-                rollbackElement.SetActivenessComponents(false);
-            } 
-        }
+        currentFrameNum = frameNumber;
     }
+    
     
     public void SaveCurrentFrame() {
         foreach(RollbackComponent rollbackElement in rollbackElements)
         {
             rollbackElement.SaveCurrentFrame();
-            rollbackElement.SetActivenessComponents(true);
         }
         currentFrameNum++;
         maxFrameNum = currentFrameNum;

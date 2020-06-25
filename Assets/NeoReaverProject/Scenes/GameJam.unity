@@ -211,7 +211,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e47f81d0fcff42a4695f942420939b47, type: 3}
-  m_Color: {r: 1, g: 0.9198113, b: 0.9198113, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -267,6 +267,7 @@ MonoBehaviour:
   - NeoReaverProject.Scripts.PlayerController
   - RollbackComponent
   doRollbackComponents: 0101010000
+  disableComponents: 0000000000
 --- !u!114 &682128099
 MonoBehaviour:
   m_ObjectHideFlags: 0

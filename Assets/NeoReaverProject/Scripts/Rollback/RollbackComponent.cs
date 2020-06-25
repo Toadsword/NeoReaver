@@ -22,7 +22,15 @@ public class RollbackComponent : MonoBehaviour
                         transformRollback.Init(gameObject);
                         elementsToRollback.Add(transformRollback);
                         break;
+                    case "UnityEngine.SpriteRenderer":
+                        SpriteRendererRollback spriteRendererRollback = new SpriteRendererRollback();
+                        spriteRendererRollback.Init(gameObject);
+                        elementsToRollback.Add(spriteRendererRollback);
+                        break;
                     case "PlayerMovement":
+                        PlayerMovementRollback playerMovementRollback = new PlayerMovementRollback();
+                        playerMovementRollback.Init(gameObject);
+                        elementsToRollback.Add(playerMovementRollback);
                         break;
                 }
             }
@@ -35,27 +43,9 @@ public class RollbackComponent : MonoBehaviour
         }
     }
 
-    public void GoBackToFrame(int frameNumber, bool deleteFrames) {
+    public void GoToFrame(int frameNumber, bool deleteFrames) {
         foreach (RollbackElement rbElement in elementsToRollback) {
-            rbElement.GoBack(frameNumber, deleteFrames);
-        }
-    }
-
-    public void GoForward(int frameNumber) {
-        foreach (RollbackElement rbElement in elementsToRollback) {
-            rbElement.GoForward(frameNumber);
-        }
-    }
-
-    public void SetActivenessComponents(bool setActive) {
-        for(int i = 0; i < rollbackedComponentsName.Count; i++){
-            if (doRollbackComponents[i]) {
-                switch (rollbackedComponentsName[i]) {
-                    case "PlayerMovement":
-                        gameObject.GetComponent<PlayerMovement>().enabled = setActive;
-                        break;
-                }
-            }
+            rbElement.GoToFrame(frameNumber, deleteFrames);
         }
     }
 }
