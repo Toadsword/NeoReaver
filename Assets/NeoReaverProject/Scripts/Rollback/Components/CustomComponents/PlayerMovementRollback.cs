@@ -25,5 +25,6 @@ public class PlayerMovementRollback : RollbackElement {
 
     protected override void DeleteFrame(int frameNumber) {
         _directions.RemoveAt(frameNumber - 1);
+        totalSavedFrame = _directions.Count;
     }
 }

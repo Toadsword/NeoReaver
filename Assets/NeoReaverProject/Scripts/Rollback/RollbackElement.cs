@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.PlayerLoop;
+﻿using UnityEngine;
 
 public abstract class RollbackElement{
     protected int totalSavedFrame = 0;
@@ -28,11 +24,10 @@ public abstract class RollbackElement{
     protected abstract void GoToFrame(int frameNumber);
 
     private void DeleteFrames(int fromFrameNumber, int toFrameNumber) {
+        Debug.Log("Delete frame from" + fromFrameNumber + " to " + toFrameNumber);
         for (int i = toFrameNumber; i > fromFrameNumber; i--) {
             DeleteFrame(i);
         }
-        
-        totalSavedFrame = toFrameNumber - fromFrameNumber;
     }
     
     protected abstract void DeleteFrame(int frameNumber);

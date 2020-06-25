@@ -32,5 +32,6 @@ public class TransformRollback : RollbackElement {
     protected override void DeleteFrame(int frameNumber) {
         positions.RemoveAt(positions.Count - 1);
         rotations.RemoveAt(rotations.Count - 1);
+        totalSavedFrame = positions.Count;
     }
 }

@@ -43,10 +43,20 @@ public class RollbackManager : MonoBehaviour {
         }
 
         currentFrameNum = frameNumber;
+        if (deleteFrames) {
+            maxFrameNum = currentFrameNum;
+        }
     }
     
     
     public void SaveCurrentFrame() {
+        //If we try to save a frame while in restored state, we delete the first predicted future
+        if (currentFrameNum != maxFrameNum) {
+            foreach(RollbackComponent rollbackElement in rollbackElements) {
+                rollbackElement.GoToFrame(currentFrameNum, true);
+            }
+        }
+        
         foreach(RollbackComponent rollbackElement in rollbackElements)
         {
             rollbackElement.SaveCurrentFrame();
