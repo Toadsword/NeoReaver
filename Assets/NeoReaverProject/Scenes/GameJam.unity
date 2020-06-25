@@ -257,7 +257,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 682128094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32ecc8e83de63e047bd4e85f2a34cad5, type: 3}
+  m_Script: {fileID: 11500000, guid: fd0c9cba7cb86044a97bbf61cb98262b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rollbackedComponentsName:
@@ -265,9 +265,8 @@ MonoBehaviour:
   - UnityEngine.SpriteRenderer
   - PlayerMovement
   - NeoReaverProject.Scripts.PlayerController
-  - RollbackComponent
+  - EZRollback.Core.RollbackComponent
   doRollbackComponents: 0101010000
-  disableComponents: 0000000000
 --- !u!114 &682128099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,7 +280,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeedo: 7.5
-  minSpeedo: 0.5
+  minSpeedo: 0.2
   speedMultiplier: 1.01
   currentSpeedMultiplier: 0
   direction: {x: 0, y: 0}
