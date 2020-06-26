@@ -27,4 +27,9 @@ public class PlayerMovementRollback : RollbackElement {
         _directions.RemoveAt(frameNumber - 1);
         totalSavedFrame = _directions.Count;
     }
+
+    public override void Simulate() {
+        Debug.Log("PlayerMovementRollback.Simulate");
+        _refPlayerMovement.Simulate();
+    }
 }

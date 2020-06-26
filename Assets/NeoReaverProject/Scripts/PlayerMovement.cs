@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Security;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour, IRollbackComponent {
 
     [Serializable]
     enum MovementState {
@@ -81,5 +81,10 @@ public class PlayerMovement : MonoBehaviour {
 
         Vector3 currentDirection = new Vector3(Mathf.Cos(currentAngle) , Mathf.Sin(currentAngle), 0.0f);
         transform.position = initPosition + currentDirection * currentSpeedo * deltaTime;
+    }
+
+    public void Simulate() {
+        Debug.Log("Moveing Spaceship from PlayerMovement");
+        MoveSpaceship(transform.position, Time.fixedDeltaTime);
     }
 }
