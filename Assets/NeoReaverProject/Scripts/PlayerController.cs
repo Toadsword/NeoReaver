@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour {
     private float _horizontal = 0.0f;
     private float _vertical = 0.0f;
 
-    PlayerMovement _playerMovement;
+    [SerializeField] PlayerMovement _playerMovement;
     
     // Start is called before the first frame update
     void Start() {
@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour {
 
     void FixedUpdate() {
         //Input update
-        _playerMovement.direction = new Vector2(_horizontal, _vertical);
+        _playerMovement.direction.value = new Vector2(_horizontal, _vertical);
     }
 }
 }
