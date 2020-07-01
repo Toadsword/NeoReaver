@@ -247,6 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f8c7fc9d18739e4cb5b45a8acf68f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerMovement: {fileID: 0}
 --- !u!114 &682128099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,6 +512,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: RollbackManagerPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
+        type: 3}
+      propertyPath: bufferSize
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
+        type: 3}
+      propertyPath: bufferRestriction
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 096f619208d54234ca409cb26970225f, type: 3}

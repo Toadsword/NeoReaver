@@ -19,14 +19,14 @@ public class PlayerMovement : IRollbackBehaviour {
 
     Vector3 fixedLastUpdatePosition;
     [SerializeField] float midSpeedo;
-    [SerializeField] RollbackElement<float> currentSpeedo = new RollbackElement<float>();
     [SerializeField] MovementState currentMovementState;
 
     //Rollback elements
-    public RollbackElement<Vector2> direction = new RollbackElement<Vector2>();
+    [SerializeField] RollbackElement<float> currentSpeedo = new RollbackElement<float>();
     [SerializeField] RollbackElement<float> currentSpeedMultiplier = new RollbackElement<float>();
-    private RollbackElement<Vector3> positionRB = new RollbackElement<Vector3>();
-    private RollbackElement<Quaternion> rotationRB = new RollbackElement<Quaternion>();
+    [SerializeField] public RollbackElement<Vector2> direction = new RollbackElement<Vector2>();
+    [SerializeField] private RollbackElement<Vector3> positionRB = new RollbackElement<Vector3>();
+    [SerializeField] private RollbackElement<Quaternion> rotationRB = new RollbackElement<Quaternion>();
     
     void Start() {
         currentSpeedo.value = 5.0f;
@@ -97,12 +97,12 @@ public class PlayerMovement : IRollbackBehaviour {
         transform.rotation = rotationRB.value;
     }
 
-    public override void DeleteFrames(int fromFrame, int toFrame) {
-        currentSpeedMultiplier.DeleteFrames(fromFrame, toFrame);
-        currentSpeedo.DeleteFrames(fromFrame, toFrame);
-        direction.DeleteFrames(fromFrame, toFrame);
-        positionRB.DeleteFrames(fromFrame, toFrame);
-        rotationRB.DeleteFrames(fromFrame, toFrame);
+    public override void DeleteFrames(int fromFrame, int numFramesToDelete) {
+        currentSpeedMultiplier.DeleteFrames(fromFrame, numFramesToDelete);
+        currentSpeedo.DeleteFrames(fromFrame, numFramesToDelete);
+        direction.DeleteFrames(fromFrame, numFramesToDelete);
+        positionRB.DeleteFrames(fromFrame, numFramesToDelete);
+        rotationRB.DeleteFrames(fromFrame, numFramesToDelete);
     }
 
     public override void SaveFrame() {
