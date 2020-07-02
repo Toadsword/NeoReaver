@@ -7,8 +7,8 @@ public class PlayerController : MonoBehaviour {
     private float _horizontal = 0.0f;
     private float _vertical = 0.0f;
 
-    [SerializeField] PlayerMovement _playerMovement;
-    
+    PlayerMovement _playerMovement;
+
     // Start is called before the first frame update
     void Start() {
         _playerMovement = GetComponent<PlayerMovement>();

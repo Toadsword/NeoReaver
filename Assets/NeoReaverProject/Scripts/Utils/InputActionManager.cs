@@ -22,7 +22,6 @@ public static class InputActionManager {
         ACTION_BACK,
         
         SHOOT,
-
         PAUSE
     }
     public enum AxisType

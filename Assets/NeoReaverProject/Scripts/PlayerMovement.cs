@@ -12,6 +12,8 @@ public class PlayerMovement : IRollbackBehaviour {
         MOVING,
         CHANGING_DIRECTION
     }
+
+    [SerializeField] bool movable = false;
     
     [SerializeField] float maxSpeedo = 5.0f;
     [SerializeField] float minSpeedo = 0.2f;
@@ -36,6 +38,10 @@ public class PlayerMovement : IRollbackBehaviour {
 
     private void MoveSpaceship(Vector3 initPosition, float deltaTime) {
 
+        if (!movable) {
+            return;
+        }
+        
         float angle = Mathf.Atan2(direction.value.y, direction.value.x) * Mathf.Rad2Deg - 90.0f;
         float currentAngle = (transform.rotation.eulerAngles.z + 90.0f) * Mathf.Deg2Rad;
         Quaternion newRotation = transform.rotation;
