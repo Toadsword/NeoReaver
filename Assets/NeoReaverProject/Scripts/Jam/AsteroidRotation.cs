@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using EZRollback.Core.Component;
 using UnityEngine;
 
-public class AsteroidRotation : MonoBehaviour {
+public class AsteroidRotation : IRollbackBehaviour {
     [SerializeField] float minRotateSpeed = -120.0f;
     [SerializeField] float maxRotateSpeed = 120.0f;
 
@@ -18,4 +19,14 @@ public class AsteroidRotation : MonoBehaviour {
     {
         transform.Rotate(currentRotateSpeed * Time.deltaTime);
     }
+
+    public override void Simulate() {
+        transform.Rotate(currentRotateSpeed * Time.fixedDeltaTime);
+    }
+
+    public override void GoToFrame(int frameNumber) { }
+
+    public override void DeleteFrames(int fromFrame, int numFramesToDelete) { }
+
+    public override void SaveFrame() { }
 }
