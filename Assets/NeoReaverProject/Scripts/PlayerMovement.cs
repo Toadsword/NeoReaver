@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security;
+using EZRollback.Core.Component;
 using UnityEngine;
 
 public class PlayerMovement : IRollbackBehaviour {
@@ -27,7 +28,6 @@ public class PlayerMovement : IRollbackBehaviour {
     [SerializeField] RollbackElement<float> currentSpeedo = new RollbackElement<float>();
     [SerializeField] RollbackElement<float> currentSpeedMultiplier = new RollbackElement<float>();
     [SerializeField] public RollbackElement<Vector2> direction = new RollbackElement<Vector2>();
-    [SerializeField] private RollbackElement<Vector3> positionRB = new RollbackElement<Vector3>();
     [SerializeField] private RollbackElement<Quaternion> rotationRB = new RollbackElement<Quaternion>();
     
     void Start() {
@@ -96,10 +96,8 @@ public class PlayerMovement : IRollbackBehaviour {
         currentSpeedMultiplier.SetValueFromFrameNumber(frameNumber);
         currentSpeedo.SetValueFromFrameNumber(frameNumber);
         direction.SetValueFromFrameNumber(frameNumber);
-        positionRB.SetValueFromFrameNumber(frameNumber);
         rotationRB.SetValueFromFrameNumber(frameNumber);
 
-        transform.position = positionRB.value;
         transform.rotation = rotationRB.value;
     }
 
@@ -107,7 +105,6 @@ public class PlayerMovement : IRollbackBehaviour {
         currentSpeedMultiplier.DeleteFrames(fromFrame, numFramesToDelete);
         currentSpeedo.DeleteFrames(fromFrame, numFramesToDelete);
         direction.DeleteFrames(fromFrame, numFramesToDelete);
-        positionRB.DeleteFrames(fromFrame, numFramesToDelete);
         rotationRB.DeleteFrames(fromFrame, numFramesToDelete);
     }
 
@@ -115,7 +112,6 @@ public class PlayerMovement : IRollbackBehaviour {
         currentSpeedMultiplier.SaveFrame();
         currentSpeedo.SaveFrame();
         direction.SaveFrame();
-        positionRB.SetAndSaveValue(transform.position);
         rotationRB.SetAndSaveValue(transform.rotation);
     }
 }
