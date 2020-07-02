@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 1402660852}
   - component: {fileID: 1402660851}
   - component: {fileID: 1402660854}
+  - component: {fileID: 1402660855}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -220,6 +221,18 @@ MonoBehaviour:
   minCameraSize: 5
   maxCameraSize: 10
   radiusAroundPlayer: 2.5
+--- !u!114 &1402660855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1402660850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a5126e6d8a3d7a4baaedd75151a2194, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1406155996
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -359,7 +372,7 @@ PrefabInstance:
     - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
         type: 3}
       propertyPath: bufferSize
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
         type: 3}

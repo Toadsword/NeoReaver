@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using EZRollback.Core.Component;
 using NeoReaverProject.Scripts;
 using UnityEngine;
 
-public class CameraScale : MonoBehaviour {
+public class CameraScale : IRollbackBehaviour {
     List<PlayerController> _players;
+
+    RollbackElement<float> calculatedSizes = new RollbackElement<float>();
 
     Camera _camera;
     
@@ -30,6 +33,11 @@ public class CameraScale : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        Simulate();
+    }
+
+    private void CalculateNewCamera() {
+        
         upRightPoint = Vector2.negativeInfinity;
         downLeftPoint = Vector2.positiveInfinity;
         //Calculate points
@@ -74,5 +82,21 @@ public class CameraScale : MonoBehaviour {
             calculatedSize = maxCameraSize;
 
         _camera.orthographicSize = calculatedSize;
+    }
+
+    public override void Simulate() {
+        CalculateNewCamera();
+    }
+
+    public override void GoToFrame(int frameNumber) {
+        calculatedSizes.SetValueFromFrameNumber(frameNumber);
+    }
+
+    public override void DeleteFrames(int fromFrame, int numFramesToDelete) {
+        calculatedSizes.DeleteFrames(fromFrame, numFramesToDelete);
+    }
+
+    public override void SaveFrame() {
+        calculatedSizes.SaveFrame();
     }
 }
