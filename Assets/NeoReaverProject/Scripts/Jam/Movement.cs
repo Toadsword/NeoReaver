@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Permissions;
-using EZRollback.Core.Component;
 using UnityEngine;
 
 public class Movement : MonoBehaviour {

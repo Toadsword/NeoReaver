@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security;
-using EZRollback.Core.Component;
 using UnityEngine;
+using Packages.EZRollback.Runtime.Scripts;
 
 public class PlayerMovement : IRollbackBehaviour {
 
@@ -23,29 +23,33 @@ public class PlayerMovement : IRollbackBehaviour {
     Vector3 fixedLastUpdatePosition;
     [SerializeField] float midSpeedo;
     [SerializeField] MovementState currentMovementState;
-
-    //Rollback elements
-    [SerializeField] RollbackElement<float> currentSpeedo = new RollbackElement<float>();
-    [SerializeField] RollbackElement<float> currentSpeedMultiplier = new RollbackElement<float>();
-    [SerializeField] public RollbackElement<Vector2> direction = new RollbackElement<Vector2>();
-    [SerializeField] private RollbackElement<Quaternion> rotationRB = new RollbackElement<Quaternion>();
+    
+    [Serializable]
+    public struct ElementsToRollback {
+        public float currentSpeedo;
+        public float currentSpeedMultiplier;
+        public Vector2 direction;
+    }
+    
+    [SerializeField] public RollbackElement<ElementsToRollback> rbElements = new RollbackElement<ElementsToRollback>();
     
     void Start() {
-        currentSpeedo.value = 5.0f;
+        rbElements.value.currentSpeedo = 5.0f;
+        rbElements.value.currentSpeedMultiplier = speedMultiplier;
+        
         midSpeedo = (maxSpeedo + minSpeedo) / 2.0f;
-        currentSpeedMultiplier.value = speedMultiplier;
     }
 
-    private void MoveSpaceship(Vector3 initPosition, float deltaTime) {
+    private void MoveSpaceship(Vector3 initPosition) {
 
         if (!movable) {
             return;
         }
         
-        float angle = Mathf.Atan2(direction.value.y, direction.value.x) * Mathf.Rad2Deg - 90.0f;
+        float angle = Mathf.Atan2(rbElements.value.direction.y, rbElements.value.direction.x) * Mathf.Rad2Deg - 90.0f;
         float currentAngle = (transform.rotation.eulerAngles.z + 90.0f) * Mathf.Deg2Rad;
         Quaternion newRotation = transform.rotation;
-        if (direction.value != Vector2.zero) 
+        if (rbElements.value.direction != Vector2.zero) 
         {
             newRotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * 450.0f);
             // Calculating new state
@@ -62,56 +66,45 @@ public class PlayerMovement : IRollbackBehaviour {
         float checkingMaxSpeedo = maxSpeedo;
         switch (currentMovementState) {
             case MovementState.IDLE:
-                currentSpeedMultiplier.value = speedMultiplier;
-                currentSpeedo.value /= currentSpeedMultiplier.value;
+                rbElements.value.currentSpeedMultiplier = speedMultiplier;
+                rbElements.value.currentSpeedo /= rbElements.value.currentSpeedMultiplier;
                 break;
             case MovementState.MOVING:
-                currentSpeedo.value *= currentSpeedMultiplier.value * 5.0f;
+                rbElements.value.currentSpeedo *= rbElements.value.currentSpeedMultiplier * 5.0f;
                 break;
             case MovementState.CHANGING_DIRECTION:
                 if (currentAngle - angle > 60.0f) {
-                    currentSpeedMultiplier.value = speedMultiplier;
+                    rbElements.value.currentSpeedMultiplier = speedMultiplier;
                 } else {
-                    currentSpeedo.value *= currentSpeedMultiplier.value;
+                    rbElements.value.currentSpeedo *= rbElements.value.currentSpeedMultiplier;
                 } 
                 break;
         }
             
-        if (currentSpeedo.value > checkingMaxSpeedo) {
-            currentSpeedo.value = checkingMaxSpeedo;
+        if (rbElements.value.currentSpeedo > checkingMaxSpeedo) {
+            rbElements.value.currentSpeedo = checkingMaxSpeedo;
         }
-        if (currentSpeedo.value < minSpeedo) {
-            currentSpeedo.value = minSpeedo;
+        if (rbElements.value.currentSpeedo < minSpeedo) {
+            rbElements.value.currentSpeedo = minSpeedo;
         }
 
         Vector3 currentDirection = new Vector3(Mathf.Cos(currentAngle) , Mathf.Sin(currentAngle), 0.0f);
-        transform.position = initPosition + currentDirection * currentSpeedo.value * deltaTime;
+        transform.position = initPosition + currentDirection * rbElements.value.currentSpeedo * Time.fixedDeltaTime;
     }
 
     public override void Simulate() {
-        MoveSpaceship(transform.position, Time.fixedDeltaTime);
+        MoveSpaceship(transform.position);
     }
 
     public override void GoToFrame(int frameNumber) {
-        currentSpeedMultiplier.SetValueFromFrameNumber(frameNumber);
-        currentSpeedo.SetValueFromFrameNumber(frameNumber);
-        direction.SetValueFromFrameNumber(frameNumber);
-        rotationRB.SetValueFromFrameNumber(frameNumber);
-
-        transform.rotation = rotationRB.value;
+        rbElements.SetValueFromFrameNumber(frameNumber);
     }
 
-    public override void DeleteFrames(int fromFrame, int numFramesToDelete) {
-        currentSpeedMultiplier.DeleteFrames(fromFrame, numFramesToDelete);
-        currentSpeedo.DeleteFrames(fromFrame, numFramesToDelete);
-        direction.DeleteFrames(fromFrame, numFramesToDelete);
-        rotationRB.DeleteFrames(fromFrame, numFramesToDelete);
+    public override void DeleteFrames(int numFramesToDelete, bool fromFrames) {
+        rbElements.DeleteFrames(numFramesToDelete, fromFrames);
     }
 
     public override void SaveFrame() {
-        currentSpeedMultiplier.SaveFrame();
-        currentSpeedo.SaveFrame();
-        direction.SaveFrame();
-        rotationRB.SetAndSaveValue(transform.rotation);
+        rbElements.SaveFrame();
     }
 }

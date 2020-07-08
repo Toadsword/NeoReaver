@@ -77,25 +77,29 @@ public static class InputActionManager {
                 result = GetInput(InputControlType.LeftStickLeft, timeType, device) ||
                          GetInput(InputControlType.DPadLeft, timeType, device) ||
                          GetInput(InputControlType.RightStickLeft, timeType, device) ||
-                         GetInput(KeyCode.RightArrow, timeType);
+                         GetInput(KeyCode.RightArrow, timeType) ||
+                         GetInput(KeyCode.D, timeType);
                 break;
             case InputType.RIGHT:
                 result = GetInput(InputControlType.LeftStickRight, timeType, device) ||
                          GetInput(InputControlType.DPadRight, timeType, device) ||
                          GetInput(InputControlType.RightStickRight, timeType, device) ||
-                         GetInput(KeyCode.LeftArrow, timeType);
+                         GetInput(KeyCode.LeftArrow, timeType) ||
+                         GetInput(KeyCode.A, timeType);
                 break;
             case InputType.UP:
                 result = GetInput(InputControlType.LeftStickUp, timeType, device) ||
                          GetInput(InputControlType.DPadUp, timeType, device) ||
                          GetInput(InputControlType.RightStickUp, timeType, device) ||
-                         GetInput(KeyCode.UpArrow, timeType);
+                         GetInput(KeyCode.UpArrow, timeType) ||
+                         GetInput(KeyCode.W, timeType);
                 break;
             case InputType.DOWN:
                 result = GetInput(InputControlType.LeftStickDown, timeType, device) ||
                          GetInput(InputControlType.DPadDown, timeType, device) ||
                          GetInput(InputControlType.RightStickDown, timeType, device) ||
-                         GetInput(KeyCode.DownArrow, timeType);
+                         GetInput(KeyCode.DownArrow, timeType) ||
+                         GetInput(KeyCode.S, timeType);
                 break;
             case InputType.ACTION_CONFIRM:
                 result = GetInput(InputControlType.Action1, timeType) ;
@@ -230,6 +234,15 @@ public static class InputActionManager {
         return deltaMove;
     }
 
+    public static sbyte GetAxisSByte(AxisType axisType, InputDevice inputDevice = null) {
+        float value = GetAxis(axisType, inputDevice);
+        return (sbyte)(value * 127f);
+    }
+    
+    public static float GetAxisValueFromSByte(sbyte value) {
+        return value / 127f;
+    }
+    
     // Asks for the screenPosition if using the keyboard
     public static Vector2 GetDirection(DirectionType directionType, Vector2 origin, InputDevice inputDevice = null)
     {

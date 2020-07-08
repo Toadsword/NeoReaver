@@ -28,7 +28,7 @@ public class CustomPlayer : Player
     public int Color { get; set; }
     
     // Implement current player input and send it through network
-    public List<FrameInput> inputHistory;
+    //public List<FrameInput> inputHistory;
 
     private int LastUpdateFrame { get; set; }
 
@@ -78,7 +78,7 @@ public class CustomPlayer : Player
             bufferSize = (int)evContent[(byte)1];
         }
         if (evContent.ContainsKey((byte) 2)) {
-            FrameInput[] inputs = (FrameInput[])evContent[(byte)2];
+            //FrameInput[] inputs = (FrameInput[])evContent[(byte)2];
 
         }
         

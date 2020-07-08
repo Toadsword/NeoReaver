@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour {
 
     void FixedUpdate() {
         //Input update
-        _playerMovement.direction.value = new Vector2(_horizontal, _vertical);
+        _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
     }
 }
 }

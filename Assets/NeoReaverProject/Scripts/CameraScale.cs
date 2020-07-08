@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using EZRollback.Core.Component;
 using NeoReaverProject.Scripts;
 using UnityEngine;
+using Packages.EZRollback.Runtime.Scripts;
 
 public class CameraScale : IRollbackBehaviour {
     List<PlayerController> _players;
@@ -82,6 +82,7 @@ public class CameraScale : IRollbackBehaviour {
             calculatedSize = maxCameraSize;
 
         _camera.orthographicSize = calculatedSize;
+        calculatedSizes.value = calculatedSize;
     }
 
     public override void Simulate() {
@@ -90,10 +91,11 @@ public class CameraScale : IRollbackBehaviour {
 
     public override void GoToFrame(int frameNumber) {
         calculatedSizes.SetValueFromFrameNumber(frameNumber);
+        _camera.orthographicSize = calculatedSizes.value;
     }
 
-    public override void DeleteFrames(int fromFrame, int numFramesToDelete) {
-        calculatedSizes.DeleteFrames(fromFrame, numFramesToDelete);
+    public override void DeleteFrames(int numFrames, bool fromFirst) {
+        calculatedSizes.DeleteFrames(numFrames, fromFirst);
     }
 
     public override void SaveFrame() {

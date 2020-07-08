@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using EZRollback.Core.Component;
+using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
 public class AsteroidRotation : IRollbackBehaviour {
@@ -26,7 +26,7 @@ public class AsteroidRotation : IRollbackBehaviour {
 
     public override void GoToFrame(int frameNumber) { }
 
-    public override void DeleteFrames(int fromFrame, int numFramesToDelete) { }
+    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) { }
 
     public override void SaveFrame() { }
 }
