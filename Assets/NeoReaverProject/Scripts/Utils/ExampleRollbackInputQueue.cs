@@ -19,8 +19,8 @@ public class ExampleRollbackInputQueue : InputQueue
         SetBitFromAction(InputActionManager.InputType.DOWN, ref actionsValue);
         SetBitFromAction(InputActionManager.InputType.SHOOT, ref actionsValue);
 
-        actionsValue.horizontalValue = InputActionManager.GetAxisSByte(InputActionManager.AxisType.HORIZONTAL);
-        actionsValue.verticalValue = InputActionManager.GetAxisSByte(InputActionManager.AxisType.VERTICAL);
+        actionsValue.horizontalValue = TransformAxisValueToSByte(InputActionManager.GetAxis(InputActionManager.AxisType.HORIZONTAL));
+        actionsValue.verticalValue = TransformAxisValueToSByte(InputActionManager.GetAxis(InputActionManager.AxisType.VERTICAL));
 
         _baseActions.value = actionsValue;
     }

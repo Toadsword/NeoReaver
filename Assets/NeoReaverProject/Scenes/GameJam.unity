@@ -561,12 +561,12 @@ PrefabInstance:
     - target: {fileID: 7755034797764533140, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.23
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7755034797764533140, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.44
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7755034797764533140, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
@@ -613,10 +613,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7755034797764533141, guid: ee1f38d8727613c4293190dc8a5e3f0a,
+        type: 3}
+      propertyPath: framesInDecal
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7755034797764533143, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
       propertyPath: movable
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7755034797764533162, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
@@ -752,12 +757,12 @@ PrefabInstance:
     - target: {fileID: 7755034797764533140, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.76
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7755034797764533140, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.44
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7755034797764533140, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
@@ -802,6 +807,11 @@ PrefabInstance:
     - target: {fileID: 7755034797764533140, guid: ee1f38d8727613c4293190dc8a5e3f0a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7755034797764533141, guid: ee1f38d8727613c4293190dc8a5e3f0a,
+        type: 3}
+      propertyPath: framesInDecal
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7755034797764533162, guid: ee1f38d8727613c4293190dc8a5e3f0a,

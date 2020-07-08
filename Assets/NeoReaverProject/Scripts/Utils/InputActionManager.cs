@@ -234,15 +234,6 @@ public static class InputActionManager {
         return deltaMove;
     }
 
-    public static sbyte GetAxisSByte(AxisType axisType, InputDevice inputDevice = null) {
-        float value = GetAxis(axisType, inputDevice);
-        return (sbyte)(value * 127f);
-    }
-    
-    public static float GetAxisValueFromSByte(sbyte value) {
-        return value / 127f;
-    }
-    
     // Asks for the screenPosition if using the keyboard
     public static Vector2 GetDirection(DirectionType directionType, Vector2 origin, InputDevice inputDevice = null)
     {
