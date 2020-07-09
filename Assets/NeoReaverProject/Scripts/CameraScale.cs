@@ -72,8 +72,10 @@ public class CameraScale : IRollbackBehaviour {
     }
 
     private void CalculateCameraPosition() {
-        transform.position = (upRightPoint + downLeftPoint) / 2.0f;
-        transform.position = new Vector3(transform.position.x, transform.position.y, -10.0f);
+        var position = transform.position;
+        position = (upRightPoint + downLeftPoint) / 2.0f;
+        position = new Vector3(position.x, position.y, -10.0f);
+        transform.position = position;
     }
 
     private void CalculateCameraSize() {
