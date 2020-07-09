@@ -80,7 +80,7 @@ public class ExampleRollbackInputQueue : InputQueue {
 
             if (_playerPrefab != null)
             {
-                Vector3 spawnPosition = new Vector3(0,0,-20); //Behind the camera
+                Vector3 spawnPosition = new Vector3(0,0,0); //Behind the camera
 
                 GameObject newPlayerObj = Instantiate(_playerPrefab, spawnPosition, Quaternion.identity);
                 newPlayerObj.name = "Player "+(ctPlayer.playerId+1).ToString();
@@ -108,8 +108,8 @@ public class ExampleRollbackInputQueue : InputQueue {
         }
     }
 
-    protected  override RollbackInputBaseActions GetCurrentActionsValue(int controllerId) {
-        if (controllerToPlayers.Count >= controllerId) {
+    protected  override RollbackInputBaseActions GetCurrentActionsValue(int controllerId){
+        if (controllerToPlayers.Count <= controllerId) {
             return new RollbackInputBaseActions();
         }
             

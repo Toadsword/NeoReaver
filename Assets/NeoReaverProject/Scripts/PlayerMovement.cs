@@ -4,6 +4,17 @@ using System.Collections.Generic;
 using System.Security;
 using UnityEngine;
 using Packages.EZRollback.Runtime.Scripts;
+    
+
+[Serializable]
+public struct SpeedValues {
+    public float currentSpeedo;
+    public float currentSpeedMultiplier;
+    public Vector2 direction;
+}
+
+[Serializable]
+public class RollbackElementSpeedValues : RollbackElement<SpeedValues> { }
 
 public class PlayerMovement : IRollbackBehaviour {
 
@@ -24,20 +35,19 @@ public class PlayerMovement : IRollbackBehaviour {
     [SerializeField] float midSpeedo;
     [SerializeField] MovementState currentMovementState;
     
-    [Serializable]
-    public struct ElementsToRollback {
-        public float currentSpeedo;
-        public float currentSpeedMultiplier;
-        public Vector2 direction;
-    }
-    
-    [SerializeField] public RollbackElement<ElementsToRollback> rbElements = new RollbackElement<ElementsToRollback>();
+    [SerializeField] public RollbackElementSpeedValues rbElements = new RollbackElementSpeedValues();
     
     void Start() {
         rbElements.value.currentSpeedo = 5.0f;
         rbElements.value.currentSpeedMultiplier = speedMultiplier;
         
         midSpeedo = (maxSpeedo + minSpeedo) / 2.0f;
+        
+        RollbackManager.RegisterRollbackBehaviour(this);
+    }
+
+    void OnDestroy() {
+        RollbackManager.UnregisterRollbackBehaviour(this);
     }
 
     private void MoveSpaceship(Vector3 initPosition) {

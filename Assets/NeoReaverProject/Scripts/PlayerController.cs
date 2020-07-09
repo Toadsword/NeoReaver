@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Xml.Schema;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -11,7 +12,7 @@ public class PlayerController : MonoBehaviour {
     
     PlayerMovement _playerMovement;
 
-    [SerializeField] int controllerId = 0;
+    [SerializeField] int controllerId = -1;
 
     // Start is called before the first frame update
     void Start() {
@@ -20,6 +21,10 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if (controllerId == -1) {
+            return;
+        }
+        
         int currentFrameNum = RollbackManager.inputQueue.GetCurrentFrameNumberValue();
         
         _horizontal = RollbackManager.inputQueue.GetAxis(InputQueue.AxisEnum.HORIZONTAL, controllerId);
