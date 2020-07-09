@@ -120,7 +120,7 @@ public class ExampleRollbackInputQueue : InputQueue {
             return new RollbackInputBaseActions();
         }
         
-        RollbackInputBaseActions actionsValue = new RollbackInputBaseActions(1);
+        RollbackInputBaseActions actionsValue = new RollbackInputBaseActions(5);
         
         SetBitFromAction(InputActionManager.InputType.LEFT, ref actionsValue, currentDevice);
         SetBitFromAction(InputActionManager.InputType.RIGHT, ref actionsValue, currentDevice);

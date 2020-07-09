@@ -18,7 +18,6 @@ public class PlayerController : IRollbackBehaviour {
     new void Start() {
         base.Start();
         _playerMovement = GetComponent<PlayerMovement>();
-        Debug.Log("coucou Start");
     }
 
     // Update is called once per frame
@@ -26,9 +25,6 @@ public class PlayerController : IRollbackBehaviour {
         if (controllerId == -1) {
             return;
         }
-        
-        _horizontal = RollbackManager.inputQueue.GetAxis(InputQueue.AxisEnum.HORIZONTAL, controllerId);
-        _vertical = RollbackManager.inputQueue.GetAxis(InputQueue.AxisEnum.VERTICAL, controllerId);
     }
 
     public void SetControllerId(int newControllerId) {
@@ -37,15 +33,10 @@ public class PlayerController : IRollbackBehaviour {
 
     public override void Simulate() {
         int currentFrameNum = RollbackManager.inputQueue.GetCurrentFrameNumberValue();
-            
-        Debug.Log("Before : _horizontal : " + _horizontal);
-        Debug.Log("Before _vertical : " + _vertical);
         
         _horizontal = RollbackManager.inputQueue.GetAxis(InputQueue.AxisEnum.HORIZONTAL, controllerId, currentFrameNum);
         _vertical = RollbackManager.inputQueue.GetAxis(InputQueue.AxisEnum.VERTICAL, controllerId, currentFrameNum);
         
-        Debug.Log("After : _horizontal : " + _horizontal);
-        Debug.Log("After _vertical : " + _vertical);
         _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
     }
 
