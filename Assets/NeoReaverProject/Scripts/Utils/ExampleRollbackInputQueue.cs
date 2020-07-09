@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using InControl;
@@ -13,6 +14,7 @@ public class ExampleRollbackInputQueue : InputQueue {
     
     [SerializeField] List<ControllerToPlayer> controllerToPlayers = new List<ControllerToPlayer>();
 
+    [Serializable]
     public struct ControllerToPlayer
     {
         public InputDevice device;

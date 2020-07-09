@@ -203,6 +203,11 @@ PrefabInstance:
       propertyPath: _inputQueue
       value: 
       objectReference: {fileID: 610534842}
+    - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
+        type: 3}
+      propertyPath: _bufferSize
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 096f619208d54234ca409cb26970225f, type: 3}
 --- !u!1 &610534841 stripped
@@ -226,6 +231,7 @@ MonoBehaviour:
   _baseActions: []
   _playerPrefab: {fileID: 836399485038030964, guid: 522b6304f7e492748886f7129149d3cd,
     type: 3}
+  controllerToPlayers: []
 --- !u!1 &1402660850
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,6 +549,12 @@ PrefabInstance:
       propertyPath: upRightPos
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
+        type: 3}
+      propertyPath: asteroidPrefab
+      value: 
+      objectReference: {fileID: 4503927400125312704, guid: e2f2df6c734a6e74b819200c1bdb69d7,
+        type: 3}
     - target: {fileID: 3827898940075601935, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
       propertyPath: m_Name
@@ -551,7 +563,7 @@ PrefabInstance:
     - target: {fileID: 3827898940075601935, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e57a59ea75d9c242a48efb16d47d78f, type: 3}
