@@ -5,7 +5,6 @@ using UnityEngine;
 using InControl;
 
 public static class InputActionManager {
-
     static bool logInput = false;
 
     static float deadZoneKeyboard = 0.1f;
@@ -18,10 +17,10 @@ public static class InputActionManager {
         RIGHT,
         UP,
         DOWN,
+        SHOOT,
         ACTION_CONFIRM,
         ACTION_BACK,
         
-        SHOOT,
         PAUSE
     }
     public enum AxisType

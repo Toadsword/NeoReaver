@@ -37,6 +37,8 @@ public class CameraScale : IRollbackBehaviour {
     }
 
     private void CalculateNewCamera() {
+        if (_players.Count == 0)
+            return;
         
         upRightPoint = Vector2.negativeInfinity;
         downLeftPoint = Vector2.positiveInfinity;
