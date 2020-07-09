@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using NeoReaverProject.Scripts;
 using UnityEngine;
 using Packages.EZRollback.Runtime.Scripts;
@@ -27,6 +28,12 @@ public class CameraScale : IRollbackBehaviour {
         _players = new List<PlayerController>();
         foreach (PlayerController player in foundPlayers) {
             _players.Add(player);
+        }
+    }
+
+    public void RegisterNewPlayer(PlayerController playerController) {
+        if (!_players.Contains(playerController)) {
+            _players.Add(playerController);
         }
     }
 

@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 1402660854}
   - component: {fileID: 1402660855}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Main Camera 222
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -329,6 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b6f32be69dda3546a016304de337948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  registered: 0
   minCameraSize: 5
   maxCameraSize: 10
   radiusAroundPlayer: 2.5
@@ -344,6 +345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a5126e6d8a3d7a4baaedd75151a2194, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  registered: 0
   positionRB:
     elements:
     - {x: 0, y: 0, z: 0}

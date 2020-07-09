@@ -88,6 +88,9 @@ public class ExampleRollbackInputQueue : InputQueue {
                 newPlayerObj.name = "Player "+(ctPlayer.playerId+1).ToString();
                 newPlayerObj.GetComponent<PlayerController>().SetControllerId(ctPlayer.playerId);
                 ctPlayer.player = newPlayerObj;
+                
+                Camera.main.GetComponent<CameraScale>()
+                    .RegisterNewPlayer(newPlayerObj.GetComponent<PlayerController>());
             }
 
             controllerToPlayers.Add(ctPlayer);
