@@ -103,6 +103,168 @@ MonoBehaviour:
   speedMultiplier: 1.01
   midSpeedo: 0
   currentMovementState: 0
+  rbElements:
+    elements:
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    - currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    value:
+      currentSpeedo: 0
+      currentSpeedMultiplier: 0
+      direction: {x: 0, y: 0}
+    _head: 0
+    _tail: 0
+    _size: 0
 --- !u!114 &836399485038030967
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,7 +277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f8c7fc9d18739e4cb5b45a8acf68f81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controllerId: 0
+  controllerId: -1
 --- !u!114 &836399485038030966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,3 +359,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca7b65dbf41a9bf42a141f6551be4599, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationRB:
+    elements:
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    - {x: 0, y: 0, z: 0, w: 0}
+    value: {x: 0, y: 0, z: 0, w: 0}
+    _head: 0
+    _tail: 0
+    _size: 0

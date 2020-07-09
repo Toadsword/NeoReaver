@@ -37,17 +37,12 @@ public class PlayerMovement : IRollbackBehaviour {
     
     [SerializeField] public RollbackElementSpeedValues rbElements = new RollbackElementSpeedValues();
     
-    void Start() {
+    new void Start() {
+        base.Start();
         rbElements.value.currentSpeedo = 5.0f;
         rbElements.value.currentSpeedMultiplier = speedMultiplier;
         
         midSpeedo = (maxSpeedo + minSpeedo) / 2.0f;
-        
-        RollbackManager.RegisterRollbackBehaviour(this);
-    }
-
-    void OnDestroy() {
-        RollbackManager.UnregisterRollbackBehaviour(this);
     }
 
     private void MoveSpaceship(Vector3 initPosition) {

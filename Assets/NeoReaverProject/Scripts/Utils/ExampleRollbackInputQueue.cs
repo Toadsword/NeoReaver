@@ -22,24 +22,20 @@ public class ExampleRollbackInputQueue : InputQueue {
         public ControllerState controllerState;
         public GameObject player;
         public GameState gameState;
-        public bool isReady;
     }
     
-    public enum ControllerState
-    {
+    public enum ControllerState {
         ATTACHED,
         DETACHED
     }
     
     
-    public enum GameState
-    {
+    public enum GameState {
         NOT_PLAYING,
         PLAYING
     }
     
     void OnEnable() {
-        Debug.Log("OnEnable ExampleRollbackInputQueue");
         if (controllerToPlayers == null) {
             controllerToPlayers = new List<ControllerToPlayer>();
         }
@@ -97,7 +93,7 @@ public class ExampleRollbackInputQueue : InputQueue {
         }
     }
 
-    void OnDeviceDetached(InputDevice device)
+    private void OnDeviceDetached(InputDevice device)
     {
         for (int i = 0; i < controllerToPlayers.Count; i++)
         {

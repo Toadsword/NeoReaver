@@ -21,7 +21,8 @@ public class CameraScale : IRollbackBehaviour {
     [SerializeField] float radiusAroundPlayer = 5.0f;
     
     // Start is called before the first frame update
-    void Start() {
+    new void Start() {
+        base.Start();
         _camera = GetComponent<Camera>();
         
         PlayerController[] foundPlayers = GameObject.FindObjectsOfType<PlayerController>();

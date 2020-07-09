@@ -10,7 +10,9 @@ public class AsteroidRotation : IRollbackBehaviour {
 
     Vector3 currentRotateSpeed;
     // Start is called before the first frame update
-    void Start() {
+    new void Start() {
+        base.Start();
+        
         currentRotateSpeed = new Vector3(0.0f, 0.0f, Random.Range(minRotateSpeed, maxRotateSpeed));
     }
 
