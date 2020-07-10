@@ -32,10 +32,8 @@ public class PlayerController : IRollbackBehaviour {
     }
 
     public override void Simulate() {
-        int currentFrameNum = RollbackManager.inputQueue.GetCurrentFrameNumberValue();
-        
-        _horizontal = RollbackManager.inputQueue.GetAxis(InputQueue.AxisEnum.HORIZONTAL, controllerId, currentFrameNum);
-        _vertical = RollbackManager.inputQueue.GetAxis(InputQueue.AxisEnum.VERTICAL, controllerId, currentFrameNum);
+        _horizontal = RollbackManager._instance.inputQueue.GetAxis(InputQueue.AxisEnum.HORIZONTAL, controllerId);
+        _vertical = RollbackManager._instance.inputQueue.GetAxis(InputQueue.AxisEnum.VERTICAL, controllerId);
         
         _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
     }
