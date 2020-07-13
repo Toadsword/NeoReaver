@@ -101,7 +101,7 @@ public class PlayerMovement : IRollbackBehaviour {
         MoveSpaceship(transform.position);
     }
 
-    public override void GoToFrame(int frameNumber) {
+    public override void SetValueFromFrameNumber(int frameNumber) {
         rbElements.SetValueFromFrameNumber(frameNumber);
     }
 

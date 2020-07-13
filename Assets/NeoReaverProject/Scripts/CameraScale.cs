@@ -101,7 +101,7 @@ public class CameraScale : IRollbackBehaviour {
         CalculateNewCamera();
     }
 
-    public override void GoToFrame(int frameNumber) {
+    public override void SetValueFromFrameNumber(int frameNumber) {
         calculatedSizes.SetValueFromFrameNumber(frameNumber);
         _camera.orthographicSize = calculatedSizes.value;
     }

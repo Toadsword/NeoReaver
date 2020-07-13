@@ -26,7 +26,7 @@ public class AsteroidRotation : IRollbackBehaviour {
         transform.Rotate(currentRotateSpeed * Time.fixedDeltaTime);
     }
 
-    public override void GoToFrame(int frameNumber) { }
+    public override void SetValueFromFrameNumber(int frameNumber) { }
 
     public override void DeleteFrames(int numFramesToDelete, bool firstFrames) { }
 

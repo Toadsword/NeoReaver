@@ -38,7 +38,7 @@ public class PlayerController : IRollbackBehaviour {
         _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
     }
 
-    public override void GoToFrame(int frameNumber) { }
+    public override void SetValueFromFrameNumber(int frameNumber) { }
 
     public override void DeleteFrames(int numFramesToDelete, bool firstFrames) { }
 
