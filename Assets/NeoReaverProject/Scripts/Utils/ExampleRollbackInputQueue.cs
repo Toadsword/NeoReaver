@@ -7,7 +7,7 @@ using NeoReaverProject.Scripts;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
-public class ExampleRollbackInputQueue : InputQueue {
+public class ExampleRollbackInputQueue : RollbackInputManager {
     const int numNetworkableActions = 5;
 
     [SerializeField] GameObject _playerPrefab;
@@ -71,7 +71,7 @@ public class ExampleRollbackInputQueue : InputQueue {
         {
             Debug.Log("New Connected controller : " + controllerToPlayers.Count);
             ControllerToPlayer ctPlayer = new ControllerToPlayer();
-            ctPlayer.playerId = AddController() - 1;
+            ctPlayer.playerId = AddPlayer() - 1;
             ctPlayer.device = newDevice;
             ctPlayer.controllerState = ControllerState.ATTACHED;
             ctPlayer.gameState = GameState.PLAYING;
@@ -128,8 +128,8 @@ public class ExampleRollbackInputQueue : InputQueue {
         SetBitFromAction(InputActionManager.InputType.DOWN, ref actionsValue, currentDevice);
         SetBitFromAction(InputActionManager.InputType.SHOOT, ref actionsValue, currentDevice);
 
-        actionsValue.horizontalValue = TransformAxisValueToSByte(InputActionManager.GetAxis(InputActionManager.AxisType.HORIZONTAL, currentDevice));
-        actionsValue.verticalValue = TransformAxisValueToSByte(InputActionManager.GetAxis(InputActionManager.AxisType.VERTICAL, currentDevice));
+        actionsValue.SetHorizontalAxis(InputActionManager.GetAxis(InputActionManager.AxisType.HORIZONTAL, currentDevice));
+        actionsValue.SetVerticalAxis(InputActionManager.GetAxis(InputActionManager.AxisType.VERTICAL, currentDevice));
 
         return actionsValue;
     }
