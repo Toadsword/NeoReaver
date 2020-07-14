@@ -7,7 +7,7 @@ using NeoReaverProject.Scripts;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
-public class ExampleRollbackInputQueue : RollbackInputManager {
+public class ExampleRollbackInputQueue : IRollbackInputManager {
     const int numNetworkableActions = 5;
 
     [SerializeField] GameObject _playerPrefab;

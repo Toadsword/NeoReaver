@@ -32,8 +32,8 @@ public class PlayerController : IRollbackBehaviour {
     }
 
     public override void Simulate() {
-        _horizontal = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.HORIZONTAL, controllerId);
-        _vertical = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.VERTICAL, controllerId);
+        _horizontal = RollbackManager.rbInputManager.GetAxis(IRollbackInputManager.AxisEnum.HORIZONTAL, controllerId);
+        _vertical = RollbackManager.rbInputManager.GetAxis(IRollbackInputManager.AxisEnum.VERTICAL, controllerId);
         
         _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
     }
