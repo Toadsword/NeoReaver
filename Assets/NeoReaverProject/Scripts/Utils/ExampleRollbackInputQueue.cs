@@ -67,30 +67,40 @@ public class ExampleRollbackInputQueue : IRollbackInputManager {
         }
 
         //Else, register the new controller
-        if (!reFoundController)
-        {
-            Debug.Log("New Connected controller : " + controllerToPlayers.Count);
-            ControllerToPlayer ctPlayer = new ControllerToPlayer();
-            ctPlayer.playerId = AddPlayer() - 1;
+        if (!reFoundController) {
+            int newPlayerId = AddPlayer();
+            ControllerToPlayer ctPlayer = controllerToPlayers[newPlayerId];
             ctPlayer.device = newDevice;
-            ctPlayer.controllerState = ControllerState.ATTACHED;
-            ctPlayer.gameState = GameState.PLAYING;
-
+            controllerToPlayers[newPlayerId] = ctPlayer;
+            
             if (_playerPrefab != null)
             {
                 Vector3 spawnPosition = new Vector3(0,0,0); //Behind the camera
 
                 GameObject newPlayerObj = Instantiate(_playerPrefab, spawnPosition, Quaternion.identity);
-                newPlayerObj.name = "Player "+(ctPlayer.playerId+1).ToString();
-                newPlayerObj.GetComponent<PlayerController>().SetControllerId(ctPlayer.playerId);
+                newPlayerObj.name = "Player " + (ctPlayer.playerId+1).ToString();
+                newPlayerObj.GetComponent<PlayerController>().SetPlayerId(ctPlayer.playerId);
                 ctPlayer.player = newPlayerObj;
                 
                 Camera.main.GetComponent<CameraScale>()
                     .RegisterNewPlayer(newPlayerObj.GetComponent<PlayerController>());
             }
-
-            controllerToPlayers.Add(ctPlayer);
         }
+    }
+
+    public override int AddPlayer() {
+        int playerId = base.AddPlayer();
+        
+        Debug.Log("New Connected controller : " + controllerToPlayers.Count);
+        ControllerToPlayer ctPlayer = new ControllerToPlayer();
+        ctPlayer.playerId = playerId - 1;
+        ctPlayer.device = null;
+        ctPlayer.controllerState = ControllerState.ATTACHED;
+        ctPlayer.gameState = GameState.PLAYING;
+
+        controllerToPlayers.Add(ctPlayer);
+        
+        return playerId;
     }
 
     private void OnDeviceDetached(InputDevice device)
@@ -116,10 +126,6 @@ public class ExampleRollbackInputQueue : IRollbackInputManager {
             
         InputDevice currentDevice = controllerToPlayers[controllerId].device;
 
-        if (currentDevice == null) {
-            return new RollbackInputBaseActions();
-        }
-        
         RollbackInputBaseActions actionsValue = new RollbackInputBaseActions(5);
         
         SetBitFromAction(InputActionManager.InputType.LEFT, ref actionsValue, currentDevice);
@@ -130,7 +136,7 @@ public class ExampleRollbackInputQueue : IRollbackInputManager {
 
         actionsValue.SetHorizontalAxis(InputActionManager.GetAxis(InputActionManager.AxisType.HORIZONTAL, currentDevice));
         actionsValue.SetVerticalAxis(InputActionManager.GetAxis(InputActionManager.AxisType.VERTICAL, currentDevice));
-
+        
         return actionsValue;
     }
 
