@@ -41,9 +41,10 @@ public class PlayerController : IRollbackBehaviour {
         }
         
         if (_timerBetweenShoots.ShouldExecute) {
-            if(RollbackManager.rbInputManager.GetInputDown(0, _playerId))
+            if(RollbackManager.rbInputManager.GetInput((int)InputActionManager.InputType.SHOOT, _playerId))
             {
-                _projectileManager.CreateProjectile(_shootPosition.position, transform.forward * _projectileSpeed);
+                _projectileManager.CreateProjectile(_shootPosition.position, transform.rotation, _projectileSpeed);
+                _timerBetweenShoots.Reset();
             }
         }
     }

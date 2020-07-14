@@ -6,13 +6,9 @@ using UnityEngine;
 
 public class Movement : IRollbackBehaviour {
 
-    public Vector2 speed = Vector2.zero;
+    public Vector2 speed;
     void Update() {
         Move(Time.deltaTime);
-    }
-    
-    void Move(float deltaTime) {
-        transform.position = speed * deltaTime;
     }
 
     public override void Simulate() {
@@ -24,4 +20,8 @@ public class Movement : IRollbackBehaviour {
     public override void DeleteFrames(int numFramesToDelete, bool firstFrames) { }
 
     public override void SaveFrame() { }
+
+    void Move(float deltaTime) {
+        transform.position = transform.position + ((Vector3)speed * deltaTime);
+    }
 }

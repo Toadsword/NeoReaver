@@ -20,11 +20,14 @@ public class ProjectileManager : MonoBehaviour
         }
     }
 
-    public void CreateProjectile(Vector3 position, Vector2 speed) {
-        Transform obj = transform.GetChild(_lastUsedIndex);
-        obj.position = position;
-        obj.gameObject.GetComponent<Movement>().speed = speed; 
+    public void CreateProjectile(Vector3 position, Quaternion rotation, float speed) {
+        GameObject obj = transform.GetChild(_lastUsedIndex).gameObject;
+        obj.transform.position = position;
+        obj.transform.rotation = rotation;
+        var dir = Quaternion.AngleAxis(obj.transform.rotation.eulerAngles.z + 90.0f, Vector3.forward) * Vector3.right;
+        obj.gameObject.GetComponent<Movement>().speed = dir.normalized * speed;
         obj.gameObject.GetComponent<SelfDestruct>().SetGameobjectActive();
         _lastUsedIndex++;
+        _lastUsedIndex = _lastUsedIndex % _numberOfProjectilesToInstantiate;
     }
 }

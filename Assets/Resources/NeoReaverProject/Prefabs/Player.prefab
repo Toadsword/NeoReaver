@@ -281,8 +281,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   registered: 0
-  _localPlayer: 0
-  _controllerId: -1
+  _localPlayer: 1
+  _playerId: -1
+  _shootPosition: {fileID: 3943976708827660750}
+  _projectileSpeed: 1.5
+  _timeBetweenShootsTick: 20
 --- !u!114 &3549745396525921042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,7 +298,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eed41f001ef4f6d44b31ef1de80fad86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _timeBetweenShootsTick: 20
 --- !u!114 &836399485038030966
 MonoBehaviour:
   m_ObjectHideFlags: 0

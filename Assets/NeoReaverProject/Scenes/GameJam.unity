@@ -347,8 +347,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 836399485038030967, guid: 522b6304f7e492748886f7129149d3cd,
         type: 3}
-      propertyPath: _localPlayer
-      value: 1
+      propertyPath: _projectileSpeed
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 522b6304f7e492748886f7129149d3cd, type: 3}
