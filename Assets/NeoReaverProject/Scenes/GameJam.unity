@@ -257,7 +257,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 751713966}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.1449873, y: -1.705839, z: -10.378597}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -344,16 +344,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 836399485038030967, guid: 522b6304f7e492748886f7129149d3cd,
-        type: 3}
-      propertyPath: _projectileSpeed
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 836399485038030967, guid: 522b6304f7e492748886f7129149d3cd,
-        type: 3}
-      propertyPath: _timeBetweenShootsTick
-      value: 200
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 522b6304f7e492748886f7129149d3cd, type: 3}
@@ -538,17 +528,17 @@ PrefabInstance:
     - target: {fileID: 3827898940075601932, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.1017048
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3827898940075601932, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.11563961
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3827898940075601932, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -8.7890625
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3827898940075601932, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}

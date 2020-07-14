@@ -24,9 +24,11 @@ public class ProjectileManager : MonoBehaviour
         GameObject obj = transform.GetChild(_lastUsedIndex).gameObject;
         obj.transform.position = position;
         obj.transform.rotation = rotation;
+        
         var dir = Quaternion.AngleAxis(obj.transform.rotation.eulerAngles.z + 90.0f, Vector3.forward) * Vector3.right;
         obj.gameObject.GetComponent<Movement>().speed = dir.normalized * speed;
         obj.gameObject.GetComponent<SelfDestruct>().SetGameobjectActive();
+        
         _lastUsedIndex++;
         _lastUsedIndex = _lastUsedIndex % _numberOfProjectilesToInstantiate;
     }
