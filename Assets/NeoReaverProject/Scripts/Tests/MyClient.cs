@@ -24,12 +24,12 @@ public class MyClient : MonoBehaviour {
     [SerializeField] Text _gameVersionInput;
     [SerializeField] Text _nickNameInput;
 
-    private Timer inputRepeatTimer;
+    private NetworkTimer inputRepeatTimer;
     
     // Start is called before the first frame update
     void Start() {
         _lobbyPanel.SetActive(false);
-        inputRepeatTimer = new Timer(10);
+        inputRepeatTimer = new NetworkTimer(10);
     }
 
     public void ConnectToServer() {

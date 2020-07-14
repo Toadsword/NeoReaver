@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Xml.Schema;
+using ExitGames.Client.Photon;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,7 +9,7 @@ namespace NeoReaverProject.Scripts {
 
 public class PlayerController : IRollbackBehaviour {
     PlayerMovement _playerMovement;
-    ProjectileManager _projectileManager;
+    PoolManager _projectileManager;
 
     [SerializeField] bool _localPlayer = false;
     [SerializeField] int _playerId = -1;
@@ -17,7 +18,7 @@ public class PlayerController : IRollbackBehaviour {
     [SerializeField] float _projectileSpeed = 1.5f; 
     
     //Player shoo parameters
-    [SerializeField] int _timeBetweenShootsTick = 20;
+    [SerializeField] float _timeBetweenShootsTick = 0.2f;
     private Timer _timerBetweenShoots;
     private float _horizontal = 0.0f;
     private float _vertical = 0.0f;
@@ -27,7 +28,7 @@ public class PlayerController : IRollbackBehaviour {
         base.Start();
         _playerMovement = GetComponent<PlayerMovement>();
         _timerBetweenShoots = new Timer(_timeBetweenShootsTick);
-        _projectileManager = FindObjectOfType<ProjectileManager>();
+        _projectileManager = GameObject.Find("ProjectileManager").GetComponent<PoolManager>();
 
         if (_localPlayer) {
             _playerId = RollbackManager.rbInputManager.AddPlayer() - 1;
@@ -40,13 +41,7 @@ public class PlayerController : IRollbackBehaviour {
             return;
         }
         
-        if (_timerBetweenShoots.ShouldExecute) {
-            if(RollbackManager.rbInputManager.GetInput((int)InputActionManager.InputType.SHOOT, _playerId))
-            {
-                _projectileManager.CreateProjectile(_shootPosition.position, transform.rotation, _projectileSpeed);
-                _timerBetweenShoots.Reset();
-            }
-        }
+        Shoot(Time.deltaTime);
     }
 
     public void SetPlayerId(int newControllerId) {
@@ -58,12 +53,31 @@ public class PlayerController : IRollbackBehaviour {
         _vertical = RollbackManager.rbInputManager.GetAxis(IRollbackInputManager.AxisEnum.VERTICAL, _playerId);
         
         _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
+        
+        Shoot(Time.fixedDeltaTime);
     }
 
-    public override void SetValueFromFrameNumber(int frameNumber) { }
+    public override void SetValueFromFrameNumber(int frameNumber) {
+        _timerBetweenShoots.SetValueFromFrameNumber(frameNumber);
+    }
 
-    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) { }
+    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) {
+        _timerBetweenShoots.DeleteFrames(numFramesToDelete, firstFrames);
+    }
 
-    public override void SaveFrame() { }
+    public override void SaveFrame() {
+        _timerBetweenShoots.SaveFrame();
+    }
+
+    private void Shoot(float deltaTime) {
+        _timerBetweenShoots.AddTime(deltaTime);
+        if (_timerBetweenShoots.ShouldExecute()) {
+            if(RollbackManager.rbInputManager.GetInput((int)InputActionManager.InputType.SHOOT, _playerId))
+            {
+                _projectileManager.CreateObject(_shootPosition.position, transform.rotation, _projectileSpeed);
+                _timerBetweenShoots.Reset();
+            }
+        }
+    }
 }
 }

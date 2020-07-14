@@ -91,15 +91,15 @@ public class GameLogic : LoadBalancingClient
 
     /// <summary>Tracks the interval in which the current position should be broadcasted.</summary>
     /// <remarks>This actually defines how many updates per second this player creates by position updates.</remarks>
-    public Timer UpdateOthersInterval { get; set; }
+    public NetworkTimer UpdateOthersInterval { get; set; }
 
     /// <summary>Tracks the interval in which PhotonPeer.DispatchIncomingCommands should be called.</summary>
     /// <remarks>Instead of dispatching incoming info every frame, this demo will do find with a slightly lower rate.</remarks>
-    public Timer DispatchInterval { get; set; }
+    public NetworkTimer DispatchInterval { get; set; }
 
     /// <summary>Tracks the interval in which PhotonPeer.SendOutgoingCommands should be called.</summary>
     /// <remarks>You can send in fixed intervals and additionally send when some update was created (to speed up delivery).</remarks>
-    public Timer SendInterval { get; set; }
+    public NetworkTimer SendInterval { get; set; }
 
     /// <summary>Internally used property to get some timestamp.</summary>
     /// <remarks>Could be exchanged, if some platform doesn't provide Environment.TickCount or if more precision is needed</remarks>
@@ -123,9 +123,9 @@ public class GameLogic : LoadBalancingClient
         this.UseInterestGroups = true;
         this.JoinRandomGame = true;
 
-        this.DispatchInterval = new Timer(10);
-        this.SendInterval = new Timer(20);
-        this.UpdateOthersInterval = new Timer(20);
+        this.DispatchInterval = new NetworkTimer(10);
+        this.SendInterval = new NetworkTimer(20);
+        this.UpdateOthersInterval = new NetworkTimer(20);
     }
 
 

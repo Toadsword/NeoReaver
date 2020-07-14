@@ -2,34 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileManager : MonoBehaviour
+public class PoolManager : MonoBehaviour
 {
-    [SerializeField] GameObject _projectileGameObject;
+    [SerializeField] GameObject _object;
 
-    [SerializeField] int _numberOfProjectilesToInstantiate = 100;
+    [SerializeField] int _numberOfInstances = 100;
 
     int _lastUsedIndex = 0; 
     
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 0; i < _numberOfProjectilesToInstantiate; i++) {
+        for (int i = 0; i < _numberOfInstances; i++) {
             //Instantiate them behind the camera
-            GameObject go = Instantiate(_projectileGameObject, new Vector3(0, 0, -20), Quaternion.identity);
+            GameObject go = Instantiate(_object, new Vector3(0, 0, -20), Quaternion.identity);
             go.transform.parent = this.transform;
+            InScreenManager._instance.RegisterObject(go);
         }
     }
 
-    public void CreateProjectile(Vector3 position, Quaternion rotation, float speed) {
+    public void CreateObject(Vector3 position, Quaternion rotation, float speed) {
         GameObject obj = transform.GetChild(_lastUsedIndex).gameObject;
         obj.transform.position = position;
         obj.transform.rotation = rotation;
         
         var dir = Quaternion.AngleAxis(obj.transform.rotation.eulerAngles.z + 90.0f, Vector3.forward) * Vector3.right;
         obj.gameObject.GetComponent<Movement>().speed = dir.normalized * speed;
-        obj.gameObject.GetComponent<SelfDestruct>().SetGameobjectActive();
-        
+        obj.gameObject.GetComponent<SelfDestruct>().SetGameObjectActive();
+
         _lastUsedIndex++;
-        _lastUsedIndex = _lastUsedIndex % _numberOfProjectilesToInstantiate;
+        _lastUsedIndex = _lastUsedIndex % _numberOfInstances;
     }
 }

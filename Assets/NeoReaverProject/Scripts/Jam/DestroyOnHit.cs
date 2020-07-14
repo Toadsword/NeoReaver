@@ -6,7 +6,7 @@ using UnityEngine;
 public class DestroyOnHit : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D other) {
-        if (other.tag == "Destructible") {
+        if (other.CompareTag("Destructible")) {
             gameObject.SetActive(false);
         }
     }
