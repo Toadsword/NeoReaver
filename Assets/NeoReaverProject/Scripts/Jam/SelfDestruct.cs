@@ -19,6 +19,9 @@ public class SelfDestruct : IRollbackBehaviour {
     public void SetGameObjectActive() {
         gameObject.SetActive(true);
 
+        if(_timer == null)
+            _timer = new Timer(_timeBeforeSelfDestruct);
+        
         _timer.Reset();
     }
     
