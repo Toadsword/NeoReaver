@@ -5,7 +5,7 @@ using NeoReaverProject.Scripts;
 using UnityEngine;
 using Packages.EZRollback.Runtime.Scripts;
 
-public class CameraScale : IRollbackBehaviour {
+public class CameraScale : RollbackBehaviour {
     List<PlayerController> _players;
 
     RollbackElement<float> calculatedSizes = new RollbackElement<float>();

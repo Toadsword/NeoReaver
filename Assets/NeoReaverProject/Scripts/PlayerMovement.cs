@@ -16,7 +16,7 @@ public struct SpeedValues {
 [Serializable]
 public class RollbackElementSpeedValues : RollbackElement<SpeedValues> { }
 
-public class PlayerMovement : IRollbackBehaviour {
+public class PlayerMovement : RollbackBehaviour {
 
     [Serializable]
     enum MovementState {

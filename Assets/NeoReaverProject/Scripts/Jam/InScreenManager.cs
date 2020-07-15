@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
-public class InScreenManager : IRollbackBehaviour {
+public class InScreenManager : RollbackBehaviour {
 
     public static InScreenManager _instance;
 

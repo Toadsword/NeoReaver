@@ -5,7 +5,7 @@ using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class AsteroidGenerator : IRollbackBehaviour {
+public class AsteroidGenerator : RollbackBehaviour {
     
     private PoolManager _asteroidPoolManager;
 

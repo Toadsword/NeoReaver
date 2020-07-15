@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
-public class Movement : IRollbackBehaviour {
+public class Movement : RollbackBehaviour {
 
     public Vector2 speed;
     void Update() {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
-public class SelfDestruct : IRollbackBehaviour {
+public class SelfDestruct : RollbackBehaviour {
     [SerializeField] float _timeBeforeSelfDestruct = 1.5f;
 
     Timer _timer;

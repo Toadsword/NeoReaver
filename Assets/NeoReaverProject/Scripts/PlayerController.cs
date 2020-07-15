@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace NeoReaverProject.Scripts {
 
-public class PlayerController : IRollbackBehaviour {
+public class PlayerController : RollbackBehaviour {
     PlayerMovement _playerMovement;
     PoolManager _projectileManager;
 
@@ -49,8 +49,8 @@ public class PlayerController : IRollbackBehaviour {
     }
 
     public override void Simulate() {
-        _horizontal = RollbackManager.rbInputManager.GetAxis(IRollbackInputManager.AxisEnum.HORIZONTAL, _playerId);
-        _vertical = RollbackManager.rbInputManager.GetAxis(IRollbackInputManager.AxisEnum.VERTICAL, _playerId);
+        _horizontal = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.HORIZONTAL, _playerId);
+        _vertical = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.VERTICAL, _playerId);
 
         _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
 

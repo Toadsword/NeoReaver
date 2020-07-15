@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
-public class AsteroidRotation : IRollbackBehaviour {
+public class AsteroidRotation : RollbackBehaviour {
     [SerializeField] float minRotateSpeed = -120.0f;
     [SerializeField] float maxRotateSpeed = 120.0f;
 
