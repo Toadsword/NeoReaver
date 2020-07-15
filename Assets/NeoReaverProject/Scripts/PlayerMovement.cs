@@ -37,8 +37,7 @@ public class PlayerMovement : IRollbackBehaviour {
     
     [SerializeField] public RollbackElementSpeedValues rbElements = new RollbackElementSpeedValues();
     
-    new void Start() {
-        base.Start();
+    void Start() {
         rbElements.value.currentSpeedo = 5.0f;
         rbElements.value.currentSpeedMultiplier = speedMultiplier;
         

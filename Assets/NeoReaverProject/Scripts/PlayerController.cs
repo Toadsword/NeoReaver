@@ -24,8 +24,7 @@ public class PlayerController : IRollbackBehaviour {
     private float _vertical = 0.0f;
 
     // Start is called before the first frame update
-    new void Start() {
-        base.Start();
+    void Start() {
         _playerMovement = GetComponent<PlayerMovement>();
         _timerBetweenShoots = new Timer(_timeBetweenShootsTick);
         _projectileManager = GameObject.Find("ProjectileManager").GetComponent<PoolManager>();
@@ -35,6 +34,7 @@ public class PlayerController : IRollbackBehaviour {
         if (_localPlayer) {
             _playerId = RollbackManager.rbInputManager.AddPlayer() - 1;
         }
+        _timerBetweenShoots.Reset();
     }
 
     // Update is called once per frame

@@ -9,19 +9,13 @@ public class SelfDestruct : IRollbackBehaviour {
 
     Timer _timer;
     
-    new void Start() {
-        base.Start();
-        
+    void Awake() {
         _timer = new Timer(_timeBeforeSelfDestruct);
         SetGameObjectActive();
     }
 
     public void SetGameObjectActive() {
         gameObject.SetActive(true);
-
-        if(_timer == null)
-            _timer = new Timer(_timeBeforeSelfDestruct);
-        
         _timer.Reset();
     }
     

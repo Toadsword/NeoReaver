@@ -2,55 +2,37 @@
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
-struct TimerInfos {
-    public float currentTime;
-    public bool enabled;
-
-    public void Reset() {
-        currentTime = 0.0f;
-        enabled = true;
-    }
-}
-
 public class Timer {
     float _maxTime = 0.0f;
-    RollbackElement<TimerInfos> _timerInfos;
+    RollbackElement<float> _currentTime;
 
     // Return true the first frame that should be executed
     public bool ShouldExecute() {
-        bool result = false;
-        
-        if(_timerInfos.value.enabled) 
-            result = _timerInfos.value.currentTime >= _maxTime;
-        
-        if (result) 
-            _timerInfos.value.enabled = false;
-        
-        return result;
+        return _currentTime.value >= _maxTime;
     }
 
     public Timer(float maxTime) {
         _maxTime = maxTime;
-        _timerInfos = new RollbackElement<TimerInfos>();
+        _currentTime = new RollbackElement<float>();
     }
     
     public void Simulate() {
-        _timerInfos.value.currentTime += Time.fixedDeltaTime;
+        _currentTime.value += Time.fixedDeltaTime;
     }
     
     public void Reset() {
-        _timerInfos.value.Reset();
+        _currentTime.value = 0.0f;
     }
     
     public void SetValueFromFrameNumber(int frameNumber) {
-        _timerInfos.SetValueFromFrameNumber(frameNumber);
+        _currentTime.SetValueFromFrameNumber(frameNumber);
     }
     
     public void DeleteFrames(int numFramesToDelete, bool firstFrames) { 
-        _timerInfos.DeleteFrames(numFramesToDelete, firstFrames);
+        _currentTime.DeleteFrames(numFramesToDelete, firstFrames);
     }
 
     public void SaveFrame() {
-        _timerInfos.SaveFrame();
+        _currentTime.SaveFrame();
     }
 }
