@@ -21,16 +21,22 @@ public class PoolManager : MonoBehaviour
         }
     }
 
-    public void CreateObject(Vector3 position, Quaternion rotation, float speed) {
+    public GameObject CreateObject(Vector3 position, Quaternion rotation, float speed) {
         GameObject obj = transform.GetChild(_lastUsedIndex).gameObject;
         obj.transform.position = position;
         obj.transform.rotation = rotation;
         
         var dir = Quaternion.AngleAxis(obj.transform.rotation.eulerAngles.z + 90.0f, Vector3.forward) * Vector3.right;
         obj.gameObject.GetComponent<Movement>().speed = dir.normalized * speed;
-        obj.gameObject.GetComponent<SelfDestruct>().SetGameObjectActive();
+        if (obj.gameObject.GetComponent<SelfDestruct>()) {
+            obj.gameObject.GetComponent<SelfDestruct>().SetGameObjectActive();
+        } else {
+            obj.gameObject.SetActive(true);
+        }
 
         _lastUsedIndex++;
         _lastUsedIndex = _lastUsedIndex % _numberOfInstances;
+
+        return obj;
     }
 }

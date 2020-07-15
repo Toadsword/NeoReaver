@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3827898940075601932}
   - component: {fileID: 3827898940075601933}
+  - component: {fileID: 3827898940030085236}
   m_Layer: 0
   m_Name: AsteroidFieldGenerator
   m_TagString: Untagged
@@ -43,11 +44,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e1f8a3402cf1b3418b1493445934018, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asteroidPrefab: {fileID: 4403560638186911277, guid: 5de66f3a768428a4b9660269c155bdfc,
-    type: 3}
-  _distanceMinRandom: 1.3
-  _distanceMaxRandom: 3
-  _scaleMinRandom: 2
-  _scaleMaxRandom: 2
-  downLeftPos: -200
-  upRightPos: 200
+  registered: 0
+  _topLeftScreen: {fileID: 0}
+  _bottomRightScreen: {fileID: 0}
+  _minSpeed: 1
+  _maxSpeed: 3
+  _minScale: 1
+  _maxScale: 2
+  _spawnRadius: 2
+  _timeBetweenAsteroidSpawn: 0
+--- !u!114 &3827898940030085236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3827898940075601935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19ee33a3a9a1aa54c94b4fa6f3b0f1a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _object: {fileID: 4503927400125312704, guid: e2f2df6c734a6e74b819200c1bdb69d7, type: 3}
+  _numberOfInstances: 20

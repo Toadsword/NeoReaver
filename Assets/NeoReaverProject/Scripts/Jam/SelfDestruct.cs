@@ -25,19 +25,14 @@ public class SelfDestruct : IRollbackBehaviour {
         _timer.Reset();
     }
     
-    void Update() {
-        UpdateTimer(Time.deltaTime);
-    }
-
     public override void Simulate() {
-        UpdateTimer(Time.fixedDeltaTime);
-    }
-
-    private void UpdateTimer(float deltaTime) {
-        _timer.AddTime(deltaTime);
+        _timer.Simulate();
         if (_timer.ShouldExecute()) {
             gameObject.SetActive(false);
         }
+    }
+
+    private void UpdateTimer(float deltaTime) {
     }
     
     public override void SetValueFromFrameNumber(int frameNumber) {

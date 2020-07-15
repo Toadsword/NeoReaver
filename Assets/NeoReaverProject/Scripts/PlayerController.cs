@@ -15,14 +15,14 @@ public class PlayerController : IRollbackBehaviour {
     [SerializeField] int _playerId = -1;
 
     [SerializeField] Transform _shootPosition;
-    [SerializeField] float _projectileSpeed = 1.5f; 
-    
+    [SerializeField] float _projectileSpeed = 1.5f;
+
     //Player shoo parameters
     [SerializeField] float _timeBetweenShootsTick = 0.2f;
     private Timer _timerBetweenShoots;
     private float _horizontal = 0.0f;
     private float _vertical = 0.0f;
-    
+
     // Start is called before the first frame update
     new void Start() {
         base.Start();
@@ -30,6 +30,8 @@ public class PlayerController : IRollbackBehaviour {
         _timerBetweenShoots = new Timer(_timeBetweenShootsTick);
         _projectileManager = GameObject.Find("ProjectileManager").GetComponent<PoolManager>();
 
+        InScreenManager._instance.RegisterObject(gameObject);
+        
         if (_localPlayer) {
             _playerId = RollbackManager.rbInputManager.AddPlayer() - 1;
         }
@@ -40,8 +42,6 @@ public class PlayerController : IRollbackBehaviour {
         if (_playerId == -1) {
             return;
         }
-        
-        Shoot(Time.deltaTime);
     }
 
     public void SetPlayerId(int newControllerId) {
@@ -51,10 +51,16 @@ public class PlayerController : IRollbackBehaviour {
     public override void Simulate() {
         _horizontal = RollbackManager.rbInputManager.GetAxis(IRollbackInputManager.AxisEnum.HORIZONTAL, _playerId);
         _vertical = RollbackManager.rbInputManager.GetAxis(IRollbackInputManager.AxisEnum.VERTICAL, _playerId);
-        
+
         _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
-        
-        Shoot(Time.fixedDeltaTime);
+
+        _timerBetweenShoots.Simulate();
+        if (_timerBetweenShoots.ShouldExecute()) {
+            if (RollbackManager.rbInputManager.GetInput((int) InputActionManager.InputType.SHOOT, _playerId)) {
+                _projectileManager.CreateObject(_shootPosition.position, transform.rotation, _projectileSpeed);
+                _timerBetweenShoots.Reset();
+            }
+        }
     }
 
     public override void SetValueFromFrameNumber(int frameNumber) {
@@ -67,17 +73,6 @@ public class PlayerController : IRollbackBehaviour {
 
     public override void SaveFrame() {
         _timerBetweenShoots.SaveFrame();
-    }
-
-    private void Shoot(float deltaTime) {
-        _timerBetweenShoots.AddTime(deltaTime);
-        if (_timerBetweenShoots.ShouldExecute()) {
-            if(RollbackManager.rbInputManager.GetInput((int)InputActionManager.InputType.SHOOT, _playerId))
-            {
-                _projectileManager.CreateObject(_shootPosition.position, transform.rotation, _projectileSpeed);
-                _timerBetweenShoots.Reset();
-            }
-        }
     }
 }
 }

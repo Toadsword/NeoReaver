@@ -144,12 +144,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 108993620}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19, y: 15.2, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -20, y: -16, z: 1.2196816}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_Father: {fileID: 1952651566}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &610534840
 PrefabInstance:
@@ -560,11 +560,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1952651565}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.08051, y: 5.2302837, z: -1.2196816}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 2076303551}
+  - {fileID: 108993621}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1952651567
 MonoBehaviour:
@@ -604,12 +606,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2076303550}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19, y: -15.2, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 20, y: 16, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_Father: {fileID: 1952651566}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3827898940030085234
 PrefabInstance:
@@ -675,49 +677,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
-      propertyPath: _scaleMinRandom
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
-        type: 3}
-      propertyPath: _distanceMinRandom
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
-        type: 3}
-      propertyPath: _distanceMaxRandom
-      value: 3.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
-        type: 3}
-      propertyPath: downLeftPos
-      value: -50
-      objectReference: {fileID: 0}
-    - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
-        type: 3}
-      propertyPath: upRightPos
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
-        type: 3}
-      propertyPath: asteroidPrefab
+      propertyPath: _topLeftScreen
       value: 
-      objectReference: {fileID: 4503927400125312704, guid: e2f2df6c734a6e74b819200c1bdb69d7,
-        type: 3}
+      objectReference: {fileID: 2076303551}
     - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
-      propertyPath: m_Enabled
-      value: 1
+      propertyPath: _bottomRightScreen
+      value: 
+      objectReference: {fileID: 108993621}
+    - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
+        type: 3}
+      propertyPath: _timeBetweenAsteroidSpawn
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3827898940075601935, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
       propertyPath: m_Name
       value: AsteroidFieldGenerator
-      objectReference: {fileID: 0}
-    - target: {fileID: 3827898940075601935, guid: 1e57a59ea75d9c242a48efb16d47d78f,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e57a59ea75d9c242a48efb16d47d78f, type: 3}

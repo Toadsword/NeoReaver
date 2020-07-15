@@ -21,26 +21,24 @@ public class InScreenManager : IRollbackBehaviour {
     [SerializeField] Transform _bottomLeftPosition;
     [SerializeField] Transform _topRightPosition;
     
-    // Start is called before the first frame update
-    new void Start()
-    {
-        base.Start();
-        _transformsToTrack = new List<Transform>();
-    }
-
     public void RegisterObject(GameObject obj) {
         _transformsToTrack.Add(obj.transform);
     }
 
     public override void Simulate() {
-        foreach (Transform transform in _transformsToTrack) {
-            Vector3 newPos = transform.position;
+        foreach (Transform trackingTransform in _transformsToTrack) {
+            if (!trackingTransform.gameObject.activeSelf)
+                continue;
+            
+            Vector3 newPos = trackingTransform.position;
             if (newPos.x < _bottomLeftPosition.position.x || newPos.x > _topRightPosition.position.x) {
                 newPos.x = -newPos.x;
             }
             if (newPos.y < _bottomLeftPosition.position.y || newPos.y > _topRightPosition.position.y) {
                 newPos.y = -newPos.y;
             }
+
+            trackingTransform.position = newPos;
         }
     }
 

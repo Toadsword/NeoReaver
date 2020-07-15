@@ -1,43 +1,86 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class AsteroidGenerator : MonoBehaviour {
-    [SerializeField] GameObject asteroidPrefab;
+public class AsteroidGenerator : IRollbackBehaviour {
     
-    [SerializeField] float _distanceMinRandom = 1.3f;
-    [SerializeField] float _distanceMaxRandom = 3.0f;
-    [SerializeField] float _distanceDeltaRandom = 0.5f;
-    [SerializeField] float _scaleMinRandom = 1.0f;
-    [SerializeField] float _scaleMaxRandom = 2.0f;
+    private PoolManager _asteroidPoolManager;
 
-    [SerializeField] int downLeftPos = -200;
-    [SerializeField] int upRightPos = 200;
+    [SerializeField] Transform _topLeftScreen;
+    [SerializeField] Transform _bottomRightScreen;
+    
+    
+    [SerializeField] float _minSpeed = 1.0f;
+    [SerializeField] float _maxSpeed = 3.0f;
+    
+    [SerializeField] float _minScale = 1.0f;
+    [SerializeField] float _maxScale = 2.0f;
 
-    void Start() {
-        GenerateAsteroids();
+    [SerializeField] float _spawnRadius = 2.0f;
+
+    [SerializeField] float _timeBetweenAsteroidSpawn;
+
+    Timer _asteroidSpawnRate;
+    
+    new void Start() {
+        base.Start();
+        
+        _asteroidPoolManager = GetComponent<PoolManager>();
+        _asteroidSpawnRate = new Timer(_timeBetweenAsteroidSpawn);
+        _asteroidSpawnRate.Reset();
     }
 
-    private void GenerateAsteroids() {
-        Vector2 currentPos = new Vector2(downLeftPos, downLeftPos);
-        while (currentPos.y < upRightPos) {
-            while (currentPos.x < upRightPos) {
-                currentPos.x += Random.Range(_distanceMinRandom, _distanceMaxRandom);
-                Vector2 tempPos = currentPos;
-                tempPos.x += Random.Range(-_distanceDeltaRandom, _distanceDeltaRandom);
-                tempPos.y += Random.Range(-_distanceDeltaRandom, _distanceDeltaRandom);
-                
-                GameObject obj = Instantiate(asteroidPrefab, (Vector3) tempPos, Quaternion.identity);
-                obj.transform.parent = this.transform;
-                //Apply random scale
-                float randomScale = Random.Range(_scaleMinRandom, _scaleMaxRandom);
-                obj.transform.localScale = new Vector3(randomScale, randomScale, 1.0f);
-            }
-
-            currentPos.y += Random.Range(_distanceMinRandom, _distanceMaxRandom);
-            currentPos.x = downLeftPos + Random.Range(_distanceMinRandom, _distanceMaxRandom);
+    private void CreateAsteroid() {
+        float randomSpeed = Random.Range(-_maxSpeed, _maxSpeed);
+        if (randomSpeed <= _minSpeed && randomSpeed >= -_minSpeed) {
+            randomSpeed = _minScale * (TrueFalseRandom() ? 1.0f : -1.0f);
         }
+            
+        Vector3 randomPosition = new Vector3();
+        if (TrueFalseRandom()) {
+            //Top or bottom position
+            randomPosition.x = Random.Range(_topLeftScreen.position.x - _spawnRadius, _bottomRightScreen.position.x + _spawnRadius);
+            randomPosition.y = _topLeftScreen.position.y;
+        } else {
+            //Left or right spawn
+            randomPosition.x = TrueFalseRandom() ? _topLeftScreen.position.x : _bottomRightScreen.position.x;
+            randomPosition.y = Random.Range(_topLeftScreen.position.y - _spawnRadius, _bottomRightScreen.position.y + _spawnRadius);
+        }
+
+        Quaternion randomRotation = Random.rotation;
+        randomRotation.eulerAngles = new Vector3(0.0f, 0.0f, randomRotation.eulerAngles.z);
+        GameObject usedObject = _asteroidPoolManager.CreateObject(randomPosition, randomRotation, randomSpeed);
+
+        //Applying scale
+        float randomScale = Random.Range(_minScale, _maxScale);
+        usedObject.transform.localScale = new Vector3(randomScale, randomScale, 1.0f);
+    }
+    
+    public override void Simulate() {
+        _asteroidSpawnRate.Simulate();
+        
+        if (_asteroidSpawnRate.ShouldExecute()) {
+            CreateAsteroid();
+            _asteroidSpawnRate.Reset();
+        }
+    }
+
+    public override void SetValueFromFrameNumber(int frameNumber) {
+        _asteroidSpawnRate.SetValueFromFrameNumber(frameNumber);
+    }
+
+    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) {
+        _asteroidSpawnRate.DeleteFrames(numFramesToDelete, firstFrames);
+    }
+
+    public override void SaveFrame() {
+        _asteroidSpawnRate.SaveFrame();
+    }
+
+    private bool TrueFalseRandom() {
+        return Random.Range(0, 1) < 0.5f;
     }
 }
