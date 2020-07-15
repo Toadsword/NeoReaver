@@ -105,8 +105,8 @@ public class CameraScale : IRollbackBehaviour {
         _camera.orthographicSize = calculatedSizes.value;
     }
 
-    public override void DeleteFrames(int numFrames, bool fromFirst) {
-        calculatedSizes.DeleteFrames(numFrames, fromFirst);
+    public override void DeleteFrames(int numFrames, RollbackManager.DeleteFrameMode deleteMode) {
+        calculatedSizes.DeleteFrames(numFrames, deleteMode);
     }
 
     public override void SaveFrame() {

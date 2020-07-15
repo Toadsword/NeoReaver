@@ -67,8 +67,8 @@ public class PlayerController : IRollbackBehaviour {
         _timerBetweenShoots.SetValueFromFrameNumber(frameNumber);
     }
 
-    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) {
-        _timerBetweenShoots.DeleteFrames(numFramesToDelete, firstFrames);
+    public override void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) {
+        _timerBetweenShoots.DeleteFrames(numFramesToDelete, deleteMode);
     }
 
     public override void SaveFrame() {

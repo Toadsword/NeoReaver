@@ -28,8 +28,8 @@ public class Timer {
         _currentTime.SetValueFromFrameNumber(frameNumber);
     }
     
-    public void DeleteFrames(int numFramesToDelete, bool firstFrames) { 
-        _currentTime.DeleteFrames(numFramesToDelete, firstFrames);
+    public void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) { 
+        _currentTime.DeleteFrames(numFramesToDelete, deleteMode);
     }
 
     public void SaveFrame() {

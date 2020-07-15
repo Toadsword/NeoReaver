@@ -8,7 +8,9 @@ public class InScreenManager : IRollbackBehaviour {
 
     public static InScreenManager _instance;
 
-    void Awake() {
+    new void Awake() {
+        base.Awake();
+        
         if (_instance == null) {
             _instance = this;
         } else {
@@ -44,7 +46,7 @@ public class InScreenManager : IRollbackBehaviour {
 
     public override void SetValueFromFrameNumber(int frameNumber) { }
 
-    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) { }
+    public override void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) { }
 
     public override void SaveFrame() { }
 }

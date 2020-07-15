@@ -104,8 +104,8 @@ public class PlayerMovement : IRollbackBehaviour {
         rbElements.SetValueFromFrameNumber(frameNumber);
     }
 
-    public override void DeleteFrames(int numFramesToDelete, bool fromFrames) {
-        rbElements.DeleteFrames(numFramesToDelete, fromFrames);
+    public override void DeleteFrames(int numFramesToDelete,RollbackManager.DeleteFrameMode deleteMode) {
+        rbElements.DeleteFrames(numFramesToDelete, deleteMode);
     }
 
     public override void SaveFrame() {

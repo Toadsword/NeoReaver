@@ -5,7 +5,7 @@ using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 
 public class SelfDestruct : IRollbackBehaviour {
-    [SerializeField] int _timeBeforeSelfDestruct = 10;
+    [SerializeField] float _timeBeforeSelfDestruct = 1.5f;
 
     Timer _timer;
     
@@ -33,8 +33,8 @@ public class SelfDestruct : IRollbackBehaviour {
         _timer.SetValueFromFrameNumber(frameNumber);
     }
 
-    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) {
-        _timer.DeleteFrames(numFramesToDelete, firstFrames);
+    public override void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) {
+        _timer.DeleteFrames(numFramesToDelete, deleteMode);
     }
 
     public override void SaveFrame() {

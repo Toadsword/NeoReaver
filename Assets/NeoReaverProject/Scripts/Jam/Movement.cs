@@ -17,7 +17,7 @@ public class Movement : IRollbackBehaviour {
 
     public override void SetValueFromFrameNumber(int frameNumber) { }
 
-    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) { }
+    public override void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) { }
 
     public override void SaveFrame() { }
 

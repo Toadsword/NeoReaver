@@ -379,6 +379,11 @@ PrefabInstance:
       propertyPath: _timeBetweenShootsTick
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 836399485038030967, guid: 522b6304f7e492748886f7129149d3cd,
+        type: 3}
+      propertyPath: _projectileSpeed
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 522b6304f7e492748886f7129149d3cd, type: 3}
 --- !u!1 &1402660850
@@ -688,7 +693,7 @@ PrefabInstance:
     - target: {fileID: 3827898940075601933, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}
       propertyPath: _timeBetweenAsteroidSpawn
-      value: 5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3827898940075601935, guid: 1e57a59ea75d9c242a48efb16d47d78f,
         type: 3}

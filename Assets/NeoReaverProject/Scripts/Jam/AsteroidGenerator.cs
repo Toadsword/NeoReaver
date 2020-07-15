@@ -70,8 +70,8 @@ public class AsteroidGenerator : IRollbackBehaviour {
         _asteroidSpawnRate.SetValueFromFrameNumber(frameNumber);
     }
 
-    public override void DeleteFrames(int numFramesToDelete, bool firstFrames) {
-        _asteroidSpawnRate.DeleteFrames(numFramesToDelete, firstFrames);
+    public override void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) {
+        _asteroidSpawnRate.DeleteFrames(numFramesToDelete, deleteMode);
     }
 
     public override void SaveFrame() {

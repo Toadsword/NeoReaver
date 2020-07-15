@@ -224,7 +224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   registered: 0
-  _timeBeforeSelfDestruct: 5
+  _timeBeforeSelfDestruct: 1.5
 --- !u!114 &-1240010364684792285
 MonoBehaviour:
   m_ObjectHideFlags: 0
