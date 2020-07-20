@@ -12,7 +12,7 @@ public class PlayerController : RollbackBehaviour {
     PoolManager _projectileManager;
 
     [SerializeField] bool _localPlayer = false;
-    [SerializeField] int _playerId = -1;
+    [SerializeField] public int _playerId = -1;
 
     [SerializeField] Transform _shootPosition;
     [SerializeField] float _projectileSpeed = 1.5f;
@@ -20,8 +20,6 @@ public class PlayerController : RollbackBehaviour {
     //Player shoo parameters
     [SerializeField] float _timeBetweenShootsTick = 0.2f;
     private Timer _timerBetweenShoots;
-    private float _horizontal = 0.0f;
-    private float _vertical = 0.0f;
 
     // Start is called before the first frame update
     void Start() {
@@ -44,16 +42,7 @@ public class PlayerController : RollbackBehaviour {
         }
     }
 
-    public void SetPlayerId(int newControllerId) {
-        _playerId = newControllerId;
-    }
-
     public override void Simulate() {
-        _horizontal = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.HORIZONTAL, _playerId);
-        _vertical = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.VERTICAL, _playerId);
-
-        _playerMovement.rbElements.value.direction = new Vector2(_horizontal, _vertical);
-
         _timerBetweenShoots.Simulate();
         if (_timerBetweenShoots.ShouldExecute()) {
             if (RollbackManager.rbInputManager.GetInput((int) InputActionManager.InputType.SHOOT, _playerId)) {

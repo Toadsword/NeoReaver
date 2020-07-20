@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security;
+using NeoReaverProject.Scripts;
 using UnityEngine;
 using Packages.EZRollback.Runtime.Scripts;
-    
+using UnityEditor;
+
 
 [Serializable]
 public struct SpeedValues {
@@ -36,8 +38,11 @@ public class PlayerMovement : RollbackBehaviour {
     [SerializeField] MovementState currentMovementState;
     
     [SerializeField] public RollbackElementSpeedValues rbElements = new RollbackElementSpeedValues();
+
+    PlayerController _playerController;
     
     void Start() {
+        _playerController = GetComponent<PlayerController>();
         rbElements.value.currentSpeedo = 5.0f;
         rbElements.value.currentSpeedMultiplier = speedMultiplier;
         
@@ -49,6 +54,13 @@ public class PlayerMovement : RollbackBehaviour {
         if (!movable) {
             return;
         }
+        
+        float horizontal = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.HORIZONTAL, _playerController._playerId);
+        float vertical = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.VERTICAL, _playerController._playerId);
+
+        Debug.Log("_horizontal : " + horizontal + "; _vertical : " + vertical );
+
+        rbElements.value.direction = new Vector2(horizontal, vertical);
         
         float angle = Mathf.Atan2(rbElements.value.direction.y, rbElements.value.direction.x) * Mathf.Rad2Deg - 90.0f;
         float currentAngle = (transform.rotation.eulerAngles.z + 90.0f) * Mathf.Deg2Rad;

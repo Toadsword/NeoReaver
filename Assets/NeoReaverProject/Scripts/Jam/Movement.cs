@@ -7,12 +7,9 @@ using UnityEngine;
 public class Movement : RollbackBehaviour {
 
     public Vector2 speed;
-    void Update() {
-        Move(Time.deltaTime);
-    }
 
     public override void Simulate() {
-        Move(Time.fixedDeltaTime);
+        transform.position = transform.position + ((Vector3)speed * Time.fixedDeltaTime);
     }
 
     public override void SetValueFromFrameNumber(int frameNumber) { }
@@ -20,8 +17,4 @@ public class Movement : RollbackBehaviour {
     public override void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) { }
 
     public override void SaveFrame() { }
-
-    void Move(float deltaTime) {
-        transform.position = transform.position + ((Vector3)speed * deltaTime);
-    }
 }

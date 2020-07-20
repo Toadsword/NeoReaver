@@ -79,7 +79,7 @@ public class ExampleRollbackInputQueue : RollbackInputManager {
 
                 GameObject newPlayerObj = Instantiate(_playerPrefab, spawnPosition, Quaternion.identity);
                 newPlayerObj.name = "Player " + (ctPlayer.playerId+1).ToString();
-                newPlayerObj.GetComponent<PlayerController>().SetPlayerId(ctPlayer.playerId);
+                newPlayerObj.GetComponent<PlayerController>()._playerId = ctPlayer.playerId;
                 ctPlayer.player = newPlayerObj;
                 
                 Camera.main.GetComponent<CameraScale>()
