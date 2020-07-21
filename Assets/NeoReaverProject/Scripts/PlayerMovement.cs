@@ -9,10 +9,18 @@ using UnityEditor;
 
 
 [Serializable]
+public enum MovementState {
+    IDLE,
+    MOVING,
+    CHANGING_DIRECTION
+}
+
+[Serializable]
 public struct SpeedValues {
-    public float currentSpeedo;
-    public float currentSpeedMultiplier;
+    public float speedo;
+    public float speedMultiplier;
     public Vector2 direction;
+    public MovementState movementState;
 }
 
 [Serializable]
@@ -20,12 +28,6 @@ public class RollbackElementSpeedValues : RollbackElement<SpeedValues> { }
 
 public class PlayerMovement : RollbackBehaviour {
 
-    [Serializable]
-    enum MovementState {
-        IDLE,
-        MOVING,
-        CHANGING_DIRECTION
-    }
 
     [SerializeField] bool movable = false;
     
@@ -35,7 +37,6 @@ public class PlayerMovement : RollbackBehaviour {
 
     Vector3 fixedLastUpdatePosition;
     [SerializeField] float midSpeedo;
-    [SerializeField] MovementState currentMovementState;
     
     [SerializeField] public RollbackElementSpeedValues rbElements = new RollbackElementSpeedValues();
 
@@ -43,77 +44,88 @@ public class PlayerMovement : RollbackBehaviour {
     
     void Start() {
         _playerController = GetComponent<PlayerController>();
-        rbElements.value.currentSpeedo = 5.0f;
-        rbElements.value.currentSpeedMultiplier = speedMultiplier;
+        rbElements.value.speedo = 5.0f;
+        rbElements.value.speedMultiplier = speedMultiplier;
         
         midSpeedo = (maxSpeedo + minSpeedo) / 2.0f;
     }
 
-    private void MoveSpaceship(Vector3 initPosition) {
-
+    private void MoveSpaceship() {
         if (!movable) {
             return;
         }
         
         float horizontal = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.HORIZONTAL, _playerController._playerId);
         float vertical = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.VERTICAL, _playerController._playerId);
-
-        Debug.Log("_horizontal : " + horizontal + "; _vertical : " + vertical );
-
+        
         rbElements.value.direction = new Vector2(horizontal, vertical);
         
-        float angle = Mathf.Atan2(rbElements.value.direction.y, rbElements.value.direction.x) * Mathf.Rad2Deg - 90.0f;
-        float currentAngle = (transform.rotation.eulerAngles.z + 90.0f) * Mathf.Deg2Rad;
+        float newAngle = Mathf.Atan2(rbElements.value.direction.y, rbElements.value.direction.x) * Mathf.Rad2Deg - 90.0f;
+        
         Quaternion newRotation = transform.rotation;
+        float currentAngle = (newRotation.eulerAngles.z + 90.0f) * Mathf.Deg2Rad;
         if (rbElements.value.direction != Vector2.zero) 
         {
-            newRotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(angle, Vector3.forward), Time.deltaTime * 450.0f);
+            newRotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(newAngle, Vector3.forward), Time.fixedDeltaTime * 450.0f);
+            Debug.Log("CALCULATED newRotation.eulerAngles : " + newRotation.eulerAngles);
             // Calculating new state
             if (transform.rotation != newRotation) {
-                currentMovementState = MovementState.CHANGING_DIRECTION;
+                rbElements.value.movementState = MovementState.CHANGING_DIRECTION;
             } else {
-                currentMovementState = MovementState.MOVING;
+                rbElements.value.movementState = MovementState.MOVING;
             }
         } else {
-            currentMovementState = MovementState.IDLE;
+            rbElements.value.movementState = MovementState.IDLE;
         }
-        
         transform.rotation = newRotation;
+
         float checkingMaxSpeedo = maxSpeedo;
-        switch (currentMovementState) {
+        switch (rbElements.value.movementState) {
             case MovementState.IDLE:
-                rbElements.value.currentSpeedMultiplier = speedMultiplier;
-                rbElements.value.currentSpeedo /= rbElements.value.currentSpeedMultiplier;
+                rbElements.value.speedMultiplier = speedMultiplier;
+                rbElements.value.speedo /= rbElements.value.speedMultiplier;
                 break;
             case MovementState.MOVING:
-                rbElements.value.currentSpeedo *= rbElements.value.currentSpeedMultiplier * 5.0f;
+                rbElements.value.speedo *= rbElements.value.speedMultiplier * 5.0f;
                 break;
             case MovementState.CHANGING_DIRECTION:
-                if (currentAngle - angle > 60.0f) {
-                    rbElements.value.currentSpeedMultiplier = speedMultiplier;
+                if (currentAngle - newAngle > 60.0f) {
+                    rbElements.value.speedMultiplier = speedMultiplier;
                 } else {
-                    rbElements.value.currentSpeedo *= rbElements.value.currentSpeedMultiplier;
+                    rbElements.value.speedo *= rbElements.value.speedMultiplier;
                 } 
                 break;
         }
             
-        if (rbElements.value.currentSpeedo > checkingMaxSpeedo) {
-            rbElements.value.currentSpeedo = checkingMaxSpeedo;
+        if (rbElements.value.speedo > checkingMaxSpeedo) {
+            rbElements.value.speedo = checkingMaxSpeedo;
         }
-        if (rbElements.value.currentSpeedo < minSpeedo) {
-            rbElements.value.currentSpeedo = minSpeedo;
+        if (rbElements.value.speedo < minSpeedo) {
+            rbElements.value.speedo = minSpeedo;
         }
 
         Vector3 currentDirection = new Vector3(Mathf.Cos(currentAngle) , Mathf.Sin(currentAngle), 0.0f);
-        transform.position = initPosition + currentDirection * rbElements.value.currentSpeedo * Time.fixedDeltaTime;
+        transform.position = transform.position + currentDirection * rbElements.value.speedo * Time.fixedDeltaTime;
     }
 
     public override void Simulate() {
-        MoveSpaceship(transform.position);
+        MoveSpaceship();
     }
 
     public override void SetValueFromFrameNumber(int frameNumber) {
         rbElements.SetValueFromFrameNumber(frameNumber);
+        /*
+        Debug.Log("frameNumber :" + frameNumber); 
+        Debug.Log("SetValueFromFrameNumber - PlayerMovement :" + 
+                  rbElements.value.direction + " - " + 
+                  rbElements.value.speedo + " - " + 
+                  rbElements.value.movementState + " - " + 
+                  rbElements.value.speedMultiplier);
+        
+        Debug.Log("SetValueFromFrameNumber - Transform :" + 
+                  transform.position + " - " + 
+                  transform.rotation.eulerAngles);
+                  */
     }
 
     public override void DeleteFrames(int numFramesToDelete,RollbackManager.DeleteFrameMode deleteMode) {
