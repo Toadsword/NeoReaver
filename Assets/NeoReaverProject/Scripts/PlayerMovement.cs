@@ -67,7 +67,6 @@ public class PlayerMovement : RollbackBehaviour {
         if (rbElements.value.direction != Vector2.zero) 
         {
             newRotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(newAngle, Vector3.forward), Time.fixedDeltaTime * 450.0f);
-            Debug.Log("CALCULATED newRotation.eulerAngles : " + newRotation.eulerAngles);
             // Calculating new state
             if (transform.rotation != newRotation) {
                 rbElements.value.movementState = MovementState.CHANGING_DIRECTION;
@@ -114,18 +113,6 @@ public class PlayerMovement : RollbackBehaviour {
 
     public override void SetValueFromFrameNumber(int frameNumber) {
         rbElements.SetValueFromFrameNumber(frameNumber);
-        /*
-        Debug.Log("frameNumber :" + frameNumber); 
-        Debug.Log("SetValueFromFrameNumber - PlayerMovement :" + 
-                  rbElements.value.direction + " - " + 
-                  rbElements.value.speedo + " - " + 
-                  rbElements.value.movementState + " - " + 
-                  rbElements.value.speedMultiplier);
-        
-        Debug.Log("SetValueFromFrameNumber - Transform :" + 
-                  transform.position + " - " + 
-                  transform.rotation.eulerAngles);
-                  */
     }
 
     public override void DeleteFrames(int numFramesToDelete,RollbackManager.DeleteFrameMode deleteMode) {
