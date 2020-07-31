@@ -8,7 +8,6 @@ using UnityEngine.Serialization;
 namespace NeoReaverProject.Scripts {
 
 public class PlayerController : RollbackBehaviour {
-    PlayerMovement _playerMovement;
     PoolManager _projectileManager;
 
     [SerializeField] bool _localPlayer = false;
@@ -23,15 +22,12 @@ public class PlayerController : RollbackBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        _playerMovement = GetComponent<PlayerMovement>();
         _timerBetweenShoots = new Timer(_timeBetweenShootsTick);
-        _projectileManager = GameObject.Find("ProjectileManager").GetComponent<PoolManager>();
+        
+        _projectileManager = ProjectileManager.Instance.poolManager;
 
         InScreenManager._instance.RegisterObject(gameObject);
         
-        if (_localPlayer) {
-            _playerId = RollbackManager.rbInputManager.AddPlayer() - 1;
-        }
         _timerBetweenShoots.Reset();
     }
 
@@ -42,10 +38,15 @@ public class PlayerController : RollbackBehaviour {
         }
     }
 
+    public void SetupPlayer(int playerId, bool isLocal) {
+        _playerId = playerId;
+        _localPlayer = isLocal;
+    }
+    
     public override void Simulate() {
         _timerBetweenShoots.Simulate();
         if (_timerBetweenShoots.ShouldExecute()) {
-            if (RollbackManager.rbInputManager.GetInput((int) InputActionManager.InputType.SHOOT, _playerId)) {
+            if (RollbackManager.rbInputManager.GetInput((int) 5, _playerId)) {
                 _projectileManager.CreateObject(_shootPosition.position, transform.rotation, _projectileSpeed);
                 _timerBetweenShoots.Reset();
             }

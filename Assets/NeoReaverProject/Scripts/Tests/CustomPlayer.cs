@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using global::Photon.Realtime;
+using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
@@ -23,9 +24,8 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 /// </remarks>
 public class CustomPlayer : Player
 {
-    public int PosX { get; set; }
-    public int PosY { get; set; }
     public int Color { get; set; }
+    
     
     // Implement current player input and send it through network
     //public List<FrameInput> inputHistory;
@@ -43,7 +43,6 @@ public class CustomPlayer : Player
         {
             // we pick a random color when we create a local player
             this.RandomizeColor();
-            this.RandomizePosition();
         }
     }
 
@@ -57,20 +56,9 @@ public class CustomPlayer : Player
     /// <summary>Randomizes position within the gridSize.</summary>
     internal void RandomizePosition()
     {
-        int gridSize = 16;
 
-        this.PosX = SupportClass.ThreadSafeRandom.Next() % gridSize;
-        this.PosY = SupportClass.ThreadSafeRandom.Next() % gridSize;
     }
 
-/*
-    public Hashtable WriteEvInputChange() {
-        Hashtable evContent = new Hashtable();
-        evContent[(int)1] = 1;    
-        evContent[(int)2] = new FrameInput(, 0.5f, 0.4f);
-        return evContent;
-    }
-    */
     public void ReadEvInputChange(Hashtable evContent) {
         int bufferSize = 1;
         // Know the buffer size
@@ -97,29 +85,35 @@ public class CustomPlayer : Player
     /// choice here.
     /// </remarks>
     /// <returns>Hashtable for event "move" to update others</returns>
-    public Hashtable WriteEvMove()
+    public Hashtable WriteEvInput()
     {
         Hashtable evContent = new Hashtable();
-        evContent[(int)1] = new int[] { this.PosX, this.PosY };
+        int currentFrame = RollbackManager.Instance.GetDisplayedFrameNum();
+        int numFramesToSend = CustomConstants.NetworkBufferSize;
+        if (numFramesToSend > currentFrame) {
+            numFramesToSend = currentFrame - 1;
+        }
+        
+        
+        evContent[0] = numFramesToSend; // Last x frames to pass through the
+        evContent[1] = currentFrame; // Current frame
+        for (int i = 2; i < numFramesToSend + 2; i++) {
+            
+        }
         return evContent;
     }
 
     /// <summary>Reads the "custom content" Hashtable that is sent as position update.</summary>
     /// <returns>Hashtable for event "move" to update others</returns>
-    public void ReadEvMove(Hashtable evContent)
+    public void ReadEvInput(Hashtable evContent)
     {
-        if (evContent.ContainsKey((int)1))
+        if (evContent.ContainsKey((int)0))
         {
-            int[] posArray = (int[])evContent[(int)1];
-            this.PosX = posArray[0];
-            this.PosY = posArray[1];
+            
         }
-        else if (evContent.ContainsKey("1"))
-        {
-            // js client event support (those can't send with byte-keys)
-            var posArray = (object[])evContent["1"];   // NOTE: this is subject to change while we update the serialization in JS/Server
-            this.PosX = System.Convert.ToInt32(posArray[0]);
-            this.PosY = System.Convert.ToInt32(posArray[1]);
+
+        if (evContent.ContainsKey((int) 1)) {
+            Debug.Log("Recieved inputs for frame : #" + evContent[1]);
         }
         
         //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
@@ -157,6 +151,6 @@ public class CustomPlayer : Player
     /// <returns>String showing basic info about this player.</returns>
     public override string ToString()
     {
-        return this.ActorNumber + "'" + this.NickName + "':" + " " + this.PosX + ":" + this.PosY + " PlayerProps: " + SupportClass.DictionaryToString(this.CustomProperties);
+        return this.ActorNumber + "'" + this.NickName + "':" + " " + " PlayerProps: " + SupportClass.DictionaryToString(this.CustomProperties);
     }
 }

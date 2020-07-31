@@ -9,6 +9,8 @@
 // --------------------------------------------------------------------------------------------------------------------
 using UnityEngine;
 using System.Collections.Generic;
+using NeoReaverProject.Scripts;
+using Packages.EZRollback.Runtime.Scripts;
 using Photon.Realtime;
 
 public class Logic
@@ -74,8 +76,9 @@ public class Logic
                 if (!remotePlayers.ContainsKey(CustomPlayer.NickName) && !clients.ContainsKey(CustomPlayer.NickName))
                 {
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
-                    GameObject player = GameObject.Instantiate(playerPrefab, new Vector3(), new Quaternion());
+                    GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = CustomPlayer.NickName;
+                    player.GetComponent<PlayerController>().SetupPlayer(RollbackManager.rbInputManager.AddPlayer(), false);
                     playerObjects.Add(player);
                     remotePlayers.Add(CustomPlayer.NickName, CustomPlayer);
                 }
@@ -95,8 +98,9 @@ public class Logic
                     }
 
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
-                    GameObject player = GameObject.Instantiate(playerPrefab, new Vector3(), new Quaternion());
+                    GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = p.NickName;
+                    player.GetComponent<PlayerController>().SetupPlayer(RollbackManager.rbInputManager.AddPlayer() - 1, true);
                     playerObjects.Add(player);
                     remotePlayers.Add(p.NickName, CustomPlayer);
                 }

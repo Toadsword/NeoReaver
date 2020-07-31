@@ -221,7 +221,7 @@ PrefabInstance:
     - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
         type: 3}
       propertyPath: bufferRestriction
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
         type: 3}
@@ -236,7 +236,7 @@ PrefabInstance:
     - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
         type: 3}
       propertyPath: _bufferSize
-      value: 49
+      value: 149
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 096f619208d54234ca409cb26970225f, type: 3}
@@ -272,6 +272,7 @@ GameObject:
   m_Component:
   - component: {fileID: 751713967}
   - component: {fileID: 751713968}
+  - component: {fileID: 751713969}
   m_Layer: 0
   m_Name: ProjectileManager
   m_TagString: Untagged
@@ -307,6 +308,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _object: {fileID: 7485608882471377038, guid: f591310997863aa498cb9e56f1bdf32a, type: 3}
   _numberOfInstances: 50
+--- !u!114 &751713969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751713966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce3c6c77ec742464eb8e1b8324be23eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolManager: {fileID: 0}
 --- !u!1001 &1161255393
 PrefabInstance:
   m_ObjectHideFlags: 0

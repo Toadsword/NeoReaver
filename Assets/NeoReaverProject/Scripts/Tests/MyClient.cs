@@ -14,15 +14,15 @@ public class MyClient : MonoBehaviour {
 
     string _serverAdress = "";
     string _appId = "6bf6b4e7-b37c-40e2-8548-11f41fbf3ae0";
-    string _gameVersion = "0.1.0";
+    string _serverAddressInput = "";
 
     [SerializeField] GameObject _connectionPanel;
     [SerializeField] GameObject _lobbyPanel;
 
-    [SerializeField] Text _serverAddressInput;
     [SerializeField] Text _appIdInput;
     [SerializeField] Text _gameVersionInput;
     [SerializeField] Text _nickNameInput;
+    [SerializeField] Text _playerNumber;
 
     private NetworkTimer inputRepeatTimer;
     
@@ -35,7 +35,7 @@ public class MyClient : MonoBehaviour {
     public void ConnectToServer() {
         _logic = new Logic();
         _logic.ConnectToMaster(
-            _serverAddressInput.text.ToString(),
+            _serverAddressInput,
             _appIdInput.text.ToString(), 
             _gameVersionInput.text.ToString(),
             _nickNameInput.text.ToString()
@@ -63,7 +63,8 @@ public class MyClient : MonoBehaviour {
 
     void OnGUI() {
         if (_logic != null){
-            GUI.Label(new Rect(10, 10, 300, 50), this._logic.localPlayer.State.ToString());
+            GUI.Label(new Rect(10, 10, 300, 30), this._logic.localPlayer.State.ToString());
+            GUI.Label(new Rect(10, 40, 300, 30), "Number of players : " + this._logic.playerObjects.Count.ToString());
         }
     }
     
@@ -85,19 +86,6 @@ public class MyClient : MonoBehaviour {
         {
             return;
         }
-
-        float x = Input.GetAxisRaw("Horizontal");
-        if (math.abs(x) > 0.1f)
-        {
-            _logic.localPlayer.LocalPlayer.PosX += (int) x;
-            inputRepeatTimer.Reset();
-        }
-
-        float y = Input.GetAxisRaw("Vertical");
-        if (math.abs(y) > 0.1f) {
-            _logic.localPlayer.LocalPlayer.PosY += (int) y;
-            inputRepeatTimer.Reset();
-        }
     }
 
     public void JoinRandomGame() {
@@ -110,7 +98,8 @@ public class MyClient : MonoBehaviour {
         switch (toState) {
             case ClientState.ConnectedToMasterServer:
                 //Show room panel
-                _lobbyPanel.SetActive(true);
+                //this._logic.localPlayer.OpJoinRandomRoom();
+                //_lobbyPanel.SetActive(true);
                 break;
         }
     }
@@ -128,7 +117,7 @@ public class MyClient : MonoBehaviour {
                 {
                     if (cube.name == p.NickName)
                     {
-                        cube.transform.position = new Vector3(p.PosX / 10f, p.PosY/ 10f, 0);
+                        //cube.transform.position = new Vector3(p.PosX / 10f, p.PosY/ 10f, 0);
                         break;
                     }
                 }
@@ -143,6 +132,5 @@ public class MyClient : MonoBehaviour {
                 _lobbyPanel.SetActive(false);
                 break;  
         }
-        Debug.Log("MyClient : " + operationResponse.ToString());
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Packages.EZRollback.Runtime.Scripts;
+using Packages.EZRollback.Runtime.Scripts.Utils;
 using UnityEngine;
 
 public class InScreenManager : RollbackBehaviour {

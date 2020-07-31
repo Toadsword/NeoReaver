@@ -86,7 +86,7 @@ public class GameLogic : LoadBalancingClient
     public bool UseInterestGroups { get; private set; }
 
     /// <summary>This is the list of custom room properties that we want listed in the lobby.</summary>
-    protected static readonly string[] RoomPropsInLobby = new string[] { CustomConstants.MapProp, CustomConstants.GridSizeProp };
+    protected static readonly string[] RoomPropsInLobby = new string[] { };
 
 
     /// <summary>Tracks the interval in which the current position should be broadcasted.</summary>
@@ -183,12 +183,11 @@ public class GameLogic : LoadBalancingClient
                 break;
             case ClientState.ConnectedToMasterServer:
                 // when that's done, this demo asks the Master for any game. the result is handled below
-                // this.OpJoinRandomRoom(null, 0);
+                this.OpJoinRandomRoom();
+
+                //this.OpGetGameList(TypedLobby.Default, "");
                 
-                
-                this.OpGetGameList(TypedLobby.Default, "");
-                
-                //this.CreateParticleDemoRoom(CustomConstants.MapType.Forest, 16);
+                //this.CreateRoom("DemoRoom", new RoomOptions());
                 break;
         }
     }
@@ -220,6 +219,7 @@ public class GameLogic : LoadBalancingClient
     /// </remarks>
     protected internal override Room CreateRoom(string roomName, RoomOptions opt)
     {
+        Debug.Log("Creating Room");
         return new CustomRoom(roomName, opt);
     }
 
@@ -244,7 +244,6 @@ public class GameLogic : LoadBalancingClient
             // In a game you could send ~10 times per second or only when the user did some input, too
             if (this.UpdateOthersInterval.ShouldExecute)
             {
-                this.SendPositionUpdate();
                 this.SendInputUpdate();
 
                 this.UpdateOthersInterval.Reset();
@@ -260,23 +259,11 @@ public class GameLogic : LoadBalancingClient
             this.SendInterval.Reset();
         }
     }
-
-    /// <summary>Makes use of the peer (connection to server) to send an Event containing our (local) positon.</summary>
-    /// <remarks>
-    /// In Photon, by default, events go to everyone in the same Room. Outside of Rooms, you can't send events, usually.
-    /// There is an option to use Interest Groups to send to just those players interested in a certain group.
-    /// This can be used to reduce the number of events each player gets or to hide information from users not in the same group.
-    /// </remarks>
-    private void SendPositionUpdate()
-    {
-        // this overload of OpRaiseEvent sends to everyone in the room - even those who didn't subscribe to any group
-        this.LoadBalancingPeer.OpRaiseEvent(CustomConstants.EvPosition, this.LocalPlayer.WriteEvMove(), new RaiseEventOptions(), new SendOptions() { Reliability = this.SendReliable });
-    }
-
+    
     private void SendInputUpdate() {
         this.LoadBalancingPeer.OpRaiseEvent(
-            CustomConstants.EvPosition,
-            this.LocalPlayer.WriteEvMove(), 
+            CustomConstants.EvInput,
+            this.LocalPlayer.WriteEvInput(), 
             new RaiseEventOptions(), 
             new SendOptions() { Reliability = this.SendReliable }
         );    
@@ -326,28 +313,22 @@ public class GameLogic : LoadBalancingClient
         // this demo defined 2 events: Position and Color. additionally, a event is triggered when players join or leave
         switch (photonEvent.Code)
         {
-            case CustomConstants.EvPosition:
-                originatingPlayer.ReadEvMove((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
+            case CustomConstants.EvInput:
+                originatingPlayer?.ReadEvInput((Hashtable) photonEvent[ParameterCode.CustomEventContent]);
                 break;
             case CustomConstants.EvColor:
-                originatingPlayer.ReadEvColor((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
-                break;
+                originatingPlayer?.ReadEvColor((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
+               break;
 
 			// in this demo, we want a callback when players join or leave (so we can update their representation)
             case EventCode.GameListUpdate:
                 Debug.Log("GameListUpdate");
                 break;
             case EventCode.Join:
-                if (OnEventJoin != null)
-				{
-					OnEventJoin(originatingPlayer);
-				}
+                OnEventJoin?.Invoke(originatingPlayer);
                 break;
             case EventCode.Leave:
-                if (OnEventLeave != null)
-				{
-					OnEventLeave(originatingPlayer);
-				}
+                OnEventLeave?.Invoke(originatingPlayer);
                 break;
         }
 
@@ -362,8 +343,7 @@ public class GameLogic : LoadBalancingClient
     public override void OnOperationResponse(OperationResponse operationResponse)
     {
         base.OnOperationResponse(operationResponse);  // important to call, to keep state up to date
-
-        Debug.Log("OnOperationResponse." + operationResponse.OperationCode.ToString());
+        
         if (operationResponse.ReturnCode != ErrorCode.Ok)
         {
             //this.DebugReturn(DebugLevel.ERROR, operationResponse.ToStringFull() + " " + this.State);
@@ -381,7 +361,7 @@ public class GameLogic : LoadBalancingClient
                 // if the Master Server didn't find a room, simply create one. the result is handled below
                 if (this.JoinRandomGame && operationResponse.ReturnCode != ErrorCode.Ok)
                 {
-                    this.CreateParticleDemoRoom(CustomConstants.MapType.Forest, 4);
+                    this.CreateGameRoom();
                 }
                 break;
 
@@ -396,8 +376,6 @@ public class GameLogic : LoadBalancingClient
 					//this.loadBalancingPeer.OpRaiseEvent(CustomConstants.EvColor, this.LocalPlayer.WriteEvColor(), true, 0, null, EventCaching.AddToRoomCache);
                     this.LoadBalancingPeer.OpRaiseEvent(CustomConstants.EvColor, this.LocalPlayer.WriteEvColor(), new RaiseEventOptions() { CachingOption = EventCaching.AddToRoomCache }, new SendOptions() { Reliability = this.SendReliable });
                 }
-                break;
-            case OperationCode.GetGameList:
                 break;
         }
 
@@ -453,7 +431,7 @@ public class GameLogic : LoadBalancingClient
     }
 
     /// <summary>
-    /// Tells the server to create a new room, randomly named but with some defult settings (properties).
+    /// Tells the server to create a new room, randomly named but with some default settings (properties).
     /// </summary>
     /// <remarks>
     /// This method shows how to create a room without assigning a name.
@@ -465,15 +443,15 @@ public class GameLogic : LoadBalancingClient
     /// <seealso cref="https://doc.photonengine.com/en/realtime/current/reference/matchmaking-and-lobby"/>
     /// <param name="maptype">Any value of CustomConstants.MapType</param>
     /// <param name="gridSize"></param>
-    public void CreateParticleDemoRoom(CustomConstants.MapType maptype, int gridSize)
+    public void CreateGameRoom()
     {
-        Debug.Log("CreateParticleDemoRoom");
+        Debug.Log("CreateRoom");
         // custom room properties to use when this client creates a room. Note: Not all are listed in the lobby.
-        Hashtable roomPropsForCreation = new Hashtable() { { CustomConstants.MapProp, maptype.ToString() }, { CustomConstants.GridSizeProp, gridSize } };
+        Hashtable roomPropsForCreation = new Hashtable() {};
         
         EnterRoomParams enterRoomParams = new EnterRoomParams
         {
-            RoomName = "Demo",
+            RoomName = "Custom room",
             RoomOptions = new RoomOptions
             {
                 CustomRoomProperties = roomPropsForCreation,
@@ -483,4 +461,5 @@ public class GameLogic : LoadBalancingClient
 
         this.OpJoinOrCreateRoom(enterRoomParams);
     }
+    
 }

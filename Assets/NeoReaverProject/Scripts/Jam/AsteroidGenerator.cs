@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Packages.EZRollback.Runtime.Scripts;
+﻿using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -11,7 +8,6 @@ public class AsteroidGenerator : RollbackBehaviour {
 
     [SerializeField] Transform _topLeftScreen;
     [SerializeField] Transform _bottomRightScreen;
-    
     
     [SerializeField] float _minSpeed = 1.0f;
     [SerializeField] float _maxSpeed = 3.0f;
