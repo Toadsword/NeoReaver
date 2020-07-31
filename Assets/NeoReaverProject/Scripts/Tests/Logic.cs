@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using NeoReaverProject.Scripts;
 using Packages.EZRollback.Runtime.Scripts;
 using Photon.Realtime;
+using UnityEditor;
 
 public class Logic
 {
@@ -21,6 +22,8 @@ public class Logic
     public static string AppId { get; set; }
     public static string GameVersion { get; set; }
 
+    public static int localPlayerId;
+    
     // Dictionaries for storing references to background games and remote players
     public GameLogic localPlayer { get; private set; }
     public static Dictionary<string, GameLogic> clients;
@@ -51,7 +54,7 @@ public class Logic
         // Initialize local game
         localPlayer = new GameLogic(appId, gameVersion);
         localPlayer.NickName = nickName;
-        localPlayer.UserId = nickName;
+        localPlayer.UserId = nickName + GUID.Generate().ToString();
 
         localPlayer.OnEventJoin = this.OnJoinedPlayer;
         localPlayer.OnEventLeave = this.OnLeavedPlayer;
@@ -88,7 +91,7 @@ public class Logic
         }
         else
         {
-            // Adding the remote players that already appeared in the game
+            // Adding the remote players that already appeared in the game ?????????????????????????????????????????????????????????????????????????
             Debug.Log("Adding local player");
             lock (localPlayer)
             {
@@ -102,7 +105,8 @@ public class Logic
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = p.NickName;
-                    player.GetComponent<PlayerController>().SetupPlayer(RollbackManager.rbInputManager.AddPlayer() - 1, true);
+                    localPlayerId = RollbackManager.rbInputManager.AddPlayer();
+                    player.GetComponent<PlayerController>().SetupPlayer(localPlayerId, true);
                     playerObjects.Add(player);
                     remotePlayers.Add(p.NickName, CustomPlayer);
                 }
@@ -111,6 +115,7 @@ public class Logic
 
         if (!gameStarted) {
             UpdateBasePositions();
+            UpdateBaseColors();
         }
     }
 
@@ -122,13 +127,13 @@ public class Logic
     {
         string name = CustomPlayer.NickName;
 
-        foreach (GameObject cube in playerObjects)
+        foreach (GameObject playerObject in playerObjects)
         {
-            if (cube.name == name)
+            if (playerObject.name == name)
             {
                 remotePlayers.Remove(name);
-                playerObjects.Remove(cube);
-                GameObject.Destroy(cube);
+                playerObjects.Remove(playerObject);
+                Object.Destroy(playerObject);
                 return;
             }
         }
@@ -185,6 +190,13 @@ public class Logic
             playerObject.transform.up = -pos;
             
             currentAngle += deltaAngle;
+        }
+    }
+
+    private void UpdateBaseColors() {
+
+        foreach (GameObject playerObject in playerObjects) {
+            
         }
     }
 }

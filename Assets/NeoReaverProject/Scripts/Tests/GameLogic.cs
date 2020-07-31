@@ -120,7 +120,6 @@ public class GameLogic : LoadBalancingClient
         this.AppVersion = gameVersion;
 
         this.StateChanged += this.OnStateChanged;
-        this.UseInterestGroups = true;
         this.JoinRandomGame = true;
 
         this.DispatchInterval = new NetworkTimer(10);

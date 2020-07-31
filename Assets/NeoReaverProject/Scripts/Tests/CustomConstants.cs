@@ -12,7 +12,7 @@ public static class CustomConstants
 
     public const byte EvColor = 2;
     
-    public const byte EvPosition = 3;
 
+    public const byte EvPosition = 3;
     public const byte NetworkBufferSize = 10;
 }

@@ -86,11 +86,11 @@ public class ExampleRollbackInputQueue : RollbackInputManager {
     }
 
     public override int AddPlayer() {
-        int playerId = base.AddPlayer();
+        int playerId = base.AddPlayer() - 1;
         
         Debug.Log("New Connected controller : " + controllerToPlayers.Count);
         ControllerToPlayer ctPlayer = new ControllerToPlayer();
-        ctPlayer.playerId = playerId - 1;
+        ctPlayer.playerId = playerId;
         ctPlayer.device = null;
         ctPlayer.controllerState = ControllerState.ATTACHED;
         ctPlayer.gameState = GameState.PLAYING;
