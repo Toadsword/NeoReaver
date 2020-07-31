@@ -319,6 +319,9 @@ public class GameLogic : LoadBalancingClient
             case CustomConstants.EvColor:
                 originatingPlayer?.ReadEvColor((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
                break;
+            case CustomConstants.EvPosition:
+                originatingPlayer?.ReadEvPosition((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
+                break;
 
 			// in this demo, we want a callback when players join or leave (so we can update their representation)
             case EventCode.GameListUpdate:

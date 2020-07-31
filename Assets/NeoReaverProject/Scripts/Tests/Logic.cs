@@ -26,6 +26,8 @@ public class Logic
     public static Dictionary<string, GameLogic> clients;
     public static Dictionary<string, CustomPlayer> remotePlayers;
 
+    public bool gameStarted = false;
+
     // Cube GameObjects that represent players
     public List<GameObject> playerObjects;
 
@@ -106,6 +108,10 @@ public class Logic
                 }
             }
         }
+
+        if (!gameStarted) {
+            UpdateBasePositions();
+        }
     }
 
     /// <summary>
@@ -160,5 +166,25 @@ public class Logic
             return true;
         }
         return false;
+    }
+
+    private void UpdateBasePositions() {
+
+        float deltaAngle = 360.0f / playerObjects.Count;
+
+        float circleRadius = 10.0f;
+        
+        float currentAngle = 0.0f;
+        foreach (GameObject playerObject in playerObjects) {
+            
+            Vector3 pos = Vector3.zero;
+            pos.x = circleRadius * Mathf.Sin(currentAngle * Mathf.Deg2Rad);
+            pos.y = circleRadius * Mathf.Cos(currentAngle * Mathf.Deg2Rad);
+            playerObject.transform.position = pos;
+            
+            playerObject.transform.up = -pos;
+            
+            currentAngle += deltaAngle;
+        }
     }
 }

@@ -144,6 +144,16 @@ public class CustomPlayer : Player
         }
         this.LastUpdateFrame = GameLogic.Timestamp;
     }
+
+    public Hashtable WriteEvPosition() {
+        Hashtable evContent = new Hashtable();
+        return evContent;
+    }
+    
+    public void ReadEvPosition(Hashtable evContent)
+    {
+        this.LastUpdateFrame = GameLogic.Timestamp;
+    }
     
     /// <summary>
     /// Converts the player info into a string.

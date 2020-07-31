@@ -22,7 +22,6 @@ public class MyClient : MonoBehaviour {
     [SerializeField] Text _appIdInput;
     [SerializeField] Text _gameVersionInput;
     [SerializeField] Text _nickNameInput;
-    [SerializeField] Text _playerNumber;
 
     private NetworkTimer inputRepeatTimer;
     
