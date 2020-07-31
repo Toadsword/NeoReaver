@@ -54,7 +54,7 @@ public class Logic
         // Initialize local game
         localPlayer = new GameLogic(appId, gameVersion);
         localPlayer.NickName = nickName;
-        localPlayer.UserId = nickName + GUID.Generate().ToString();
+        localPlayer.UserId = nickName;
 
         localPlayer.OnEventJoin = this.OnJoinedPlayer;
         localPlayer.OnEventLeave = this.OnLeavedPlayer;
@@ -83,7 +83,7 @@ public class Logic
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = CustomPlayer.NickName;
-                    player.GetComponent<PlayerController>().SetupPlayer(RollbackManager.rbInputManager.AddPlayer(), false);
+                    player.GetComponent<PlayerController>().SetupPlayer(RollbackManager.rbInputManager.AddPlayer());
                     playerObjects.Add(player);
                     remotePlayers.Add(CustomPlayer.NickName, CustomPlayer);
                 }
@@ -106,7 +106,7 @@ public class Logic
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = p.NickName;
                     localPlayerId = RollbackManager.rbInputManager.AddPlayer();
-                    player.GetComponent<PlayerController>().SetupPlayer(localPlayerId, true);
+                    player.GetComponent<PlayerController>().SetupPlayer(localPlayerId);
                     playerObjects.Add(player);
                     remotePlayers.Add(p.NickName, CustomPlayer);
                 }
@@ -194,9 +194,9 @@ public class Logic
     }
 
     private void UpdateBaseColors() {
-
         foreach (GameObject playerObject in playerObjects) {
-            
+            PlayerController playerController = playerObject.GetComponent<PlayerController>();
+            playerController.SetupLocal(localPlayerId == playerController._playerId);
         }
     }
 }

@@ -45,10 +45,11 @@ public class PlayerController : RollbackBehaviour {
         _playerMovement.SetDirection(newDirection);
     }
 
-    public void SetupPlayer(int playerId, bool isLocal) {
+    public void SetupPlayer(int playerId) {
         _playerId = playerId;
-        this.isLocal = isLocal;
-        
+    }
+
+    public void SetupLocal(bool isLocal) {
         GetComponent<SpriteRenderer>().color = isLocal ? Color.green : Color.white;
     }
     
