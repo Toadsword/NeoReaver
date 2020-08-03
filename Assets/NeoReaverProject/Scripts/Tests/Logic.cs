@@ -23,6 +23,10 @@ public class Logic
     public static string GameVersion { get; set; }
 
     public static int localPlayerId;
+
+    public int GetLocalPlayerId() {
+        return localPlayerId;
+    }
     
     // Dictionaries for storing references to background games and remote players
     public GameLogic localPlayer { get; private set; }
@@ -106,6 +110,7 @@ public class Logic
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = p.NickName;
                     localPlayerId = RollbackManager.rbInputManager.AddPlayer();
+                    Debug.Log("Local player Id : " + localPlayerId);
                     player.GetComponent<PlayerController>().SetupPlayer(localPlayerId);
                     playerObjects.Add(player);
                     remotePlayers.Add(p.NickName, CustomPlayer);
@@ -117,6 +122,11 @@ public class Logic
             UpdateBasePositions();
             UpdateBaseColors();
         }
+    }
+
+    public void StartGame() {
+        RollbackManager.Instance.registerFrames = true;
+        gameStarted = true;
     }
 
     /// <summary>

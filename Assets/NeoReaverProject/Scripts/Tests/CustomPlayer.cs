@@ -53,12 +53,6 @@ public class CustomPlayer : Player
         this.Color = (int)((uint)SupportClass.ThreadSafeRandom.Next() | 0xFF000000);
     }
 
-    /// <summary>Randomizes position within the gridSize.</summary>
-    internal void RandomizePosition()
-    {
-
-    }
-
     public void ReadEvInputChange(Hashtable evContent) {
         int bufferSize = 1;
         // Know the buffer size

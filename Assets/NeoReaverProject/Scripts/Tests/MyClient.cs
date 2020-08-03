@@ -17,7 +17,7 @@ public class MyClient : MonoBehaviour {
     string _serverAddressInput = "";
 
     [SerializeField] GameObject _connectionPanel;
-    [SerializeField] GameObject _lobbyPanel;
+    [SerializeField] GameObject _startGamePanel;
 
     [SerializeField] Text _appIdInput;
     [SerializeField] Text _gameVersionInput;
@@ -27,7 +27,7 @@ public class MyClient : MonoBehaviour {
     
     // Start is called before the first frame update
     void Start() {
-        _lobbyPanel.SetActive(false);
+        _startGamePanel.SetActive(false);
         inputRepeatTimer = new NetworkTimer(10);
     }
 
@@ -39,13 +39,17 @@ public class MyClient : MonoBehaviour {
             _gameVersionInput.text.ToString(),
             _nickNameInput.text.ToString()
             );
-        
+
+        _logic.localPlayer.OnEventJoin += this.OnEventJoin;
+        _logic.localPlayer.OnEventLeave += this.OnEventLeave;
         _logic.localPlayer.StateChanged += this.OnStateChanged;
         _logic.localPlayer.OpResponseReceived += this.OnOperationResponse;
-        
+        _logic.localPlayer.EventReceived += this.EventReceived;
+
+
         _connectionPanel.SetActive(false);
     }
-    
+
     // Update is called once per frame
     void Update()
     {
@@ -87,22 +91,10 @@ public class MyClient : MonoBehaviour {
         }
     }
 
-    public void JoinRandomGame() {
-        Debug.Log("JOINING RANDOM GAME");
-        this._logic.localPlayer.OpJoinRandomRoom();
+    public void StartGame() {
+        _logic.StartGame();
     }
 
-    private void OnStateChanged(ClientState fromState, ClientState toState)
-    {
-        switch (toState) {
-            case ClientState.ConnectedToMasterServer:
-                //Show room panel
-                //this._logic.localPlayer.OpJoinRandomRoom();
-                //_lobbyPanel.SetActive(true);
-                break;
-        }
-    }
-    
     /// <summary>
     /// Render cubes onto the scene
     /// </summary>
@@ -124,12 +116,41 @@ public class MyClient : MonoBehaviour {
         }
     }
 
+    private void OnStateChanged(ClientState fromState, ClientState toState) {
+        switch (toState) {
+            case ClientState.ConnectedToMasterServer:
+                //Show room panel
+                //this._logic.localPlayer.OpJoinRandomRoom();
+                //_lobbyPanel.SetActive(true);
+                break;
+            case ClientState.JoinedLobby:
+                
+                break;
+        }
+    }
+
     public void OnOperationResponse(OperationResponse operationResponse) {
         switch (operationResponse.OperationCode) {
             case OperationCode.JoinRandomGame:
             case OperationCode.JoinGame:
-                _lobbyPanel.SetActive(false);
-                break;  
+                break;
+        }
+    }
+
+    private void EventReceived(EventData obj) {
+        if (obj.Code == CustomConstants.EvSetupDone) {
+            
+        }
+    }
+
+    private void OnEventJoin(CustomPlayer customPlayer) {
+        if (_logic.GetLocalPlayerId() == 0) {
+            _startGamePanel.SetActive(true);
+        }
+    }
+    private void OnEventLeave(CustomPlayer customPlayer) {
+        if (_logic.GetLocalPlayerId() == 0) {
+            _startGamePanel.SetActive(true);
         }
     }
 }

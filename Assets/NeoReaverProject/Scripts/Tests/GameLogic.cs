@@ -374,7 +374,7 @@ public class GameLogic : LoadBalancingClient
                 {
                     // no matter if we joined or created a game, when we arrived in state "Joined", we are on the game server in a room and
                     // this client could start moving and update others of it's color
-                    this.LocalPlayer.RandomizePosition();
+                    this.LocalPlayer.RandomizeColor();
 					//this.loadBalancingPeer.OpRaiseEvent(CustomConstants.EvColor, this.LocalPlayer.WriteEvColor(), true, 0, null, EventCaching.AddToRoomCache);
                     this.LoadBalancingPeer.OpRaiseEvent(CustomConstants.EvColor, this.LocalPlayer.WriteEvColor(), new RaiseEventOptions() { CachingOption = EventCaching.AddToRoomCache }, new SendOptions() { Reliability = this.SendReliable });
                 }

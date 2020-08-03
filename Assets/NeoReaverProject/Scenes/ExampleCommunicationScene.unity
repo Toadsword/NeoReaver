@@ -559,7 +559,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 436736371}
-        m_MethodName: JoinRandomGame
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -728,7 +728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _connectionPanel: {fileID: 641094320}
-  _lobbyPanel: {fileID: 956581617}
+  _startGamePanel: {fileID: 956581617}
   _appIdInput: {fileID: 793510010}
   _gameVersionInput: {fileID: 963650690}
   _nickNameInput: {fileID: 414140734}
@@ -1190,7 +1190,7 @@ GameObject:
   - component: {fileID: 956581620}
   - component: {fileID: 956581619}
   m_Layer: 5
-  m_Name: LobbyPanel
+  m_Name: StartGamePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
