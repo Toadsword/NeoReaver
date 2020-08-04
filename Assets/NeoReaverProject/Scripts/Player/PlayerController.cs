@@ -8,28 +8,38 @@ using UnityEngine.Serialization;
 namespace NeoReaverProject.Scripts {
 
 public class PlayerController : RollbackBehaviour {
-    PoolManager _projectileManager;
-
+    
     public bool isLocal;
     [SerializeField] public int _playerId = -1;
+    [SerializeField] bool registerPlayer = false;
+    
 
     [SerializeField] Transform _shootPosition;
+    [SerializeField] Transform _spriteTransform;
     [SerializeField] float _projectileSpeed = 1.5f;
 
     //Player shoo parameters
     [SerializeField] float _timeBetweenShootsTick = 0.2f;
     private Timer _timerBetweenShoots;
 
+    [SerializeField] PlayerUiController _playerUiController;
+    
     PlayerMovement _playerMovement;
+
+    public PlayerUiController GetPlayerUiController() {
+        return _playerUiController;
+    }
 
     // Start is called before the first frame update
     void Start() {
-        _timerBetweenShoots = new Timer(_timeBetweenShootsTick);
+        if (registerPlayer) {
+            _playerId = RollbackManager.rbInputManager.AddPlayer();
+        }
         
-        _projectileManager = ProjectileManager.Instance.poolManager;
         _playerMovement = GetComponent<PlayerMovement>();
         InScreenManager._instance.RegisterObject(gameObject);
         
+        _timerBetweenShoots = new Timer(_timeBetweenShootsTick);
         _timerBetweenShoots.Reset();
     }
 
@@ -38,26 +48,39 @@ public class PlayerController : RollbackBehaviour {
         if (_playerId == -1) {
             return;
         }
-        
         Vector2 newDirection;
         newDirection.x = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.HORIZONTAL, _playerId);
         newDirection.y = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.VERTICAL, _playerId);
         _playerMovement.SetDirection(newDirection);
     }
 
-    public void SetupPlayer(int playerId) {
+    public void SetupPlayer(int playerId, string playerName) {
         _playerId = playerId;
+        GetPlayerUiController().UpdatePlayerText(playerName);
     }
 
+    public Transform GetRotationTransform() {
+        return _spriteTransform;
+    }
+    
     public void SetupLocal(bool isLocal) {
-        GetComponent<SpriteRenderer>().color = isLocal ? Color.green : Color.white;
+        _spriteTransform.GetComponent<SpriteRenderer>().color = isLocal ? Color.green : Color.white;
     }
     
     public override void Simulate() {
+        if (_playerId == -1) {
+            return;
+        }
+        
+        Vector2 newDirection;
+        newDirection.x = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.HORIZONTAL, _playerId);
+        newDirection.y = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.VERTICAL, _playerId);
+        _playerMovement.SetDirection(newDirection);
+        
         _timerBetweenShoots.Simulate();
         if (_timerBetweenShoots.ShouldExecute()) {
             if (RollbackManager.rbInputManager.GetInput((int)CustomInputManager.ActionsCode.SHOOT, _playerId)) {
-                _projectileManager.CreateObject(_shootPosition.position, transform.rotation, _projectileSpeed);
+                ProjectileManager.Instance.poolManager.CreateObject(_shootPosition.position, _playerMovement.spriteTransform.rotation, _projectileSpeed);
                 _timerBetweenShoots.Reset();
             }
         }

@@ -7,11 +7,11 @@ public class CustomInputManager : RollbackInputManager
 {
     public enum ActionsCode : int{
         UP = 0,
-        RIGHT,
-        DOWN,
-        LEFT,
+        RIGHT = 1,
+        DOWN = 2,
+        LEFT = 3,
         
-        SHOOT,
+        SHOOT = 4,
         
         LENGTH
     }

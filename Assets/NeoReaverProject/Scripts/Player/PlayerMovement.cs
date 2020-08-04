@@ -37,6 +37,8 @@ public class PlayerMovement : RollbackBehaviour {
 
     Vector3 fixedLastUpdatePosition;
     [SerializeField] float midSpeedo;
+    [SerializeField] public Transform spriteTransform;
+    
     
     [SerializeField] public RollbackElementSpeedValues rbElements = new RollbackElementSpeedValues();
 
@@ -62,21 +64,21 @@ public class PlayerMovement : RollbackBehaviour {
         
         float newAngle = Mathf.Atan2(rbElements.value.direction.y, rbElements.value.direction.x) * Mathf.Rad2Deg - 90.0f;
         
-        Quaternion newRotation = transform.rotation;
+        Quaternion newRotation = spriteTransform.rotation;
         float currentAngle = (newRotation.eulerAngles.z + 90.0f) * Mathf.Deg2Rad;
         if (rbElements.value.direction != Vector2.zero) 
         {
-            newRotation = Quaternion.RotateTowards(transform.rotation, Quaternion.AngleAxis(newAngle, Vector3.forward), Time.fixedDeltaTime * 450.0f);
+            newRotation = Quaternion.RotateTowards(newRotation, Quaternion.AngleAxis(newAngle, Vector3.forward), Time.fixedDeltaTime * 450.0f);
             // Calculating new state
-            if (transform.rotation != newRotation) {
+            if (spriteTransform.rotation != newRotation) {
                 rbElements.value.movementState = MovementState.CHANGING_DIRECTION;
             } else {
                 rbElements.value.movementState = MovementState.MOVING;
             }
+            spriteTransform.rotation = newRotation;
         } else {
             rbElements.value.movementState = MovementState.IDLE;
         }
-        transform.rotation = newRotation;
 
         float checkingMaxSpeedo = maxSpeedo;
         switch (rbElements.value.movementState) {

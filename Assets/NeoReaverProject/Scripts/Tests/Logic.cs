@@ -74,22 +74,23 @@ public class Logic
     /// Handler for "Player Joined" Event
     /// </summary>
     /// <param name="CustomPlayer">Player that joined the game</param>
-    private void OnJoinedPlayer(CustomPlayer CustomPlayer)
+    private void OnJoinedPlayer(CustomPlayer customPlayer)
     {
-        if (!CustomPlayer.IsLocal)
+        if (!customPlayer.IsLocal)
         {
             // Adding the new player, that just joined the game
             Debug.Log("Adding remote player");
             lock (remotePlayers)
             {
-                if (!remotePlayers.ContainsKey(CustomPlayer.NickName) && !clients.ContainsKey(CustomPlayer.NickName))
+                if (!remotePlayers.ContainsKey(customPlayer.NickName) && !clients.ContainsKey(customPlayer.NickName))
                 {
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
-                    player.name = CustomPlayer.NickName;
-                    player.GetComponent<PlayerController>().SetupPlayer(RollbackManager.rbInputManager.AddPlayer());
+                    player.name = customPlayer.NickName;
+                    int playerId = RollbackManager.rbInputManager.AddPlayer();
+                    player.GetComponent<PlayerController>().SetupPlayer(playerId, customPlayer.NickName + ": " + playerId);
                     playerObjects.Add(player);
-                    remotePlayers.Add(CustomPlayer.NickName, CustomPlayer);
+                    remotePlayers.Add(customPlayer.NickName, customPlayer);
                 }
             }
         }
@@ -110,10 +111,10 @@ public class Logic
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = p.NickName;
                     localPlayerId = RollbackManager.rbInputManager.AddPlayer();
-                    Debug.Log("Local player Id : " + localPlayerId);
-                    player.GetComponent<PlayerController>().SetupPlayer(localPlayerId);
+                    
+                    player.GetComponent<PlayerController>().SetupPlayer(localPlayerId, p.NickName + " (You) : " + localPlayerId);
                     playerObjects.Add(player);
-                    remotePlayers.Add(p.NickName, CustomPlayer);
+                    remotePlayers.Add(p.NickName, customPlayer);
                 }
             }
         }
@@ -197,8 +198,8 @@ public class Logic
             pos.y = circleRadius * Mathf.Cos(currentAngle * Mathf.Deg2Rad);
             playerObject.transform.position = pos;
             
-            playerObject.transform.up = -pos;
-            
+            playerObject.GetComponent<PlayerController>().GetRotationTransform().up = -pos;
+
             currentAngle += deltaAngle;
         }
     }
