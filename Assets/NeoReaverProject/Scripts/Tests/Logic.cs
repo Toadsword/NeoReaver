@@ -21,13 +21,11 @@ public class Logic
     public static string ServerAddress { get; set; }
     public static string AppId { get; set; }
     public static string GameVersion { get; set; }
-
-    public static int localPlayerId;
-
-    public int GetLocalPlayerId() {
-        return localPlayerId;
-    }
     
+    public int GetLocalPlayerId() {
+        return localPlayer.LocalPlayer.ActorNumber - 1;
+    }
+
     // Dictionaries for storing references to background games and remote players
     public GameLogic localPlayer { get; private set; }
     public static Dictionary<string, GameLogic> clients;
@@ -74,21 +72,20 @@ public class Logic
     /// Handler for "Player Joined" Event
     /// </summary>
     /// <param name="CustomPlayer">Player that joined the game</param>
-    private void OnJoinedPlayer(CustomPlayer customPlayer)
-    {
+    private void OnJoinedPlayer(CustomPlayer customPlayer) {
+        RollbackManager.rbInputManager.localPlayerId = localPlayer.LocalPlayer.ActorNumber - 1;
+        
         if (!customPlayer.IsLocal)
         {
             // Adding the new player, that just joined the game
-            Debug.Log("Adding remote player");
             lock (remotePlayers)
             {
                 if (!remotePlayers.ContainsKey(customPlayer.NickName) && !clients.ContainsKey(customPlayer.NickName))
                 {
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
-                    player.name = customPlayer.NickName;
-                    int playerId = RollbackManager.rbInputManager.AddPlayer();
-                    player.GetComponent<PlayerController>().SetupPlayer(playerId, customPlayer.NickName + ": " + playerId);
+                    player.name = customPlayer.NickName + RollbackManager.rbInputManager.AddPlayer();
+                    player.GetComponent<PlayerController>().SetupPlayer(customPlayer.ActorNumber - 1, customPlayer.NickName + " : " + customPlayer.ActorNumber);
                     playerObjects.Add(player);
                     remotePlayers.Add(customPlayer.NickName, customPlayer);
                 }
@@ -96,8 +93,7 @@ public class Logic
         }
         else
         {
-            // Adding the remote players that already appeared in the game ?????????????????????????????????????????????????????????????????????????
-            Debug.Log("Adding local player");
+            // Adding the remote players that already appeared in the game
             lock (localPlayer)
             {
                 foreach (CustomPlayer p in localPlayer.LocalRoom.Players.Values)
@@ -106,13 +102,13 @@ public class Logic
                     {
                         if (playerObject.name == p.NickName) return;
                     }
+                    Debug.Log("Creating");
 
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
-                    player.name = p.NickName;
-                    localPlayerId = RollbackManager.rbInputManager.AddPlayer();
+                    player.name = p.NickName + RollbackManager.rbInputManager.AddPlayer();
                     
-                    player.GetComponent<PlayerController>().SetupPlayer(localPlayerId, p.NickName + " (You) : " + localPlayerId);
+                    player.GetComponent<PlayerController>().SetupPlayer(p.ActorNumber - 1, p.NickName + " (You) : " + p.ActorNumber);
                     playerObjects.Add(player);
                     remotePlayers.Add(p.NickName, customPlayer);
                 }
@@ -122,6 +118,7 @@ public class Logic
         if (!gameStarted) {
             UpdateBasePositions();
             UpdateBaseColors();
+            UpdateBaseNames();
         }
     }
 
@@ -186,28 +183,46 @@ public class Logic
 
     private void UpdateBasePositions() {
 
-        float deltaAngle = 360.0f / playerObjects.Count;
+        Debug.Log("Player count : " + localPlayer.LocalRoom.PlayerCount);
+        float deltaAngle = 360.0f / localPlayer.LocalRoom.PlayerCount;
 
+        Debug.Log("deltaAngle : " + deltaAngle);
         float circleRadius = 10.0f;
         
         float currentAngle = 0.0f;
+        //Update position of all players
         foreach (GameObject playerObject in playerObjects) {
+            
+            Debug.Log("Updating player position : " + playerObject.name);
+            Debug.Log("Player id : " + playerObject.GetComponent<PlayerController>()._playerId);
+            currentAngle = deltaAngle * playerObject.GetComponent<PlayerController>()._playerId;
             
             Vector3 pos = Vector3.zero;
             pos.x = circleRadius * Mathf.Sin(currentAngle * Mathf.Deg2Rad);
             pos.y = circleRadius * Mathf.Cos(currentAngle * Mathf.Deg2Rad);
+            Debug.Log("Current angle : " + currentAngle);
+            Debug.Log("New position : " + pos);
             playerObject.transform.position = pos;
             
             playerObject.GetComponent<PlayerController>().GetRotationTransform().up = -pos;
-
-            currentAngle += deltaAngle;
         }
     }
 
     private void UpdateBaseColors() {
         foreach (GameObject playerObject in playerObjects) {
             PlayerController playerController = playerObject.GetComponent<PlayerController>();
-            playerController.SetupLocal(localPlayerId == playerController._playerId);
+            playerController.SetupLocal(localPlayer.LocalPlayer.ActorNumber - 1 == playerController._playerId);
+        }
+    }
+
+    private void UpdateBaseNames() {
+        for(int i = 0; i < playerObjects.Count; i++) {
+            PlayerController playerController = playerObjects[i].GetComponent<PlayerController>();
+            if (localPlayer.LocalPlayer.ActorNumber - 1 == playerController._playerId) {
+                playerController.GetPlayerUiController().UpdatePlayerText(playerObjects[i].name + " (You) -" + playerController._playerId);
+            } else {
+                playerController.GetPlayerUiController().UpdatePlayerText(playerObjects[i].name + " - " + playerController._playerId);
+            }
         }
     }
 }

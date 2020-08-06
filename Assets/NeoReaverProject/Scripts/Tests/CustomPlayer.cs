@@ -39,6 +39,7 @@ public class CustomPlayer : Player
 
     public CustomPlayer(string nickName, int actorID, bool isLocal, Hashtable actorProperties) : base(nickName, actorID, isLocal, actorProperties)
     {
+        Debug.Log(nickName + " - " + actorID + " - " + isLocal);
         if (isLocal)
         {
             // we pick a random color when we create a local player
@@ -107,7 +108,7 @@ public class CustomPlayer : Player
         }
 
         if (evContent.ContainsKey((int) 1)) {
-            Debug.Log("Recieved inputs for frame : #" + evContent[1]);
+            //Debug.Log("Recieved inputs for frame : #" + evContent[1]);
         }
         
         //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);

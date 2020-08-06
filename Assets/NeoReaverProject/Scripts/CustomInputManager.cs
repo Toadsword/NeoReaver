@@ -13,11 +13,11 @@ public class CustomInputManager : RollbackInputManager
         
         SHOOT = 4,
         
-        LENGTH
+        LENGTH = 5
     }
     
     protected  override RollbackInputBaseActions GetCurrentActionsValue(int controllerId) {
-        if (controllerId == Logic.localPlayerId) {
+        if (controllerId == localPlayerId) {
             //Gather local inputs and execute them
             RollbackInputBaseActions actionsValue = new RollbackInputBaseActions((int)ActionsCode.LENGTH);
             
@@ -35,11 +35,6 @@ public class CustomInputManager : RollbackInputManager
             //Predict the next input by copying the last input
             return _playerInputList[controllerId].value;
         }
-    }
-
-    public override int AddPlayer() {
-        Debug.Log("AddPlayer");
-        return base.AddPlayer();
     }
 
     void SetBitFromKeycode(int inputIndex, KeyCode keyCode, ref RollbackInputBaseActions actionsValue) {

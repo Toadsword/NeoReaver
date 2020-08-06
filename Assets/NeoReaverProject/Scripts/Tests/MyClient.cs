@@ -120,7 +120,7 @@ public class MyClient : MonoBehaviour {
         switch (toState) {
             case ClientState.ConnectedToMasterServer:
                 //Show room panel
-                //this._logic.localPlayer.OpJoinRandomRoom();
+                //this._logic.LocalPlayer.OpJoinRandomRoom();
                 //_lobbyPanel.SetActive(true);
                 break;
             case ClientState.JoinedLobby:

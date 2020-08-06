@@ -14,6 +14,7 @@ using global::Photon.Realtime;
 using System;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 
 /// <summary>Delegate to get notified of joining/leaving players (see OnEventJoin and OnEventLeave).</summary>
@@ -61,7 +62,7 @@ public class GameLogic : LoadBalancingClient
 	public EventPlayerListChangeDelegate OnEventLeave;
 
     /// <summary>Provides the LocalPlayer cast to ParticlePlayer.</summary>
-    public new CustomPlayer LocalPlayer { get { return (CustomPlayer)base.LocalPlayer; } }
+    public new CustomPlayer LocalPlayer { get { return (CustomPlayer)base.LocalPlayer; }   }
 
     /// <summary>Provides the CurrentRoom cast to ParticleRoom.</summary>
     /// <remarks>This could also be names CurrentRoom (with new keywork) but this way it better matches LocalPlayer.</remarks>
@@ -203,7 +204,6 @@ public class GameLogic : LoadBalancingClient
     /// </remarks>
     protected internal override Player CreatePlayer(string actorName, int actorNumber, bool isLocal, Hashtable actorProperties)
     {
-        Debug.Log("CreatePlayer . " + actorName + " : " + actorNumber + " : " + isLocal);
         return new CustomPlayer(actorName, actorNumber, isLocal, actorProperties);
     }
 
