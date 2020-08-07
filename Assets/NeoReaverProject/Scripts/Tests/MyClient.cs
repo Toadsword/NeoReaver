@@ -54,7 +54,6 @@ public class MyClient : MonoBehaviour {
             if (_logic.LocalPlayerJoined())
             {
                 RenderPlayers();
-                InputForControlledCube();
             }
         }
     }
@@ -76,14 +75,6 @@ public class MyClient : MonoBehaviour {
         float b = (byte)colorValue / 255.0f;
 
         return new Color(r, g, b);
-    }
-
-    private void InputForControlledCube()
-    {
-        if (!inputRepeatTimer.ShouldExecute)
-        {
-            return;
-        }
     }
 
     public void StartGame() {

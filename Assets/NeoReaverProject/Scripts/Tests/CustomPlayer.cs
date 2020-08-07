@@ -111,17 +111,14 @@ public class CustomPlayer : Player
     /// <summary>Reads the "custom content" Hashtable that is sent as position update.</summary>
     /// <returns>Hashtable for event "move" to update others</returns>
     public void ReadEvInput(Hashtable evContent) {
-        Debug.Log("--------------------- Revieved inputs ------------------------");
         int numFramesRecieved = 0;
         if (evContent.ContainsKey((int) 0)) {
             numFramesRecieved = (int) evContent[0];
-            Debug.Log("numFramesRecieved : " + numFramesRecieved);
         }
 
         int sentAtFrameNumber = 0;
         if (evContent.ContainsKey((int) 1)) {
             sentAtFrameNumber = (int) evContent[1];
-            Debug.Log("sentAtFrameNumber : " + sentAtFrameNumber);
         }
 
         RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
@@ -132,13 +129,10 @@ public class CustomPlayer : Player
             
             if (evContent.ContainsKey(2 + i)) {
                 RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
-                Debug.Log("Before unpack : " + baseActions.ToString());
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
-                Debug.Log("After unpack : " + baseActions.ToString());
                 playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i);
             }
         }
-        Debug.Log("Resimulating.");
         //Resimulate actions depending
         RollbackManager.Instance.ReSimulate(numFramesRecieved);
 

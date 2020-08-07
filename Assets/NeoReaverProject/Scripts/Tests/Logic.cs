@@ -83,6 +83,7 @@ public class Logic
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = customPlayer.NickName + RollbackManager.rbInputManager.AddPlayer();
+                    
                     player.GetComponent<PlayerController>().SetupPlayer(customPlayer.ActorNumber - 1, customPlayer.NickName + " : " + customPlayer.ActorNumber);
                     playerObjects.Add(player);
                     remotePlayers.Add(customPlayer.NickName, customPlayer);
