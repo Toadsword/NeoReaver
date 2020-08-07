@@ -19,7 +19,7 @@ public class InScreenManager : RollbackBehaviour {
         }
     }
 
-    List<Transform> _transformsToTrack = new List<Transform>();
+    readonly List<Transform> _transformsToTrack = new List<Transform>();
 
     [SerializeField] Transform _bottomLeftPosition;
     [SerializeField] Transform _topRightPosition;

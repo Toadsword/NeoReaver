@@ -4,15 +4,15 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerUiController : MonoBehaviour {
-    [SerializeField] Text playerNumberText;
-    [SerializeField] Text pingText;
+    [SerializeField] Text _playerNumberText;
+    [SerializeField] Text _pingText;
 
 
     public void UpdatePlayerText(string newPlayerName) {
-        playerNumberText.text = newPlayerName + "\n \\/";
+        _playerNumberText.text = newPlayerName + "\n \\/";
     }
     
     public void UpdatePing(int newValue) {
-        pingText.text = "Ping : " + newValue.ToString() + "ms";
+        _pingText.text = "Ping : " + newValue.ToString() + "ms";
     }
 }

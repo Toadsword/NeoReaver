@@ -79,7 +79,6 @@ public class PlayerController : RollbackBehaviour {
         
         _timerBetweenShoots.Simulate();
         if (_timerBetweenShoots.ShouldExecute()) {
-            Debug.Log("RollbackManager.rbInputManager.GetInputDown(" + (int)CustomInputManager.ActionsCode.SHOOT + ",  " + _playerId + ")");
             if (RollbackManager.rbInputManager.GetInputDown((int)CustomInputManager.ActionsCode.SHOOT, _playerId)) {
                 ProjectileManager.Instance.poolManager.CreateObject(_shootPosition.position, _playerMovement.spriteTransform.rotation, _projectileSpeed);
                 _timerBetweenShoots.Reset();

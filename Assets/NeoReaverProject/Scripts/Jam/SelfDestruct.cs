@@ -8,8 +8,10 @@ public class SelfDestruct : RollbackBehaviour {
     [SerializeField] float _timeBeforeSelfDestruct = 1.5f;
 
     Timer _timer;
-    
-    void Awake() {
+
+    new void Awake() {
+        base.Awake();
+        
         _timer = new Timer(_timeBeforeSelfDestruct);
         SetGameObjectActive();
     }

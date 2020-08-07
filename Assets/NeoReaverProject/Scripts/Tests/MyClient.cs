@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using ExitGames.Client.Photon;
+﻿using ExitGames.Client.Photon;
 using Packages.EZRollback.Runtime.Scripts;
 using Photon.Realtime;
-using Unity.Collections;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,9 +8,8 @@ public class MyClient : MonoBehaviour {
     
     Logic _logic;
 
-    string _serverAdress = "";
-    string _appId = "6bf6b4e7-b37c-40e2-8548-11f41fbf3ae0";
-    string _serverAddressInput = "";
+    const string ServerAdress = "";
+    // string _appId = "6bf6b4e7-b37c-40e2-8548-11f41fbf3ae0";
 
     [SerializeField] GameObject _connectionPanel;
     [SerializeField] GameObject _startGamePanel;
@@ -35,7 +29,7 @@ public class MyClient : MonoBehaviour {
     public void ConnectToServer() {
         _logic = new Logic();
         _logic.ConnectToMaster(
-            _serverAddressInput,
+            ServerAdress,
             _appIdInput.text.ToString(), 
             _gameVersionInput.text.ToString(),
             _nickNameInput.text.ToString()
@@ -142,6 +136,7 @@ public class MyClient : MonoBehaviour {
         if (obj.Code == CustomConstants.EvStartGame) {
             Debug.Log("Revieced : EVSETUPDONE");
             
+            _startGamePanel.SetActive(false);
             RollbackManager.Instance.registerFrames = true;
             _logic.gameStarted = true;
         }

@@ -6,6 +6,7 @@ using NeoReaverProject.Scripts;
 using UnityEngine;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEditor;
+using UnityEngine.Serialization;
 
 
 [Serializable]
@@ -31,15 +32,13 @@ public class PlayerMovement : RollbackBehaviour {
     [SerializeField] public bool movable = false;
     [SerializeField] Vector2 _direction = new Vector2();
 
-    [SerializeField] float maxSpeedo = 5.0f;
-    [SerializeField] float minSpeedo = 0.2f;
-    [SerializeField] float speedMultiplier;
+    [SerializeField] float _maxSpeed = 5.0f;
+    [SerializeField] float _minSpeed = 0.2f;
+    [SerializeField] float _speedMultiplier = 1.1f;
 
     Vector3 fixedLastUpdatePosition;
-    [SerializeField] float midSpeedo;
     [SerializeField] public Transform spriteTransform;
-    
-    
+
     [SerializeField] public RollbackElementSpeedValues rbElements = new RollbackElementSpeedValues();
 
     PlayerController _playerController;
@@ -51,9 +50,7 @@ public class PlayerMovement : RollbackBehaviour {
     void Start() {
         _playerController = GetComponent<PlayerController>();
         rbElements.value.speedo = 5.0f;
-        rbElements.value.speedMultiplier = speedMultiplier;
-        
-        midSpeedo = (maxSpeedo + minSpeedo) / 2.0f;
+        rbElements.value.speedMultiplier = _speedMultiplier;
     }
 
     private void MoveSpaceship() {
@@ -80,10 +77,10 @@ public class PlayerMovement : RollbackBehaviour {
             rbElements.value.movementState = MovementState.IDLE;
         }
 
-        float checkingMaxSpeedo = maxSpeedo;
+        float checkingMaxSpeed = _maxSpeed;
         switch (rbElements.value.movementState) {
             case MovementState.IDLE:
-                rbElements.value.speedMultiplier = speedMultiplier;
+                rbElements.value.speedMultiplier = _speedMultiplier;
                 rbElements.value.speedo /= rbElements.value.speedMultiplier;
                 break;
             case MovementState.MOVING:
@@ -91,18 +88,18 @@ public class PlayerMovement : RollbackBehaviour {
                 break;
             case MovementState.CHANGING_DIRECTION:
                 if (currentAngle - newAngle > 60.0f) {
-                    rbElements.value.speedMultiplier = speedMultiplier;
+                    rbElements.value.speedMultiplier = _speedMultiplier;
                 } else {
                     rbElements.value.speedo *= rbElements.value.speedMultiplier;
                 } 
                 break;
         }
             
-        if (rbElements.value.speedo > checkingMaxSpeedo) {
-            rbElements.value.speedo = checkingMaxSpeedo;
+        if (rbElements.value.speedo > checkingMaxSpeed) {
+            rbElements.value.speedo = checkingMaxSpeed;
         }
-        if (rbElements.value.speedo < minSpeedo) {
-            rbElements.value.speedo = minSpeedo;
+        if (rbElements.value.speedo < _minSpeed) {
+            rbElements.value.speedo = _minSpeed;
         }
 
         Vector3 currentDirection = new Vector3(Mathf.Cos(currentAngle) , Mathf.Sin(currentAngle), 0.0f);

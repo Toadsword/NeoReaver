@@ -17,7 +17,7 @@ public class AsteroidGenerator : RollbackBehaviour {
 
     [SerializeField] float _spawnRadius = 2.0f;
 
-    [SerializeField] float _timeBetweenAsteroidSpawn;
+    [SerializeField] float _timeBetweenAsteroidSpawn = 0.2f;
 
     Timer _asteroidSpawnRate;
 

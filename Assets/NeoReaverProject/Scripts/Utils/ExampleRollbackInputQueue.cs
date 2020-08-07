@@ -49,8 +49,6 @@ public class ExampleRollbackInputQueue : RollbackInputManager {
     }
 
     private void OnDeviceAttached(InputDevice newDevice) {
-        ControllerToPlayer newPlayer;
-
         //Check if we've found again the controller
         bool reFoundController = false;
         for (int i = 0; i < controllerToPlayers.Count; i++)
