@@ -243,7 +243,9 @@ public class GameLogic : LoadBalancingClient
             // In a game you could send ~10 times per second or only when the user did some input, too
             if (this.UpdateOthersInterval.ShouldExecute)
             {
-                this.SendInputUpdate();
+                if (GameManager.Instance.gameStarted) {
+                    this.SendInputUpdate();
+                }
 
                 this.UpdateOthersInterval.Reset();
             }

@@ -137,8 +137,8 @@ public class MyClient : MonoBehaviour {
             Debug.Log("Revieced : EVSETUPDONE");
             
             _startGamePanel.SetActive(false);
-            RollbackManager.Instance.registerFrames = true;
-            _logic.gameStarted = true;
+            
+            GameManager.Instance.StartGame();
         }
     }
 

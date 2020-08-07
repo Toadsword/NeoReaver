@@ -31,8 +31,6 @@ public class Logic
     public static Dictionary<string, GameLogic> clients;
     public static Dictionary<string, CustomPlayer> remotePlayers;
 
-    public bool gameStarted = false;
-
     // Cube GameObjects that represent players
     public List<GameObject> playerObjects;
 
@@ -114,18 +112,19 @@ public class Logic
             }
         }
 
-        if (!gameStarted) {
+        if (!GameManager.Instance.gameStarted) {
             UpdateBasePositions();
             UpdateBaseColors();
             UpdateBaseNames();
+        } else {
+            //TODO : Deal with new players while the game is launched
         }
     }
 
     public void StartGame() {
         localPlayer.SendStartGameEvent();
         
-        RollbackManager.Instance.registerFrames = true;
-        gameStarted = true;
+        GameManager.Instance.StartGame();
     }
 
     /// <summary>
@@ -205,14 +204,14 @@ public class Logic
     private void UpdateBaseColors() {
         foreach (GameObject playerObject in playerObjects) {
             PlayerController playerController = playerObject.GetComponent<PlayerController>();
-            playerController.SetupLocal(localPlayer.LocalPlayer.ActorNumber - 1 == playerController._playerId);
+            playerController.SetupLocal(GetLocalPlayerId() == playerController._playerId);
         }
     }
 
     private void UpdateBaseNames() {
         for(int i = 0; i < playerObjects.Count; i++) {
             PlayerController playerController = playerObjects[i].GetComponent<PlayerController>();
-            if (localPlayer.LocalPlayer.ActorNumber - 1 == playerController._playerId) {
+            if (GetLocalPlayerId() == playerController._playerId) {
                 playerController.GetPlayerUiController().UpdatePlayerText(playerObjects[i].name + " (You) -" + playerController._playerId);
             } else {
                 playerController.GetPlayerUiController().UpdatePlayerText(playerObjects[i].name + " - " + playerController._playerId);

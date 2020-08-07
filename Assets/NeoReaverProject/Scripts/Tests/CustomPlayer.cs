@@ -72,8 +72,6 @@ public class CustomPlayer : Player
             bufferSize = (int)evContent[(byte)1];
         }
         if (evContent.ContainsKey((byte) 2)) {
-            //FrameInput[] inputs = (FrameInput[])evContent[(byte)2];
-
         }
         
         //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
@@ -94,34 +92,56 @@ public class CustomPlayer : Player
     public Hashtable WriteEvInput()
     {
         Hashtable evContent = new Hashtable();
-        int currentFrame = RollbackManager.Instance.GetDisplayedFrameNum();
+        int currentFrameNum = RollbackManager.Instance.GetDisplayedFrameNum();
         int numFramesToSend = CustomConstants.NetworkBufferSize;
-        if (numFramesToSend > currentFrame) {
-            numFramesToSend = currentFrame - 1;
+        if (numFramesToSend > currentFrameNum) {
+            numFramesToSend = currentFrameNum - 1;
         }
-        
-        
+
         evContent[0] = numFramesToSend; // Last x frames to pass through the
-        evContent[1] = currentFrame; // Current frame
-        for (int i = 2; i < numFramesToSend + 2; i++) {
-            
+        evContent[1] = currentFrameNum; // Current frame number
+        RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
+        for (int i = 0; i < numFramesToSend; i++) {
+            RollbackInputBaseActions rollbackInputBaseActions = playerInputHistory.GetValue(currentFrameNum - i);
+            evContent[2 + i] = rollbackInputBaseActions.PackBits();
         }
         return evContent;
     }
 
     /// <summary>Reads the "custom content" Hashtable that is sent as position update.</summary>
     /// <returns>Hashtable for event "move" to update others</returns>
-    public void ReadEvInput(Hashtable evContent)
-    {
-        if (evContent.ContainsKey((int)0))
-        {
-            
+    public void ReadEvInput(Hashtable evContent) {
+        Debug.Log("--------------------- Revieved inputs ------------------------");
+        int numFramesRecieved = 0;
+        if (evContent.ContainsKey((int) 0)) {
+            numFramesRecieved = (int) evContent[0];
+            Debug.Log("numFramesRecieved : " + numFramesRecieved);
         }
 
+        int sentAtFrameNumber = 0;
         if (evContent.ContainsKey((int) 1)) {
-            //Debug.Log("Recieved inputs for frame : #" + evContent[1]);
+            sentAtFrameNumber = (int) evContent[1];
+            Debug.Log("sentAtFrameNumber : " + sentAtFrameNumber);
         }
+
+        RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
         
+        for (int i = 0; i < numFramesRecieved; i++) {
+            
+            // TODO : Add check if frame have to be corrected. 
+            
+            if (evContent.ContainsKey(2 + i)) {
+                RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
+                Debug.Log("Before unpack : " + baseActions.ToString());
+                baseActions.UnpackBits((byte[])evContent[2 + i]);
+                Debug.Log("After unpack : " + baseActions.ToString());
+                playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i);
+            }
+        }
+        Debug.Log("Resimulating.");
+        //Resimulate actions depending
+        RollbackManager.Instance.ReSimulate(numFramesRecieved);
+
         //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
         this.LastUpdateFrame = GameLogic.Timestamp;
     }
