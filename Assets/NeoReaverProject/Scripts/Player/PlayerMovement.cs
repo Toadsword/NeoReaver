@@ -28,15 +28,14 @@ public struct SpeedValues {
 public class RollbackElementSpeedValues : RollbackElement<SpeedValues> { }
 
 public class PlayerMovement : RollbackBehaviour {
-
-    [SerializeField] public bool movable = false;
+    
     [SerializeField] Vector2 _direction = new Vector2();
 
     [SerializeField] float _maxSpeed = 5.0f;
     [SerializeField] float _minSpeed = 0.2f;
     [SerializeField] float _speedMultiplier = 1.1f;
 
-    Vector3 fixedLastUpdatePosition;
+    Vector3 _fixedLastUpdatePosition;
     [SerializeField] public Transform spriteTransform;
 
     [SerializeField] public RollbackElementSpeedValues rbElements = new RollbackElementSpeedValues();
@@ -54,9 +53,6 @@ public class PlayerMovement : RollbackBehaviour {
     }
 
     private void MoveSpaceship() {
-        if (!movable) {
-            return;
-        }
         rbElements.value.direction = new Vector2(_direction.x, _direction.y);
         
         float newAngle = Mathf.Atan2(rbElements.value.direction.y, rbElements.value.direction.x) * Mathf.Rad2Deg - 90.0f;

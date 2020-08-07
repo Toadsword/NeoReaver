@@ -191,8 +191,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57341640aadffb4992acc1b540c5d35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerNumberText: {fileID: 6452713915256857715}
-  pingText: {fileID: 5493506251239841977}
+  _playerNumberText: {fileID: 6452713915256857715}
+  _pingText: {fileID: 5493506251239841977}
 --- !u!1 &5493506249980512309
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,10 +265,9 @@ MonoBehaviour:
   registered: 0
   movable: 1
   _direction: {x: 0, y: 0}
-  maxSpeedo: 7.5
-  minSpeedo: 0.2
-  speedMultiplier: 1.01
-  midSpeedo: 0
+  _maxSpeed: 7
+  _minSpeed: 0.2
+  _speedMultiplier: 1.03
   spriteTransform: {fileID: 5493506251452203662}
   rbElements:
     _history:

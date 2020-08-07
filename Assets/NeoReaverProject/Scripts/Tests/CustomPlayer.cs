@@ -39,7 +39,6 @@ public class CustomPlayer : Player
 
     public CustomPlayer(string nickName, int actorID, bool isLocal, Hashtable actorProperties) : base(nickName, actorID, isLocal, actorProperties)
     {
-        Debug.Log(nickName + " - " + actorID + " - " + isLocal);
         if (isLocal)
         {
             // we pick a random color when we create a local player
