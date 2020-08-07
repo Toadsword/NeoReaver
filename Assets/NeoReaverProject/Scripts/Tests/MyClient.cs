@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
+using Packages.EZRollback.Runtime.Scripts;
 using Photon.Realtime;
 using Unity.Collections;
 using Unity.Mathematics;
@@ -138,8 +139,11 @@ public class MyClient : MonoBehaviour {
     }
 
     private void EventReceived(EventData obj) {
-        if (obj.Code == CustomConstants.EvSetupDone) {
+        if (obj.Code == CustomConstants.EvStartGame) {
+            Debug.Log("Revieced : EVSETUPDONE");
             
+            RollbackManager.Instance.registerFrames = true;
+            _logic.gameStarted = true;
         }
     }
 

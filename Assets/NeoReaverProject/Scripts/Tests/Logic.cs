@@ -102,7 +102,6 @@ public class Logic
                     {
                         if (playerObject.name == p.NickName) return;
                     }
-                    Debug.Log("Creating");
 
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
@@ -123,6 +122,8 @@ public class Logic
     }
 
     public void StartGame() {
+        localPlayer.SendStartGameEvent();
+        
         RollbackManager.Instance.registerFrames = true;
         gameStarted = true;
     }
@@ -182,26 +183,19 @@ public class Logic
     }
 
     private void UpdateBasePositions() {
-
-        Debug.Log("Player count : " + localPlayer.LocalRoom.PlayerCount);
+        
         float deltaAngle = 360.0f / localPlayer.LocalRoom.PlayerCount;
-
-        Debug.Log("deltaAngle : " + deltaAngle);
+        
         float circleRadius = 10.0f;
         
         float currentAngle = 0.0f;
         //Update position of all players
         foreach (GameObject playerObject in playerObjects) {
-            
-            Debug.Log("Updating player position : " + playerObject.name);
-            Debug.Log("Player id : " + playerObject.GetComponent<PlayerController>()._playerId);
             currentAngle = deltaAngle * playerObject.GetComponent<PlayerController>()._playerId;
             
             Vector3 pos = Vector3.zero;
             pos.x = circleRadius * Mathf.Sin(currentAngle * Mathf.Deg2Rad);
             pos.y = circleRadius * Mathf.Cos(currentAngle * Mathf.Deg2Rad);
-            Debug.Log("Current angle : " + currentAngle);
-            Debug.Log("New position : " + pos);
             playerObject.transform.position = pos;
             
             playerObject.GetComponent<PlayerController>().GetRotationTransform().up = -pos;

@@ -158,6 +158,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 443282402, guid: 522b6304f7e492748886f7129149d3cd, type: 3}
+      propertyPath: registerPlayer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5493506249980512309, guid: 522b6304f7e492748886f7129149d3cd,
         type: 3}
       propertyPath: m_Name
@@ -332,6 +336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d7da81496eea804bb4be4e0b0bc563f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  localPlayerId: 0
   _playerInputList: []
 --- !u!1 &751713966
 GameObject:

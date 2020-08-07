@@ -258,6 +258,18 @@ public class GameLogic : LoadBalancingClient
             this.SendInterval.Reset();
         }
     }
+
+    public void SendStartGameEvent() {
+        
+        this.LoadBalancingPeer.OpRaiseEvent(
+            CustomConstants.EvStartGame,
+            this.LocalPlayer.WriteEvStartGame(), 
+            new RaiseEventOptions(), 
+            new SendOptions() { Reliability = this.SendReliable }
+        );   
+    } 
+    
+    
     
     private void SendInputUpdate() {
         this.LoadBalancingPeer.OpRaiseEvent(

@@ -44,6 +44,10 @@ public class ExampleRollbackInputQueue : RollbackInputManager {
         InputManager.OnDeviceDetached += OnDeviceDetached;
     }
 
+    protected override int GetNumberOfInputs() {
+        return numNetworkableActions;
+    }
+
     private void OnDeviceAttached(InputDevice newDevice) {
         ControllerToPlayer newPlayer;
 

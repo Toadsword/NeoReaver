@@ -12,5 +12,5 @@ public static class CustomConstants {
     public const byte EvPosition = 3;
     
     public const byte NetworkBufferSize = 10;
-    public const byte EvSetupDone = 11;
+    public const byte EvStartGame = 11;
 }

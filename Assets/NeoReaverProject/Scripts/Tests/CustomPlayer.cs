@@ -54,6 +54,18 @@ public class CustomPlayer : Player
         this.Color = (int)((uint)SupportClass.ThreadSafeRandom.Next() | 0xFF000000);
     }
 
+    public Hashtable WriteEvStartGame() {
+        Hashtable evContent = new Hashtable();
+
+        evContent[0] = true;
+
+        return evContent;
+    }
+
+    public void ReadEvStartGame(Hashtable evContent) {
+        
+    }
+    
     public void ReadEvInputChange(Hashtable evContent) {
         int bufferSize = 1;
         // Know the buffer size
