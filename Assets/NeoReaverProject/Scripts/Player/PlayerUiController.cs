@@ -14,7 +14,8 @@ public class PlayerUiController : MonoBehaviour {
     }
     
     public void UpdatePing(int newValue) {
-        _pingText.text = "Ping : " + newValue.ToString() + "ms";
+        Debug.Log("new ping : " + newValue);
+        _pingText.text = newValue.ToString() + "ms";
     }
 
     public void SetSpectator() {

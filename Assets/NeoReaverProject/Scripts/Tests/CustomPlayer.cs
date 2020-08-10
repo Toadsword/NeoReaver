@@ -137,6 +137,9 @@ public class CustomPlayer : Player
 
         RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
         
+        //TODO Retest difference between frames once ping calculated
+        
+        // Debug.Log("------------------------");
         //Correct inputs
         for (int i = 0; i < numFramesRecieved; i++) {
             
@@ -145,6 +148,7 @@ public class CustomPlayer : Player
             if (evContent.ContainsKey(2 + i)) {
                 RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
+                //Debug.Log("Corrected value frame number : " + (sentAtFrameNumber - i));
                 playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i);
             }
         }
@@ -153,6 +157,8 @@ public class CustomPlayer : Player
         RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
         lastInput.UnpackBits((byte[])evContent[2 + numFramesRecieved - 1]);
         int numDiffFramesWithPresent = RollbackManager.Instance.GetDisplayedFrameNum() - sentAtFrameNumber;
+        
+        //Debug.Log(numDiffFramesWithPresent);
         for (int i = 0; i < numDiffFramesWithPresent; i++) {
             playerInputHistory.CorrectValue(lastInput, sentAtFrameNumber + i);
         }

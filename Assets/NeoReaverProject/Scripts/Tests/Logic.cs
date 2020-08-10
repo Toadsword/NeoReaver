@@ -28,7 +28,6 @@ public class Logic
 
     // Dictionaries for storing references to background games and remote players
     public GameLogic localPlayer { get; private set; }
-    public static Dictionary<string, GameLogic> clients;
     public static Dictionary<string, CustomPlayer> remotePlayers;
 
     // Cube GameObjects that represent players
@@ -46,8 +45,7 @@ public class Logic
         ServerAddress = serverAddress;
         AppId = appId;
         GameVersion = gameVersion;
-
-        clients = new Dictionary<string, GameLogic>();
+        
         remotePlayers = new Dictionary<string, CustomPlayer>();
         playerObjects = new List<GameObject>();
 
@@ -77,7 +75,7 @@ public class Logic
             // Adding the new player, that just joined the game
             lock (remotePlayers)
             {
-                if (!remotePlayers.ContainsKey(customPlayer.NickName) && !clients.ContainsKey(customPlayer.NickName))
+                if (!remotePlayers.ContainsKey(customPlayer.NickName))
                 {
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
@@ -165,10 +163,7 @@ public class Logic
     {
         if (LocalPlayerJoined())
         {
-            foreach (GameLogic logic in clients.Values)
-            {
-                logic.UpdateLoop();
-            }
+            localPlayer.UpdateLoop();
         }
     }
 
@@ -215,16 +210,21 @@ public class Logic
     private void UpdateBaseNames() {
         for(int i = 0; i < playerObjects.Count; i++) {
             PlayerController playerController = playerObjects[i].GetComponent<PlayerController>();
+            string newName = playerObjects[i].name;
             if (GetLocalPlayerId() == playerController._playerId) {
-                playerController.GetPlayerUiController().UpdatePlayerText(playerObjects[i].name + " (You) -" + playerController._playerId);
-            } else {
-                playerController.GetPlayerUiController().UpdatePlayerText(playerObjects[i].name + " - " + playerController._playerId);
+                newName = newName + " (You)";
             }
+            playerController.GetPlayerUiController().UpdatePlayerText(newName);
         }
     }
 
     private void UpdatePlayersPing() {
-        
+        foreach (GameObject playerObject in playerObjects) {
+            PlayerController playerController = playerObject.GetComponent<PlayerController>();
+            if (playerController._playerId != localPlayer.LocalPlayer.ActorNumber - 1) continue;
+         
+            playerController.GetPlayerUiController().UpdatePing(localPlayer.LocalRoom.LoadBalancingClient.LoadBalancingPeer.RoundTripTime);
+        }
     }
 
     private void DisablePlayer(int playerId) {
