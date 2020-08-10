@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using ExitGames.Client.Photon;
 using global::Photon.Realtime;
+using NeoReaverProject.Scripts;
 using Packages.EZRollback.Runtime.Scripts;
 using UnityEngine;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
@@ -27,10 +29,10 @@ public class CustomPlayer : Player
 {
     public int Color { get; set; }
     
-    
-    // Implement current player input and send it through network
-    //public List<FrameInput> inputHistory;
+    public int Ping { get; set; }
 
+    public GameObject playerObject;
+    
     private int LastUpdateFrame { get; set; }
 
     /// <summary>
@@ -62,10 +64,6 @@ public class CustomPlayer : Player
         return evContent;
     }
 
-    public void ReadEvStartGame(Hashtable evContent) {
-        
-    }
-    
     public void ReadEvInputChange(Hashtable evContent) {
         int bufferSize = 1;
         // Know the buffer size
@@ -195,14 +193,31 @@ public class CustomPlayer : Player
         this.LastUpdateFrame = GameLogic.Timestamp;
     }
 
+    public Hashtable WriteEvPing() {
+        Hashtable evContent = new Hashtable();
+        evContent[0] = Ping;
+        return evContent;
+    }
+
+    public void ReadEvPing(Hashtable evContent) {
+        if (evContent.ContainsKey(0)) {
+            this.Ping = (int)evContent[0];
+        }
+    }
+    
     public Hashtable WriteEvPosition() {
         Hashtable evContent = new Hashtable();
+        
         return evContent;
     }
     
     public void ReadEvPosition(Hashtable evContent)
     {
         this.LastUpdateFrame = GameLogic.Timestamp;
+    }
+
+    public void UpdatePingValue() {
+        playerObject.GetComponent<PlayerController>().GetPlayerUiController().UpdatePing(Ping);
     }
     
     /// <summary>

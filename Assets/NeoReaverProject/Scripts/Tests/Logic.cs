@@ -9,6 +9,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using NeoReaverProject.Scripts;
 using Packages.EZRollback.Runtime.Scripts;
 using Photon.Realtime;
@@ -79,10 +80,12 @@ public class Logic
                 {
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
-                    player.name = customPlayer.NickName + RollbackManager.rbInputManager.AddPlayer();
+                    RollbackManager.rbInputManager.AddPlayer();
+                    player.name = customPlayer.NickName; 
                     
                     player.GetComponent<PlayerController>().SetupPlayer(customPlayer.ActorNumber - 1, customPlayer.NickName);
                     playerObjects.Add(player);
+                    customPlayer.playerObject = player;
                     remotePlayers.Add(customPlayer.NickName, customPlayer);
                 }
             }
@@ -92,8 +95,9 @@ public class Logic
             // Adding the remote players that already appeared in the game
             lock (localPlayer)
             {
-                foreach (CustomPlayer p in localPlayer.LocalRoom.Players.Values)
+                foreach (Player player1 in localPlayer.LocalRoom.Players.Values)
                 {
+                    CustomPlayer p = (CustomPlayer) player1;
                     foreach (GameObject playerObject in playerObjects)
                     {
                         if (playerObject.name == p.NickName) return;
@@ -101,11 +105,13 @@ public class Logic
 
                     GameObject playerPrefab = Resources.Load("NeoReaverProject/Prefabs/Player", typeof(GameObject)) as GameObject;
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
-                    player.name = p.NickName + RollbackManager.rbInputManager.AddPlayer();
+                    RollbackManager.rbInputManager.AddPlayer();
+                    player.name = p.NickName;
                     
                     player.GetComponent<PlayerController>().SetupPlayer(p.ActorNumber - 1, p.NickName);
                     playerObjects.Add(player);
-                    remotePlayers.Add(p.NickName, customPlayer);
+                    p.playerObject = player;
+                    remotePlayers.Add(p.NickName, p);
                 }
             }
         }
@@ -116,7 +122,6 @@ public class Logic
             UpdateBaseNames();
         } else {
             DisablePlayer(customPlayer.ActorNumber - 1);
-            //TODO : Deal with new players while the game is launched
         }
     }
 
@@ -144,6 +149,12 @@ public class Logic
                 return;
             }
         }
+
+        if (!GameManager.Instance.gameStarted) {
+            UpdateBasePositions();
+            UpdateBaseColors();
+            UpdateBaseNames();
+        }
     }
 
     // Update is called once per frame
@@ -153,9 +164,10 @@ public class Logic
         {
             localPlayer.UpdateLoop();
             Move();
+            if (localPlayer.State == ClientState.Joined) {
+                UpdatePlayersPing();
+            }
         }
-
-        UpdatePlayersPing();
     }
 
     // Update the position of the client
@@ -217,11 +229,11 @@ public class Logic
     }
 
     private void UpdatePlayersPing() {
-        foreach (GameObject playerObject in playerObjects) {
-            PlayerController playerController = playerObject.GetComponent<PlayerController>();
-            if (playerController._playerId != localPlayer.LocalPlayer.ActorNumber - 1) continue;
-         
-            playerController.GetPlayerUiController().UpdatePing(localPlayer.LocalRoom.LoadBalancingClient.LoadBalancingPeer.RoundTripTime);
+        localPlayer.LocalPlayer.Ping = localPlayer.LocalRoom.LoadBalancingClient.LoadBalancingPeer.RoundTripTime;
+        localPlayer.LocalPlayer.UpdatePingValue();
+        
+        foreach (var remotePlayer in remotePlayers) {
+            remotePlayer.Value.UpdatePingValue();
         }
     }
 

@@ -93,6 +93,7 @@ public class GameLogic : LoadBalancingClient
     /// <summary>Tracks the interval in which the current position should be broadcasted.</summary>
     /// <remarks>This actually defines how many updates per second this player creates by position updates.</remarks>
     public NetworkTimer UpdateOthersInterval { get; set; }
+    public NetworkTimer UpdateOthersPingInterval { get; set; }
 
     /// <summary>Tracks the interval in which PhotonPeer.DispatchIncomingCommands should be called.</summary>
     /// <remarks>Instead of dispatching incoming info every frame, this demo will do find with a slightly lower rate.</remarks>
@@ -126,6 +127,7 @@ public class GameLogic : LoadBalancingClient
         this.DispatchInterval = new NetworkTimer(10);
         this.SendInterval = new NetworkTimer(20);
         this.UpdateOthersInterval = new NetworkTimer(20);
+        this.UpdateOthersPingInterval = new NetworkTimer(1000);
     }
 
 
@@ -249,6 +251,12 @@ public class GameLogic : LoadBalancingClient
 
                 this.UpdateOthersInterval.Reset();
             }
+
+            //Update the other player's ping information
+            if (this.UpdateOthersPingInterval.ShouldExecute) {
+                this.SendPingUpdate();
+                this.UpdateOthersPingInterval.Reset();
+            }
         }
 
         // With the Photon API you can fine-control sending data, which allows the library to aggregate several messages into one package
@@ -269,10 +277,16 @@ public class GameLogic : LoadBalancingClient
             new RaiseEventOptions(), 
             new SendOptions() { Reliability = this.SendReliable }
         );   
-    } 
-    
-    
-    
+    }
+
+    private void SendPingUpdate() {
+        this.LoadBalancingPeer.OpRaiseEvent(
+            CustomConstants.EvPing,
+            this.LocalPlayer.WriteEvPing(), 
+            new RaiseEventOptions(), 
+            new SendOptions() { Reliability = this.SendReliable }
+        );    
+    }
     private void SendInputUpdate() {
         this.LoadBalancingPeer.OpRaiseEvent(
             CustomConstants.EvInput,
@@ -322,8 +336,7 @@ public class GameLogic : LoadBalancingClient
             this.DebugReturn(DebugLevel.WARNING, photonEvent.Code + " ev. We didn't find a originating player for actorId: " + actorNr);
             return;
         }
-
-        // this demo defined 2 events: Position and Color. additionally, a event is triggered when players join or leave
+        
         switch (photonEvent.Code)
         {
             case CustomConstants.EvInput:
@@ -336,6 +349,10 @@ public class GameLogic : LoadBalancingClient
             case CustomConstants.EvPosition:
                 Debug.Log("Recieved Postion");
                 originatingPlayer?.ReadEvPosition((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
+                break;
+            case CustomConstants.EvPing:
+                Debug.Log("Recieved Ping");
+                originatingPlayer?.ReadEvPing((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
                 break;
 
 			// in this demo, we want a callback when players join or leave (so we can update their representation)
