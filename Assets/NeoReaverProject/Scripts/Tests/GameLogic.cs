@@ -351,7 +351,6 @@ public class GameLogic : LoadBalancingClient
                 originatingPlayer?.ReadEvPosition((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
                 break;
             case CustomConstants.EvPing:
-                Debug.Log("Recieved Ping");
                 originatingPlayer?.ReadEvPing((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
                 break;
 
