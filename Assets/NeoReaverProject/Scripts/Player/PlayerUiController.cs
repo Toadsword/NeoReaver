@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class PlayerUiController : MonoBehaviour {
     [SerializeField] Text _playerNumberText;
     [SerializeField] Text _pingText;
+    [SerializeField] GameObject _spectatorPanel; 
 
 
     public void UpdatePlayerText(string newPlayerName) {
@@ -14,5 +15,9 @@ public class PlayerUiController : MonoBehaviour {
     
     public void UpdatePing(int newValue) {
         _pingText.text = "Ping : " + newValue.ToString() + "ms";
+    }
+
+    public void SetSpectator() {
+        _spectatorPanel.SetActive(true);
     }
 }

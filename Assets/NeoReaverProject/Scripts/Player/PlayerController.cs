@@ -2,6 +2,7 @@
 using System.Xml.Schema;
 using ExitGames.Client.Photon;
 using Packages.EZRollback.Runtime.Scripts;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -65,6 +66,11 @@ public class PlayerController : RollbackBehaviour {
     
     public void SetupLocal(bool isLocal) {
         _spriteTransform.GetComponent<SpriteRenderer>().color = isLocal ? Color.green : Color.white;
+    }
+
+    public void SetSpectator() {
+        gameObject.SetActive(false);
+        _playerUiController.SetSpectator();
     }
     
     public override void Simulate() {

@@ -72,7 +72,6 @@ public class Logic
     /// <param name="CustomPlayer">Player that joined the game</param>
     private void OnJoinedPlayer(CustomPlayer customPlayer) {
         RollbackManager.rbInputManager.localPlayerId = localPlayer.LocalPlayer.ActorNumber - 1;
-        
         if (!customPlayer.IsLocal)
         {
             // Adding the new player, that just joined the game
@@ -84,7 +83,7 @@ public class Logic
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = customPlayer.NickName + RollbackManager.rbInputManager.AddPlayer();
                     
-                    player.GetComponent<PlayerController>().SetupPlayer(customPlayer.ActorNumber - 1, customPlayer.NickName + " : " + customPlayer.ActorNumber);
+                    player.GetComponent<PlayerController>().SetupPlayer(customPlayer.ActorNumber - 1, customPlayer.NickName);
                     playerObjects.Add(player);
                     remotePlayers.Add(customPlayer.NickName, customPlayer);
                 }
@@ -106,7 +105,7 @@ public class Logic
                     GameObject player = Object.Instantiate(playerPrefab, new Vector3(), new Quaternion());
                     player.name = p.NickName + RollbackManager.rbInputManager.AddPlayer();
                     
-                    player.GetComponent<PlayerController>().SetupPlayer(p.ActorNumber - 1, p.NickName + " (You) : " + p.ActorNumber);
+                    player.GetComponent<PlayerController>().SetupPlayer(p.ActorNumber - 1, p.NickName);
                     playerObjects.Add(player);
                     remotePlayers.Add(p.NickName, customPlayer);
                 }
@@ -118,6 +117,7 @@ public class Logic
             UpdateBaseColors();
             UpdateBaseNames();
         } else {
+            DisablePlayer(customPlayer.ActorNumber - 1);
             //TODO : Deal with new players while the game is launched
         }
     }
@@ -156,6 +156,8 @@ public class Logic
             localPlayer.UpdateLoop();
             Move();
         }
+
+        UpdatePlayersPing();
     }
 
     // Update the position of the client
@@ -184,6 +186,7 @@ public class Logic
 
     private void UpdateBasePositions() {
         
+        Debug.Log("UpdateBasePositions");
         float deltaAngle = 360.0f / localPlayer.LocalRoom.PlayerCount;
         
         float circleRadius = 10.0f;
@@ -217,6 +220,19 @@ public class Logic
             } else {
                 playerController.GetPlayerUiController().UpdatePlayerText(playerObjects[i].name + " - " + playerController._playerId);
             }
+        }
+    }
+
+    private void UpdatePlayersPing() {
+        
+    }
+
+    private void DisablePlayer(int playerId) {
+        for(int i = 0; i < playerObjects.Count; i++) {
+            PlayerController playerController = playerObjects[i].GetComponent<PlayerController>();
+            if (playerId == playerController._playerId) {
+                playerController.SetSpectator();
+            } 
         }
     }
 }

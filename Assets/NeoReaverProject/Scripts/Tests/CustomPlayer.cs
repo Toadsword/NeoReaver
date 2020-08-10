@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq.Expressions;
 using ExitGames.Client.Photon;
 using global::Photon.Realtime;
 using Packages.EZRollback.Runtime.Scripts;
@@ -94,7 +95,7 @@ public class CustomPlayer : Player
         Hashtable evContent = new Hashtable();
         int currentFrameNum = RollbackManager.Instance.GetDisplayedFrameNum();
         int numFramesToSend = CustomConstants.NetworkBufferSize;
-        if (numFramesToSend > currentFrameNum) {
+        if (numFramesToSend >= currentFrameNum) {
             numFramesToSend = currentFrameNum - 1;
         }
 
@@ -103,6 +104,15 @@ public class CustomPlayer : Player
         RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
         for (int i = 0; i < numFramesToSend; i++) {
             RollbackInputBaseActions rollbackInputBaseActions = playerInputHistory.GetValue(currentFrameNum - i);
+            if (!rollbackInputBaseActions.IsWellInitialized()) {
+                Debug.Log("i : " + i);
+                Debug.Log("ActorNumber - 1 : " + (ActorNumber - 1));
+                Debug.Log("numFramesToSend : " + numFramesToSend);
+                Debug.Log("currentFrameNum : " + currentFrameNum);
+                Debug.Log("rollbackInputBaseActions : " + rollbackInputBaseActions.ToString());
+                Debug.Break();
+            }
+                
             evContent[2 + i] = rollbackInputBaseActions.PackBits();
         }
         return evContent;
@@ -116,6 +126,10 @@ public class CustomPlayer : Player
             numFramesRecieved = (int) evContent[0];
         }
 
+        if (numFramesRecieved <= 0) {
+            return;
+        }
+
         int sentAtFrameNumber = 0;
         if (evContent.ContainsKey((int) 1)) {
             sentAtFrameNumber = (int) evContent[1];
@@ -123,6 +137,7 @@ public class CustomPlayer : Player
 
         RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
         
+        //Correct inputs
         for (int i = 0; i < numFramesRecieved; i++) {
             
             // TODO : Add check if frame have to be corrected. 
@@ -133,8 +148,17 @@ public class CustomPlayer : Player
                 playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i);
             }
         }
+
+        //Predict new inputs from difference of recieving
+        RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
+        lastInput.UnpackBits((byte[])evContent[2 + numFramesRecieved - 1]);
+        int numDiffFramesWithPresent = RollbackManager.Instance.GetDisplayedFrameNum() - sentAtFrameNumber;
+        for (int i = 0; i < numDiffFramesWithPresent; i++) {
+            playerInputHistory.CorrectValue(lastInput, sentAtFrameNumber + i);
+        }
+
         //Resimulate actions depending
-        RollbackManager.Instance.ReSimulate(numFramesRecieved);
+        RollbackManager.Instance.ReSimulate(numFramesRecieved + numDiffFramesWithPresent);
 
         //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
         this.LastUpdateFrame = GameLogic.Timestamp;
