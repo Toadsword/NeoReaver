@@ -180,8 +180,6 @@ public class Logic
     }
 
     private void UpdateBasePositions() {
-        
-        Debug.Log("UpdateBasePositions");
         float deltaAngle = 360.0f / localPlayer.LocalRoom.PlayerCount;
         
         float circleRadius = 10.0f;

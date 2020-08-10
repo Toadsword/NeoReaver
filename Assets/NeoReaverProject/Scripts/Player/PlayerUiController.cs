@@ -14,7 +14,6 @@ public class PlayerUiController : MonoBehaviour {
     }
     
     public void UpdatePing(int newValue) {
-        Debug.Log("new ping : " + newValue);
         _pingText.text = newValue.ToString() + "ms";
     }
 
