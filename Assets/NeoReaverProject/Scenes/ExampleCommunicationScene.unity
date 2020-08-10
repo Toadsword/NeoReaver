@@ -1709,6 +1709,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AsteroidFieldGenerator
       objectReference: {fileID: 0}
+    - target: {fileID: 3827898940075601935, guid: 1e57a59ea75d9c242a48efb16d47d78f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e57a59ea75d9c242a48efb16d47d78f, type: 3}
 --- !u!1001 &1580284957

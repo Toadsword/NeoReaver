@@ -185,6 +185,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   registered: 0
+  _isActiveRb:
+    _history: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+    value: 0
+    _head: 0
+    _tail: 0
+    _size: 0
 --- !u!61 &1930643744559728634
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -224,7 +230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   registered: 0
-  _timeBeforeSelfDestruct: 1.5
+  _timeBeforeSelfDestruct: 5
 --- !u!114 &-1240010364684792285
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -27,9 +27,6 @@ public class SelfDestruct : RollbackBehaviour {
             gameObject.SetActive(false);
         }
     }
-
-    private void UpdateTimer(float deltaTime) {
-    }
     
     public override void SetValueFromFrameNumber(int frameNumber) {
         _timer.SetValueFromFrameNumber(frameNumber);

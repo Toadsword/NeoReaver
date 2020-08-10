@@ -22,6 +22,7 @@ public class PoolManager : MonoBehaviour
     }
 
     public GameObject CreateObject(Vector3 position, Quaternion rotation, float speed) {
+        Debug.Log("Creating object");
         GameObject obj = transform.GetChild(_lastUsedIndex).gameObject;
         obj.transform.position = position;
         obj.transform.rotation = rotation;
