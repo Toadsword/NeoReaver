@@ -145,7 +145,9 @@ public class CustomPlayer : Player
             if (evContent.ContainsKey(2 + i)) {
                 RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
-                
+                Debug.Log(baseActions);
+                Debug.Log("i : " + i);
+                Debug.Log("sentAtFrameNumber - i : " + (sentAtFrameNumber - i));
                 //If return true, that means the correction was done
                 if (playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i)) {
                     Debug.Log("Correcting frame");
