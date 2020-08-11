@@ -137,34 +137,42 @@ public class CustomPlayer : Player
         
         //TODO Retest difference between frames once ping calculated
         
-        // Debug.Log("------------------------");
+        Debug.Log("------------------------");
         //Correct inputs
+        int backtrackNumFrames = -1;
         for (int i = 0; i < numFramesRecieved; i++) {
-            
-            // TODO : Add check if frame have to be corrected. 
             
             if (evContent.ContainsKey(2 + i)) {
                 RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
-                //Debug.Log("Corrected value frame number : " + (sentAtFrameNumber - i));
-                playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i);
+                
+                //If return true, that means the correction was done
+                if (playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i)) {
+                    Debug.Log("Correcting frame");
+                    backtrackNumFrames = i + 1;
+                }
             }
         }
 
-        //Predict new inputs from difference of recieving
-        RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
-        lastInput.UnpackBits((byte[])evContent[2 + numFramesRecieved - 1]);
-        int numDiffFramesWithPresent = RollbackManager.Instance.GetDisplayedFrameNum() - sentAtFrameNumber;
-        
-        //Debug.Log(numDiffFramesWithPresent);
-        for (int i = 0; i < numDiffFramesWithPresent; i++) {
-            playerInputHistory.CorrectValue(lastInput, sentAtFrameNumber + i);
+        Debug.Log(backtrackNumFrames);
+        // If at least a frame changed, we make a simulate
+        if (backtrackNumFrames > -1) {
+            //Predict new inputs from difference of recieving
+            RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
+            lastInput.UnpackBits((byte[])evContent[2 + numFramesRecieved - 1]);
+            int numDiffFramesWithPresent = RollbackManager.Instance.GetDisplayedFrameNum() - sentAtFrameNumber;
+            
+            Debug.Log(numDiffFramesWithPresent);
+            for (int i = 0; i < numDiffFramesWithPresent; i++) {
+                playerInputHistory.CorrectValue(lastInput, sentAtFrameNumber + i);
+            }
+
+            //TODO : CHeck ces histoires de simulates
+            
+            //Resimulate actions depending
+            RollbackManager.Instance.ReSimulate(backtrackNumFrames + numDiffFramesWithPresent);
         }
-
-        //Resimulate actions depending
-        RollbackManager.Instance.ReSimulate(numFramesRecieved + numDiffFramesWithPresent);
-
-        //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
+        
         this.LastUpdateFrame = GameLogic.Timestamp;
     }
 
