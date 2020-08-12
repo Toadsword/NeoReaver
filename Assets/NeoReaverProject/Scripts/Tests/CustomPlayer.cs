@@ -59,24 +59,11 @@ public class CustomPlayer : Player
     public Hashtable WriteEvStartGame() {
         Hashtable evContent = new Hashtable();
 
-        evContent[0] = true;
+        evContent[0] = GameLogic.Timestamp;
 
         return evContent;
     }
 
-    public void ReadEvInputChange(Hashtable evContent) {
-        int bufferSize = 1;
-        // Know the buffer size
-        if (evContent.ContainsKey((byte) 1)) {
-            bufferSize = (int)evContent[(byte)1];
-        }
-        if (evContent.ContainsKey((byte) 2)) {
-        }
-        
-        //Debug.Log("Update from  : " + this.LastUpdateTimestamp + " to : " + GameLogic.Timestamp);
-        this.LastUpdateFrame = GameLogic.Timestamp;
-    }
-    
     /// <summary>Creates the "custom content" Hashtable that is sent as position update.</summary>
     /// <remarks>
     /// As with event codes, the content of this event is arbitrary and "made up" for this demo.
@@ -119,49 +106,51 @@ public class CustomPlayer : Player
     /// <summary>Reads the "custom content" Hashtable that is sent as position update.</summary>
     /// <returns>Hashtable for event "move" to update others</returns>
     public void ReadEvInput(Hashtable evContent) {
-        int numFramesRecieved = 0;
+        int numFramesReceived = 0;
         if (evContent.ContainsKey((int) 0)) {
-            numFramesRecieved = (int) evContent[0];
+            numFramesReceived = (int) evContent[0];
         }
 
-        if (numFramesRecieved <= 0) {
+        if (numFramesReceived <= 0) {
             return;
         }
-
+        
         int sentAtFrameNumber = 0;
         if (evContent.ContainsKey((int) 1)) {
             sentAtFrameNumber = (int) evContent[1];
         }
+        Debug.Log("----------ReadInput-----------");
 
         RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
         
-        //TODO Retest difference between frames once ping calculated
-        
-        Debug.Log("------------------------");
         //Correct inputs
         int backtrackNumFrames = -1;
-        for (int i = 0; i < numFramesRecieved; i++) {
+        int firstIndex = 0;
+        if (numFramesReceived >= RollbackManager.Instance.GetDisplayedFrameNum()) {
+            firstIndex = RollbackManager.Instance.GetDisplayedFrameNum() - numFramesReceived + 1;
+        }
+        
+        for (int i = firstIndex; i < numFramesReceived; i++) {
             
             if (evContent.ContainsKey(2 + i)) {
                 RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
-                Debug.Log(baseActions);
                 Debug.Log("i : " + i);
                 Debug.Log("sentAtFrameNumber - i : " + (sentAtFrameNumber - i));
+                Debug.Log("current Rollback Frame : " + (RollbackManager.Instance.GetDisplayedFrameNum()));
                 //If return true, that means the correction was done
                 if (playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i)) {
-                    Debug.Log("Correcting frame");
                     backtrackNumFrames = i + 1;
                 }
             }
         }
 
-        Debug.Log(backtrackNumFrames);
+        Debug.Log(" backtrackNumFrames :" + backtrackNumFrames);
         // If at least a frame changed, we make a simulate
         if (backtrackNumFrames > -1) {
             //Predict new inputs from difference of recieving
             RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
-            lastInput.UnpackBits((byte[])evContent[2 + numFramesRecieved - 1]);
+            lastInput.UnpackBits((byte[])evContent[2 + numFramesReceived - 1]);
             int numDiffFramesWithPresent = RollbackManager.Instance.GetDisplayedFrameNum() - sentAtFrameNumber;
             
             Debug.Log(numDiffFramesWithPresent);

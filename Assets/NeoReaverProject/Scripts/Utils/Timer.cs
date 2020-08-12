@@ -23,6 +23,10 @@ public class Timer {
     public void Reset() {
         _currentTime.value = 0.0f;
     }
+
+    public float GetRemainingTime() {
+        return _maxTime - _currentTime.value;
+    }
     
     public void SetValueFromFrameNumber(int frameNumber) {
         _currentTime.SetValueFromFrameNumber(frameNumber);

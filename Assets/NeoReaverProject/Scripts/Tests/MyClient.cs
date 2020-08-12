@@ -1,8 +1,10 @@
-﻿using ExitGames.Client.Photon;
+﻿using System.Collections;
+using ExitGames.Client.Photon;
 using Packages.EZRollback.Runtime.Scripts;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class MyClient : MonoBehaviour {
     
@@ -11,18 +13,10 @@ public class MyClient : MonoBehaviour {
     const string ServerAdress = "";
     // string _appId = "6bf6b4e7-b37c-40e2-8548-11f41fbf3ae0";
 
-    [SerializeField] GameObject _connectionPanel;
-    [SerializeField] GameObject _startGamePanel;
-
-    [SerializeField] Text _appIdInput;
-    [SerializeField] Text _gameVersionInput;
-    [SerializeField] Text _nickNameInput;
-
     private NetworkTimer inputRepeatTimer;
     
     // Start is called before the first frame update
     void Start() {
-        _startGamePanel.SetActive(false);
         inputRepeatTimer = new NetworkTimer(10);
     }
 
@@ -30,19 +24,18 @@ public class MyClient : MonoBehaviour {
         _logic = new Logic();
         _logic.ConnectToMaster(
             ServerAdress,
-            _appIdInput.text.ToString(), 
-            _gameVersionInput.text.ToString(),
-            _nickNameInput.text.ToString()
+            GameUIManager.Instance._appIdInput.text.ToString(), 
+            GameUIManager.Instance._gameVersionInput.text.ToString(),
+            GameUIManager.Instance._nickNameInput.text.ToString()
             );
 
         _logic.localPlayer.OnEventJoin += this.OnEventJoin;
-        _logic.localPlayer.OnEventLeave += this.OnEventLeave;
+        //_logic.localPlayer.OnEventLeave += this.OnEventLeave;
         _logic.localPlayer.StateChanged += this.OnStateChanged;
         _logic.localPlayer.OpResponseReceived += this.OnOperationResponse;
         _logic.localPlayer.EventReceived += this.EventReceived;
 
-
-        _connectionPanel.SetActive(false);
+        GameUIManager.Instance.ChangeUIState(GameUIManager.GameUIState.EMPTY);
     }
 
     // Update is called once per frame
@@ -53,7 +46,7 @@ public class MyClient : MonoBehaviour {
 
             if (_logic.LocalPlayerJoined())
             {
-                RenderPlayers();
+               //RenderPlayers();
             }
         }
     }
@@ -81,27 +74,6 @@ public class MyClient : MonoBehaviour {
         _logic.StartGame();
     }
 
-    /// <summary>
-    /// Render cubes onto the scene
-    /// </summary>
-    void RenderPlayers()
-    {
-        lock (_logic.localPlayer)
-        {
-            foreach (CustomPlayer p in _logic.localPlayer.LocalRoom.Players.Values)
-            {
-                foreach (GameObject cube in _logic.playerObjects)
-                {
-                    if (cube.name == p.NickName)
-                    {
-                        //cube.transform.position = new Vector3(p.PosX / 10f, p.PosY/ 10f, 0);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     private void OnStateChanged(ClientState fromState, ClientState toState) {
         switch (toState) {
             case ClientState.ConnectedToMasterServer:
@@ -110,7 +82,6 @@ public class MyClient : MonoBehaviour {
                 //_lobbyPanel.SetActive(true);
                 break;
             case ClientState.JoinedLobby:
-                
                 break;
         }
     }
@@ -127,20 +98,23 @@ public class MyClient : MonoBehaviour {
         if (obj.Code == CustomConstants.EvStartGame) {
             Debug.Log("Revieced : EVSETUPDONE");
             
-            _startGamePanel.SetActive(false);
-            
-            GameManager.Instance.StartGame();
+            Hashtable evContent = (Hashtable) obj[ParameterCode.CustomEventContent];
+            GameUIManager.Instance.StartCountdown((GameLogic.Timestamp - (int) evContent[0]) / 1000.0f);
         }
     }
 
-    private void OnEventJoin(CustomPlayer customPlayer) {
-        if (_logic.GetLocalPlayerId() == 0) {
-            _startGamePanel.SetActive(true);
-        }
+    IEnumerator StartCountdown(float timeBeforeStart) {
+        Debug.Log("Starting Game in : " + timeBeforeStart);
+        
+        yield return new WaitForSeconds(timeBeforeStart);
+        
+        GameManager.Instance.StartGame();
     }
-    private void OnEventLeave(CustomPlayer customPlayer) {
-        if (_logic.GetLocalPlayerId() == 0) {
-            _startGamePanel.SetActive(true);
+
+    //TODO : Correct the false condition
+    private void OnEventJoin(CustomPlayer customPlayer) {
+        if (!GameManager.Instance.gameStarted && _logic.GetLocalPlayerId() == 0) {
+            GameUIManager.Instance.ChangeUIState(GameUIManager.GameUIState.GAME_LOBBY);
         }
     }
 }

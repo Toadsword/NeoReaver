@@ -270,7 +270,6 @@ public class GameLogic : LoadBalancingClient
     }
 
     public void SendStartGameEvent() {
-        
         this.LoadBalancingPeer.OpRaiseEvent(
             CustomConstants.EvStartGame,
             this.LocalPlayer.WriteEvStartGame(), 

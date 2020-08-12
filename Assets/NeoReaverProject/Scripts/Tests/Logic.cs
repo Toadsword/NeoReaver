@@ -126,9 +126,9 @@ public class Logic
     }
 
     public void StartGame() {
-        localPlayer.SendStartGameEvent();
+        GameUIManager.Instance.StartCountdown(0f);
         
-        GameManager.Instance.StartGame();
+        localPlayer.SendStartGameEvent();
     }
 
     /// <summary>
