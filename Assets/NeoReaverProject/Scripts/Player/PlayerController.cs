@@ -21,7 +21,7 @@ public class PlayerController : RollbackBehaviour {
 
     //Player shoo parameters
     [SerializeField] float _timeBetweenShootsTick = 0.2f;
-    private Timer _timerBetweenShoots;
+    private RollbackTimer _rollbackTimerBetweenShoots;
 
     [SerializeField] PlayerUiController _playerUiController;
     
@@ -40,8 +40,8 @@ public class PlayerController : RollbackBehaviour {
         _playerMovement = GetComponent<PlayerMovement>();
         InScreenManager._instance.RegisterObject(gameObject);
         
-        _timerBetweenShoots = new Timer(_timeBetweenShootsTick);
-        _timerBetweenShoots.Reset();
+        _rollbackTimerBetweenShoots = new RollbackTimer(_timeBetweenShootsTick);
+        _rollbackTimerBetweenShoots.Reset();
     }
 
     // Update is called once per frame
@@ -83,25 +83,25 @@ public class PlayerController : RollbackBehaviour {
         newDirection.y = RollbackManager.rbInputManager.GetAxis(RollbackInputManager.AxisEnum.VERTICAL, _playerId);
         _playerMovement.SetDirection(newDirection);
         
-        _timerBetweenShoots.Simulate();
-        if (_timerBetweenShoots.ShouldExecute()) {
+        _rollbackTimerBetweenShoots.Simulate();
+        if (_rollbackTimerBetweenShoots.ShouldExecute()) {
             if (RollbackManager.rbInputManager.GetInputDown((int)CustomInputManager.ActionsCode.SHOOT, _playerId)) {
                 ProjectileManager.Instance.poolManager.CreateObject(_shootPosition.position, _playerMovement.spriteTransform.rotation, _projectileSpeed);
-                _timerBetweenShoots.Reset();
+                _rollbackTimerBetweenShoots.Reset();
             }
         }
     }
 
     public override void SetValueFromFrameNumber(int frameNumber) {
-        _timerBetweenShoots.SetValueFromFrameNumber(frameNumber);
+        _rollbackTimerBetweenShoots.SetValueFromFrameNumber(frameNumber);
     }
 
     public override void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) {
-        _timerBetweenShoots.DeleteFrames(numFramesToDelete, deleteMode);
+        _rollbackTimerBetweenShoots.DeleteFrames(numFramesToDelete, deleteMode);
     }
 
     public override void SaveFrame() {
-        _timerBetweenShoots.SaveFrame();
+        _rollbackTimerBetweenShoots.SaveFrame();
     }
 }
 }

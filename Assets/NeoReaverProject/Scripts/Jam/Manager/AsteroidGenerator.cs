@@ -19,11 +19,11 @@ public class AsteroidGenerator : RollbackBehaviour {
 
     [SerializeField] float _timeBetweenAsteroidSpawn = 0.2f;
 
-    Timer _asteroidSpawnRate;
+    RollbackTimer _asteroidSpawnRate;
 
     void Start() {
         _asteroidPoolManager = GetComponent<PoolManager>();
-        _asteroidSpawnRate = new Timer(_timeBetweenAsteroidSpawn);
+        _asteroidSpawnRate = new RollbackTimer(_timeBetweenAsteroidSpawn);
         _asteroidSpawnRate.Reset();
     }
 

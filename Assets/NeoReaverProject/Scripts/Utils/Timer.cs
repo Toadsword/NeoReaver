@@ -1,42 +1,34 @@
-﻿using System;
-using Packages.EZRollback.Runtime.Scripts;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Timer {
-    float _maxTime = 0.0f;
-    RollbackElement<float> _currentTime;
+    
+    private float _lastExecutionTime = Time.time;
+    private bool _shouldExecute;
 
-    // Return true the first frame that should be executed
-    public bool ShouldExecute() {
-        return _currentTime.value >= _maxTime;
+    public float Interval { get; set; }
+
+    public bool IsEnabled { get; set; }
+
+    public bool ShouldExecute 
+    {
+        get { return (this.IsEnabled && (this._shouldExecute || (Time.time - this._lastExecutionTime > this.Interval))); } 
+        set { this._shouldExecute = value; } 
     }
 
-    public Timer(float maxTime) {
-        _maxTime = maxTime;
-        _currentTime = new RollbackElement<float>();
+    public Timer(float interval)
+    {
+        this.IsEnabled = true;
+        this.Interval = interval;
     }
     
-    public void Simulate() {
-        _currentTime.value += Time.fixedDeltaTime;
-    }
-    
-    public void Reset() {
-        _currentTime.value = 0.0f;
+    public void Reset()
+    {
+        this._shouldExecute = false;
+        this._lastExecutionTime = Time.time;
     }
 
     public float GetRemainingTime() {
-        return _maxTime - _currentTime.value;
-    }
-    
-    public void SetValueFromFrameNumber(int frameNumber) {
-        _currentTime.SetValueFromFrameNumber(frameNumber);
-    }
-    
-    public void DeleteFrames(int numFramesToDelete, RollbackManager.DeleteFrameMode deleteMode) { 
-        _currentTime.DeleteFrames(numFramesToDelete, deleteMode);
-    }
-
-    public void SaveFrame() {
-        _currentTime.SaveFrame();
+        return Interval - (Time.time - this._lastExecutionTime);
     }
 }
+

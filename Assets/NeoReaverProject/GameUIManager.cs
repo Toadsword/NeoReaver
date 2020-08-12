@@ -29,8 +29,9 @@ public class GameUIManager : Singleton<GameUIManager>
     [Header("Others")]
     [SerializeField] Text _countdownText;
     
-    Timer _countdownTimer;
+    Timer _countdownRollbackTimer;
     bool isCountingDown = false;
+    int currentlyDisplayedValue;
     
     // Start is called before the first frame update
     void Start() {
@@ -45,13 +46,32 @@ public class GameUIManager : Singleton<GameUIManager>
     // Update is called once per frame
     void Update()
     {
-        
+        if (isCountingDown) {
+            if (currentlyDisplayedValue != (int) _countdownRollbackTimer.GetRemainingTime()) {
+                currentlyDisplayedValue = (int) _countdownRollbackTimer.GetRemainingTime();
+                _countdownText.text = currentlyDisplayedValue.ToString();
+
+                SoundManager.Instance.PlaySound(SoundManager.SoundList.TING);
+            }
+
+            if (_countdownRollbackTimer.ShouldExecute) {
+                GameManager.Instance.StartGame();
+                isCountingDown = false;
+                ChangeUIState(GameUIState.INGAME);
+            }
+        }
     }
 
     public void StartCountdown(float timeToRemoveFromCountdown) {
         ChangeUIState(GameUIState.COUNTDOWN);
         
-        _countdownTimer = new Timer(_startGameDelay - timeToRemoveFromCountdown);
+        _countdownRollbackTimer = new Timer(_startGameDelay - timeToRemoveFromCountdown);
+        
+        currentlyDisplayedValue = (int) _countdownRollbackTimer.GetRemainingTime();
+        
+        _countdownText.text = currentlyDisplayedValue.ToString();
+        isCountingDown = true;
+        Debug.Log("_countdownTimer : " + _countdownRollbackTimer.ToString());
     }
 
     public void ChangeUIState(GameUIState newState) {
