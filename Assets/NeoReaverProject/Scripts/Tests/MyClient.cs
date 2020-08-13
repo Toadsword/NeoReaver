@@ -97,18 +97,11 @@ public class MyClient : MonoBehaviour {
     private void EventReceived(EventData obj) {
         if (obj.Code == CustomConstants.EvStartGame) {
             Debug.Log("Revieced : EVSETUPDONE");
-            
+            SoundManager.Instance.PlaySound(SoundManager.SoundList.TING);
+
             Hashtable evContent = (Hashtable) obj[ParameterCode.CustomEventContent];
             GameUIManager.Instance.StartCountdown((GameLogic.Timestamp - (int) evContent[0]) / 1000.0f);
         }
-    }
-
-    IEnumerator StartCountdown(float timeBeforeStart) {
-        Debug.Log("Starting Game in : " + timeBeforeStart);
-        
-        yield return new WaitForSeconds(timeBeforeStart);
-        
-        GameManager.Instance.StartGame();
     }
 
     //TODO : Correct the false condition

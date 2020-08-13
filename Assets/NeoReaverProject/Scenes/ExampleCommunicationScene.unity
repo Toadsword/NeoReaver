@@ -2324,7 +2324,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioMixer: {fileID: 24100000, guid: 2f9f7efecf9d5ec4dbe1f859f886e3ad, type: 2}
-  tingClip: {fileID: 8300000, guid: c0115404310622e44b5ce8386a96201d, type: 3}
+  tingClip: {fileID: 8300000, guid: 1856591ee499c3942b520fa8872df7bf, type: 3}
   emitterPrefab: {fileID: 6957046678600314551, guid: 5b1f48b9e8b97794e832172707773847,
     type: 3}
   emitterNumber: 5

@@ -127,6 +127,7 @@ public class Logic
 
     public void StartGame() {
         GameUIManager.Instance.StartCountdown(0f);
+        SoundManager.Instance.PlaySound(SoundManager.SoundList.TING);
         
         localPlayer.SendStartGameEvent();
     }
