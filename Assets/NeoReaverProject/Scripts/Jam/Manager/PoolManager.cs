@@ -17,7 +17,7 @@ public class PoolManager : MonoBehaviour
             //Instantiate them behind the camera
             GameObject go = Instantiate(_object, new Vector3(0, 0, -20), Quaternion.identity);
             go.transform.parent = this.transform;
-            InScreenManager._instance.RegisterObject(go);
+            InScreenManager._instance.RegisterObject(go.transform);
         }
     }
 

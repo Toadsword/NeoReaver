@@ -342,7 +342,7 @@ public class GameLogic : LoadBalancingClient
                 originatingPlayer?.ReadEvInput((Hashtable) photonEvent[ParameterCode.CustomEventContent]);
                 break;
             case CustomConstants.EvColor:
-                Debug.Log("Recieved Color");
+                    Debug.Log("Recieved Color");
                 originatingPlayer?.ReadEvColor((Hashtable)photonEvent[ParameterCode.CustomEventContent]);
                break;
             case CustomConstants.EvPosition:

@@ -24,8 +24,14 @@ public class InScreenManager : RollbackBehaviour {
     [SerializeField] Transform _bottomLeftPosition;
     [SerializeField] Transform _topRightPosition;
     
-    public void RegisterObject(GameObject obj) {
-        _transformsToTrack.Add(obj.transform);
+    public void RegisterObject(Transform transformObj) {
+        _transformsToTrack.Add(transformObj);
+    }
+
+    public void UnregisterObject(Transform transformObj) {
+        if (_transformsToTrack.Contains(transformObj)) {
+            _transformsToTrack.Remove(transformObj);
+        }
     }
 
     public override void Simulate() {

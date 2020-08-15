@@ -31,6 +31,11 @@ public class PlayerController : RollbackBehaviour {
         return _playerUiController;
     }
 
+    new void OnDestroy() {
+        base.OnDestroy();
+        InScreenManager._instance.UnregisterObject(transform);
+    }
+
     // Start is called before the first frame update
     void Start() {
         if (registerPlayer) {
@@ -38,7 +43,7 @@ public class PlayerController : RollbackBehaviour {
         }
         
         _playerMovement = GetComponent<PlayerMovement>();
-        InScreenManager._instance.RegisterObject(gameObject);
+        InScreenManager._instance.RegisterObject(transform);
         
         _rollbackTimerBetweenShoots = new RollbackTimer(_timeBetweenShootsTick);
         _rollbackTimerBetweenShoots.Reset();
