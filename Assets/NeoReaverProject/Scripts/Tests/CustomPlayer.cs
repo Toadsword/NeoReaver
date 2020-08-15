@@ -137,9 +137,13 @@ public class CustomPlayer : Player
             if (evContent.ContainsKey(2 + i)) {
                 RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
-                
-                if(!playerInputHistory.GetValue(sentAtFrameNumber - i).IsWellInitialized()) Debug.Break();
-                if(!baseActions.IsWellInitialized()) Debug.Break();
+
+                if (!playerInputHistory.GetValue(sentAtFrameNumber - i).IsWellInitialized()) {
+                    Debug.Log("In history : wrong");
+                    Debug.Log("SentAtFrameNumber : " + sentAtFrameNumber);
+                    Debug.Log("i : " + i);
+                }
+                if(!baseActions.IsWellInitialized()) Debug.Log("Recieveed : wrong");
                 
                 //If return true, that means the correction was done
                 if (playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i)) {
