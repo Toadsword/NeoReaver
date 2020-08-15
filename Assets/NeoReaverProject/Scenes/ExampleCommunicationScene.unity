@@ -1998,6 +1998,11 @@ PrefabInstance:
       propertyPath: _displayDebugOnScreen
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5046051155018766375, guid: 096f619208d54234ca409cb26970225f,
+        type: 3}
+      propertyPath: bufferSize
+      value: 199
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 096f619208d54234ca409cb26970225f, type: 3}
 --- !u!1 &1580284958 stripped

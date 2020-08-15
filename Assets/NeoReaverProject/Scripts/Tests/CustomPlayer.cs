@@ -125,19 +125,22 @@ public class CustomPlayer : Player
         
         //Correct inputs
         int backtrackNumFrames = -1;
-        int firstIndex = 0;
-        if (numFramesReceived >= RollbackManager.Instance.GetDisplayedFrameNum()) {
-            firstIndex = RollbackManager.Instance.GetDisplayedFrameNum() - numFramesReceived + 1;
-        }
         
-        for (int i = firstIndex; i < numFramesReceived; i++) {
+        // Created in case the rollback is made too rapidly (really low ping)
+        //int firstIndex = 0;
+        //if (numFramesReceived >= RollbackManager.Instance.GetDisplayedFrameNum()) {
+        //    firstIndex = RollbackManager.Instance.GetDisplayedFrameNum() - numFramesReceived + 1;
+        //}
+
+        for (int i = 0; i < numFramesReceived; i++) {
             
             if (evContent.ContainsKey(2 + i)) {
                 RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
-                Debug.Log("i : " + i);
-                Debug.Log("sentAtFrameNumber - i : " + (sentAtFrameNumber - i));
-                Debug.Log("current Rollback Frame : " + (RollbackManager.Instance.GetDisplayedFrameNum()));
+                
+                if(!playerInputHistory.GetValue(sentAtFrameNumber - i).IsWellInitialized()) Debug.Break();
+                if(!baseActions.IsWellInitialized()) Debug.Break();
+                
                 //If return true, that means the correction was done
                 if (playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i)) {
                     backtrackNumFrames = i + 1;

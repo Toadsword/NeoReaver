@@ -4,6 +4,7 @@ using Packages.EZRollback.Runtime.Scripts;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class MyClient : MonoBehaviour {
@@ -55,6 +56,7 @@ public class MyClient : MonoBehaviour {
         if (_logic != null){
             GUI.Label(new Rect(10, 10, 300, 30), this._logic.localPlayer.State.ToString());
             GUI.Label(new Rect(10, 40, 300, 30), "Number of players : " + this._logic.playerObjects.Count.ToString());
+            GUI.Label(new Rect(10, 70, 300, 30), "Rollback Frame number : " + RollbackManager.Instance.GetDisplayedFrameNum());
         }
     }
     

@@ -71,7 +71,6 @@ public class GameUIManager : Singleton<GameUIManager>
         
         _countdownText.text = currentlyDisplayedValue.ToString();
         isCountingDown = true;
-        Debug.Log("_countdownTimer : " + _countdownRollbackTimer.ToString());
     }
 
     public void ChangeUIState(GameUIState newState) {
