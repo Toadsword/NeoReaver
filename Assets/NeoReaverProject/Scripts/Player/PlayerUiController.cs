@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,10 @@ public class PlayerUiController : MonoBehaviour {
     
     public void UpdatePing(int newValue) {
         _pingText.text = newValue.ToString() + "ms";
+    }
+
+    public void UpdateBacktrack(int value) {
+        _pingText.text = _pingText.text + " - " + value;
     }
 
     public void SetSpectator() {

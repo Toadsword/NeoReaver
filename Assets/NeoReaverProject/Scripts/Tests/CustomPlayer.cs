@@ -32,6 +32,8 @@ public class CustomPlayer : Player
     public int Ping { get; set; }
 
     public GameObject playerObject;
+
+    public List<int> backTrackFrameHistory = new List<int>();
     
     private int LastUpdateFrame { get; set; }
 
@@ -78,10 +80,10 @@ public class CustomPlayer : Player
     public Hashtable WriteEvInput()
     {
         Hashtable evContent = new Hashtable();
-        int currentFrameNum = RollbackManager.Instance.GetDisplayedFrameNum();
+        int currentFrameNum = RollbackManager.Instance.GetIndexFrameNumFromStart();
         int numFramesToSend = CustomConstants.NetworkBufferSize;
-        if (numFramesToSend > currentFrameNum) {
-            numFramesToSend = currentFrameNum;
+        if (numFramesToSend >= currentFrameNum) {
+            numFramesToSend = currentFrameNum - 1;
         }
 
         evContent[0] = numFramesToSend; // Last x frames to pass through the
@@ -97,7 +99,6 @@ public class CustomPlayer : Player
     /// <summary>Reads the "custom content" Hashtable that is sent as position update.</summary>
     /// <returns>Hashtable for event "move" to update others</returns>
     public void ReadEvInput(Hashtable evContent) {
-        int currentFrame = RollbackManager.Instance.GetDisplayedFrameNum();
         int numFramesReceived = 0;
         if (evContent.ContainsKey((int) 0)) {
             numFramesReceived = (int) evContent[0];
@@ -108,13 +109,19 @@ public class CustomPlayer : Player
         }
         
         int sentAtFrameNumber = 0;
+        int currentFrame = RollbackManager.Instance.GetIndexFrameNumFromStart();
         if (evContent.ContainsKey((int) 1)) {
             sentAtFrameNumber = (int) evContent[1];
         }
-        Debug.Log("----------ReadInput-----------");
+        int numDiffFramesWithPresent = currentFrame - sentAtFrameNumber;
+            
+        //Debug.Log("----------ReadInput-----------");
 
         RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
         
+        Debug.Log("currentFrame : " + currentFrame + ", diff : " + numDiffFramesWithPresent);
+
+        int applicableFrame = RollbackManager.Instance.GetMaxFramesNum() - numDiffFramesWithPresent;
         //Correct inputs
         int backtrackNumFrames = -1;
         for (int i = 0; i < numFramesReceived; i++) {
@@ -124,8 +131,8 @@ public class CustomPlayer : Player
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
                 
                 //If return true, that means the correction was done
-                if (playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i)) {
-                    backtrackNumFrames = i + 1;
+                if (playerInputHistory.CorrectValue(baseActions, applicableFrame - i)) {
+                    backtrackNumFrames = i;
                 }
             }
         }
@@ -136,19 +143,19 @@ public class CustomPlayer : Player
             //Predict new inputs from difference of recieving
             RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
             lastInput.UnpackBits((byte[])evContent[2 + numFramesReceived - 1]);
-            int numDiffFramesWithPresent = currentFrame - sentAtFrameNumber;
-            
-            Debug.Log(numDiffFramesWithPresent);
-            for (int i = 0; i < numDiffFramesWithPresent; i++) {
-                playerInputHistory.CorrectValue(lastInput, sentAtFrameNumber + i);
+            for (int i = 1; i < numDiffFramesWithPresent; i++) {
+                playerInputHistory.CorrectValue(lastInput, applicableFrame + i);
             }
 
-            //TODO : CHeck ces histoires de simulates
-            
             //Resimulate actions depending
             RollbackManager.Instance.ReSimulate(backtrackNumFrames + numDiffFramesWithPresent);
         }
 
+        if (backTrackFrameHistory.Count > CustomConstants.NetworkBufferSize) {
+            backTrackFrameHistory.RemoveAt(0);
+        } 
+        backTrackFrameHistory.Add(numDiffFramesWithPresent);
+        
         this.LastUpdateFrame = GameLogic.Timestamp;
     }
 
@@ -201,9 +208,16 @@ public class CustomPlayer : Player
     }
 
     public void UpdatePingValue() {
+        int min = 0;
+        foreach (var backTrackFrame in backTrackFrameHistory) {
+            if (backTrackFrame > min) {
+                min = backTrackFrame;
+            }
+        }
         playerObject.GetComponent<PlayerController>().GetPlayerUiController().UpdatePing(Ping);
+        playerObject.GetComponent<PlayerController>().GetPlayerUiController().UpdateBacktrack(min);
     }
-    
+
     /// <summary>
     /// Converts the player info into a string.
     /// </summary>
