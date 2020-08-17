@@ -80,8 +80,8 @@ public class CustomPlayer : Player
         Hashtable evContent = new Hashtable();
         int currentFrameNum = RollbackManager.Instance.GetDisplayedFrameNum();
         int numFramesToSend = CustomConstants.NetworkBufferSize;
-        if (numFramesToSend >= currentFrameNum) {
-            numFramesToSend = currentFrameNum - 1;
+        if (numFramesToSend > currentFrameNum) {
+            numFramesToSend = currentFrameNum;
         }
 
         evContent[0] = numFramesToSend; // Last x frames to pass through the
@@ -89,15 +89,6 @@ public class CustomPlayer : Player
         RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
         for (int i = 0; i < numFramesToSend; i++) {
             RollbackInputBaseActions rollbackInputBaseActions = playerInputHistory.GetValue(currentFrameNum - i);
-            if (!rollbackInputBaseActions.IsWellInitialized()) {
-                Debug.Log("i : " + i);
-                Debug.Log("ActorNumber - 1 : " + (ActorNumber - 1));
-                Debug.Log("numFramesToSend : " + numFramesToSend);
-                Debug.Log("currentFrameNum : " + currentFrameNum);
-                Debug.Log("rollbackInputBaseActions : " + rollbackInputBaseActions.ToString());
-                Debug.Break();
-            }
-                
             evContent[2 + i] = rollbackInputBaseActions.PackBits();
         }
         return evContent;
@@ -106,6 +97,7 @@ public class CustomPlayer : Player
     /// <summary>Reads the "custom content" Hashtable that is sent as position update.</summary>
     /// <returns>Hashtable for event "move" to update others</returns>
     public void ReadEvInput(Hashtable evContent) {
+        int currentFrame = RollbackManager.Instance.GetDisplayedFrameNum();
         int numFramesReceived = 0;
         if (evContent.ContainsKey((int) 0)) {
             numFramesReceived = (int) evContent[0];
@@ -125,25 +117,11 @@ public class CustomPlayer : Player
         
         //Correct inputs
         int backtrackNumFrames = -1;
-        
-        // Created in case the rollback is made too rapidly (really low ping)
-        //int firstIndex = 0;
-        //if (numFramesReceived >= RollbackManager.Instance.GetDisplayedFrameNum()) {
-        //    firstIndex = RollbackManager.Instance.GetDisplayedFrameNum() - numFramesReceived + 1;
-        //}
-
         for (int i = 0; i < numFramesReceived; i++) {
             
             if (evContent.ContainsKey(2 + i)) {
                 RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
                 baseActions.UnpackBits((byte[])evContent[2 + i]);
-
-                if (!playerInputHistory.GetValue(sentAtFrameNumber - i).IsWellInitialized()) {
-                    Debug.Log("In history : wrong");
-                    Debug.Log("SentAtFrameNumber : " + sentAtFrameNumber);
-                    Debug.Log("i : " + i);
-                }
-                if(!baseActions.IsWellInitialized()) Debug.Log("Recieveed : wrong");
                 
                 //If return true, that means the correction was done
                 if (playerInputHistory.CorrectValue(baseActions, sentAtFrameNumber - i)) {
@@ -158,7 +136,7 @@ public class CustomPlayer : Player
             //Predict new inputs from difference of recieving
             RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
             lastInput.UnpackBits((byte[])evContent[2 + numFramesReceived - 1]);
-            int numDiffFramesWithPresent = RollbackManager.Instance.GetDisplayedFrameNum() - sentAtFrameNumber;
+            int numDiffFramesWithPresent = currentFrame - sentAtFrameNumber;
             
             Debug.Log(numDiffFramesWithPresent);
             for (int i = 0; i < numDiffFramesWithPresent; i++) {
@@ -170,7 +148,7 @@ public class CustomPlayer : Player
             //Resimulate actions depending
             RollbackManager.Instance.ReSimulate(backtrackNumFrames + numDiffFramesWithPresent);
         }
-        
+
         this.LastUpdateFrame = GameLogic.Timestamp;
     }
 
