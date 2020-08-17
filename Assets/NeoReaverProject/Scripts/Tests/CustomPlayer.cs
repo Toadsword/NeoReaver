@@ -113,37 +113,31 @@ public class CustomPlayer : Player
         if (evContent.ContainsKey((int) 1)) {
             sentAtFrameNumber = (int) evContent[1];
         }
+        
         int numDiffFramesWithPresent = currentFrame - sentAtFrameNumber;
-            
-        //Debug.Log("----------ReadInput-----------");
+        int applicableFrame = RollbackManager.Instance.GetMaxFramesNum() - numDiffFramesWithPresent;
 
         RollbackElementRollbackInputBaseActions playerInputHistory = RollbackManager.rbInputManager.GetPlayerInputHistory(ActorNumber - 1);
         
-        Debug.Log("currentFrame : " + currentFrame + ", diff : " + numDiffFramesWithPresent);
-
-        int applicableFrame = RollbackManager.Instance.GetMaxFramesNum() - numDiffFramesWithPresent;
         //Correct inputs
         int backtrackNumFrames = -1;
         for (int i = 0; i < numFramesReceived; i++) {
             
-            if (evContent.ContainsKey(2 + i)) {
-                RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
-                baseActions.UnpackBits((byte[])evContent[2 + i]);
-                
-                //If return true, that means the correction was done
-                if (playerInputHistory.CorrectValue(baseActions, applicableFrame - i)) {
-                    backtrackNumFrames = i;
-                }
+            RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
+            baseActions.UnpackBits((byte[])evContent[2 + i]);
+            
+            //If return true, that means the correction was done
+            if (playerInputHistory.CorrectValue(baseActions, applicableFrame - i)) {
+                backtrackNumFrames = i;
             }
         }
-
-        Debug.Log(" backtrackNumFrames :" + backtrackNumFrames);
+        
         // If at least a frame changed, we make a simulate
         if (backtrackNumFrames > -1) {
-            //Predict new inputs from difference of recieving
+            //Predict new inputs from difference of receiving
             RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
-            lastInput.UnpackBits((byte[])evContent[2 + numFramesReceived - 1]);
-            for (int i = 1; i < numDiffFramesWithPresent; i++) {
+            lastInput.UnpackBits((byte[])evContent[2]);
+            for (int i = 0; i < numDiffFramesWithPresent; i++) {
                 playerInputHistory.CorrectValue(lastInput, applicableFrame + i);
             }
 
