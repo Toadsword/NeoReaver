@@ -132,7 +132,7 @@ public class CustomPlayer : Player
             
             //If return true, that means the correction was done
             if (playerInputHistory.CorrectValue(baseActions, applicableFrame - i)) {
-                backtrackNumFrames = i;
+                backtrackNumFrames = i + 1;
             }
         }
         
@@ -140,19 +140,14 @@ public class CustomPlayer : Player
         if (backtrackNumFrames > -1) {
             //Predict new inputs from difference of receiving
             RollbackInputBaseActions lastInput = new RollbackInputBaseActions();
-            lastInput.UnpackBits((byte[])evContent[2]);
+            lastInput.UnpackBits((byte[])evContent[2]); // The latest frame is always on 2
             for (int i = 0; i < numDiffFramesWithPresent; i++) {
                 playerInputHistory.CorrectValue(lastInput, applicableFrame + i);
             }
 
             //Resimulate actions depending
-            RollbackManager.Instance.ReSimulate(backtrackNumFrames + numDiffFramesWithPresent);
+            RollbackManager.Instance.ReSimulate(backtrackNumFrames + numDiffFramesWithPresent + 5);
         }
-
-        if (backTrackFrameHistory.Count > CustomConstants.NetworkBufferSize) {
-            backTrackFrameHistory.RemoveAt(0);
-        } 
-        backTrackFrameHistory.Add(numDiffFramesWithPresent);
 
         this.LastConfirmedFrame = sentAtFrameNumber;
         this.LastUpdateFrame = GameLogic.Timestamp;
@@ -207,14 +202,7 @@ public class CustomPlayer : Player
     }
 
     public void UpdatePingValue() {
-        int min = 0;
-        foreach (var backTrackFrame in backTrackFrameHistory) {
-            if (backTrackFrame > min) {
-                min = backTrackFrame;
-            }
-        }
         playerObject.GetComponent<PlayerController>().GetPlayerUiController().UpdatePing(Ping);
-        playerObject.GetComponent<PlayerController>().GetPlayerUiController().UpdateBacktrack(min);
     }
 
     /// <summary>

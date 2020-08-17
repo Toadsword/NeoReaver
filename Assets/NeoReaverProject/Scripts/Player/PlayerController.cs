@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using System.Xml.Schema;
 using ExitGames.Client.Photon;
 using Packages.EZRollback.Runtime.Scripts;
@@ -10,7 +11,7 @@ namespace NeoReaverProject.Scripts {
 
 public class PlayerController : RollbackBehaviour {
     
-    public bool isLocal;
+    private bool _isLocal;
     [SerializeField] public int _playerId = -1;
     [SerializeField] bool registerPlayer = false;
     
@@ -70,6 +71,7 @@ public class PlayerController : RollbackBehaviour {
     }
     
     public void SetupLocal(bool isLocal) {
+        _isLocal = isLocal;
         _spriteTransform.GetComponent<SpriteRenderer>().color = isLocal ? Color.green : Color.white;
     }
 
@@ -91,7 +93,6 @@ public class PlayerController : RollbackBehaviour {
         _rollbackTimerBetweenShoots.Simulate();
         if (_rollbackTimerBetweenShoots.ShouldExecute()) {
             if (RollbackManager.rbInputManager.GetInputDown((int)CustomInputManager.ActionsCode.SHOOT, _playerId)) {
-                Debug.Log("Shoot at frame number : " + RollbackManager.Instance.GetDisplayedFrameNum());
                 ProjectileManager.Instance.poolManager.CreateObject(_shootPosition.position, _playerMovement.spriteTransform.rotation, _projectileSpeed);
                 _rollbackTimerBetweenShoots.Reset();
             }

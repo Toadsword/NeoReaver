@@ -18,10 +18,6 @@ public class PlayerUiController : MonoBehaviour {
         _pingText.text = newValue.ToString() + "ms";
     }
 
-    public void UpdateBacktrack(int value) {
-        _pingText.text = _pingText.text + " - " + value;
-    }
-
     public void SetSpectator() {
         _spectatorPanel.SetActive(true);
     }
