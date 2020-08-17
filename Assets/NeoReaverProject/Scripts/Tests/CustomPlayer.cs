@@ -36,6 +36,7 @@ public class CustomPlayer : Player
     public List<int> backTrackFrameHistory = new List<int>();
     
     private int LastUpdateFrame { get; set; }
+    private int LastConfirmedFrame { get; set; }
 
     /// <summary>
     /// Stores this client's "group interest currently set on server" of this player (not necessarily the current one).
@@ -122,6 +123,9 @@ public class CustomPlayer : Player
         //Correct inputs
         int backtrackNumFrames = -1;
         for (int i = 0; i < numFramesReceived; i++) {
+            if (LastConfirmedFrame >= sentAtFrameNumber - i) {
+                break;
+            }
             
             RollbackInputBaseActions baseActions = new RollbackInputBaseActions();
             baseActions.UnpackBits((byte[])evContent[2 + i]);
@@ -149,7 +153,8 @@ public class CustomPlayer : Player
             backTrackFrameHistory.RemoveAt(0);
         } 
         backTrackFrameHistory.Add(numDiffFramesWithPresent);
-        
+
+        this.LastConfirmedFrame = sentAtFrameNumber;
         this.LastUpdateFrame = GameLogic.Timestamp;
     }
 
