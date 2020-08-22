@@ -20,7 +20,7 @@ public class CustomInputManager : RollbackInputManager
         return (int)ActionsCode.LENGTH;
     }
 
-    protected  override RollbackInputBaseActions GetCurrentActionsValue(int controllerId) {
+    protected override RollbackInputBaseActions GetCurrentActionsValue(int controllerId) {
         if (controllerId == localPlayerId) {
             //Gather local inputs and execute them
             RollbackInputBaseActions actionsValue = new RollbackInputBaseActions((int)ActionsCode.LENGTH);
