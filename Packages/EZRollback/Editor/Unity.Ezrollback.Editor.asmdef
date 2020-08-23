@@ -1,0 +1,18 @@
+{
+    "name": "Unity.Ezrollback.Editor",
+    "references": [
+        "GUID:da471dc2a9b653d43b269e7d989a07c1",
+        "GUID:17373b81308ade44ca92bd0f050c6233"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

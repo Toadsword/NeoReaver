@@ -1,0 +1,18 @@
+{
+  "name": "com.toadsword.ezrollback",
+  "version": "0.0.1",
+  "displayName": "EZ Rollback",
+  "description": "Tool allowing to rollback in time within the game and in the editor, for debugging purpose.",
+  "unity": "2019.3",
+  "keywords": [
+    "netcode",
+    "rollback",
+    "indie"
+  ],
+  "author": {
+    "name": "Duncan Bourquard",
+    "email": "bourquardduncan@gmail.com",
+    "url": "duncanbourquard.ch"
+  },
+  "type": "library"
+}
